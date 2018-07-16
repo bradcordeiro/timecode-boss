@@ -1,0 +1,1 @@
+require('./smpte-timecode-test');

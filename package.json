@@ -1,0 +1,20 @@
+{
+  "name": "smpte-timecode",
+  "description": "A JavaScript module for working with SMPTE timecode",
+  "main": "./lib/timecode.js",
+  "version": "1.0.0",
+  "author": {
+    "name": "Brad Cordeiro",
+    "email": "me@bradc.com",
+    "url": "http://www.bradc.com/"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^13.0.0",
+    "eslint-plugin-import": "^2.13.0",
+    "mocha": "^5.2.0"
+  }
+}
