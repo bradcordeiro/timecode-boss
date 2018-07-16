@@ -15,8 +15,8 @@ class Timecode {
     if (input instanceof Timecode) {
       this.frameCount = input.frameCount;
       this.frameRate = input.frameCount;
-    }
-    if (input instanceof Date) {
+      this.rollOver24Hours();
+    } else if (input instanceof Date) {
       this.setFrameCountFromDate(input);
     } else if (TimecodeRegex.test(input)) {
       this.setFrameCountFromString(input);
@@ -64,7 +64,7 @@ class Timecode {
     this.setHours(date.getHours());
     this.setMinutes(date.getMinutes());
     this.setSeconds(date.getSeconds());
-    this.setFrames(Math.floor(date.getMilliseconds() / this.frameRate));
+    this.setFrames(Math.floor(date.getMilliseconds() / this.nominalFrameRate()));
     return this;
   }
 
@@ -78,15 +78,16 @@ class Timecode {
   }
 
   getHours() {
-    return Math.floor(this.frameCount / this.framesPerHour()) % 24;
+    return Math.floor(this.frameCount / this.framesPerHour());
   }
 
   setHours(hours) {
     if (Number.isNaN(hours)) throw new TypeError(`Cannot set hours to ${hours}`);
 
-    const hh = parseInt(hours, 10);
+    const hh = (parseInt(hours, 10) % 24);
     this.frameCount -= this.framesInHoursField();
     this.frameCount += hh * this.framesPerHour();
+    this.rollOver24Hours();
     return this;
   }
 
@@ -145,7 +146,20 @@ class Timecode {
   }
 
   nominalFrameRate() {
-    return Math.round(this.frameRate);
+    /* 23.98 -> 24
+     * 25    -> 25
+     * 29.97 -> 30
+     * 30    -> 30
+     * 50    -> 25
+     * 59.94 -> 30
+     * 60    -> 30
+     */
+
+    let fps = this.frameRate;
+
+    if (fps > 30) fps /= 2;
+
+    return Math.round(fps);
   }
 
   framesPerHour() {
@@ -201,6 +215,8 @@ class Timecode {
       this.frameCount += addend.frameCount;
     }
 
+    this.rollOver24Hours();
+
     return this;
   }
 
@@ -211,7 +227,16 @@ class Timecode {
       this.frameCount -= subtrahend.frameCount;
     }
 
+    this.rollOver24Hours();
+
     return this;
+  }
+
+  rollOver24Hours() {
+    const maxFrames = (this.framesPerHour() * 24);
+
+    this.frameCount += maxFrames; // protect against negative frameCount
+    this.frameCount %= maxFrames; // protect against going over 24 hours
   }
 }
 

@@ -67,6 +67,55 @@ describe('Timecode', () => {
 
       assert.strictEqual(tc.toString(), '00;08;30;06');
     });
+
+    it('Should roll over to 0 at 24 hours', () => {
+      const tc = new Timecode('24:00:00:00', 29.97);
+      assert.strictEqual(tc.toString(), '00;00;00;00');
+    });
+  });
+
+  describe('Nominal Frame Rates', () => {
+    const tc = new Timecode();
+
+    it('Should use 24 for 23.98', () => {
+      tc.frameRate = 23.98;
+      assert.strictEqual(tc.nominalFrameRate(), 24);
+    });
+
+    it('Should use 24 for 24', () => {
+      tc.frameRate = 24;
+      assert.strictEqual(tc.nominalFrameRate(), 24);
+    });
+
+    it('Should use 25 for 25', () => {
+      tc.frameRate = 25;
+      assert.strictEqual(tc.nominalFrameRate(), 25);
+    });
+
+    it('Should use 30 for 29.97', () => {
+      tc.frameRate = 29.97;
+      assert.equal(tc.nominalFrameRate(), 30);
+    });
+
+    it('Should use 30 for 30', () => {
+      tc.frameRate = 30;
+      assert.strictEqual(tc.nominalFrameRate(), 30);
+    });
+
+    it('Should use 25 for 50', () => {
+      tc.frameRate = 50;
+      assert.strictEqual(tc.nominalFrameRate(), 25);
+    });
+
+    it('Should use 30 for 59.94', () => {
+      tc.frameRate = 59.94;
+      assert.strictEqual(tc.nominalFrameRate(), 30);
+    });
+
+    it('Should use 30 for 60', () => {
+      tc.frameRate = 60;
+      assert.strictEqual(tc.nominalFrameRate(), 30);
+    });
   });
 
   describe('Drop Frame Detection', () => {
@@ -137,6 +186,52 @@ describe('Timecode', () => {
     });
   });
 
+  describe('Conversion', () => {
+    const tc = new Timecode(1289434, 30);
+
+    it('Should convert to 23.98 FPS', () => {
+      const converted = tc.convert(23.98);
+
+      assert.strictEqual(converted.toString(), '14:55:26:10');
+    });
+
+    it('Should convert to 24 FPS', () => {
+      const converted = tc.convert(24);
+
+      assert.strictEqual(converted.toString(), '14:55:26:10');
+    });
+
+    it('Should convert to 25 FPS', () => {
+      const converted = tc.convert(25);
+
+      assert.strictEqual(converted.toString(), '14:19:37:09');
+    });
+
+    it('Should convert to 29.97 FPS', () => {
+      const converted = tc.convert(29.97);
+
+      assert.strictEqual(converted.toString(), '11;57;04;06');
+    });
+
+    it('Should convert to 30 FPS', () => {
+      const converted = tc.convert(30);
+
+      assert.strictEqual(converted.toString(), '11:56:21:04');
+    });
+
+    it('Should convert to 50 FPS using 25 FPS base', () => {
+      const converted = tc.convert(50);
+
+      assert.strictEqual(converted.toString(), '14:19:37:09');
+    });
+
+    it('Should convert to 59.94 FPS using 29.97 FPS base', () => {
+      const converted = tc.convert(59.94);
+
+      assert.strictEqual(converted.toString(), '11;57;04;06');
+    });
+  });
+
   describe('Addition', () => {
     it('Should increment by 1 hour when adding another Timecode of "01:00:00:00 at 30', () => {
       const tc = new Timecode('01:00:00:00', 30);
@@ -173,15 +268,61 @@ describe('Timecode', () => {
       tc.add('00:33:22:11');
       assert.strictEqual('01:33:22:11', tc.toString());
     });
+
+    it('Should roll over the 24-hour mark', () => {
+      const tc = new Timecode('23:59:59:29', 29.97);
+      tc.add(1);
+      assert.strictEqual(tc.toString(), '00;00;00;00');
+    });
   });
 
   describe('Subtraction', () => {
+    it('Should decrement by 1 hour subtracting adding another Timecode of "01:00:00:00 at 30', () => {
+      const tc = new Timecode('04:00:00:00', 30);
+      tc.subtract(new Timecode('01:00:00:00', 30));
+      assert.strictEqual('03:00:00:00', tc.toString());
+    });
 
+    it('Should subtract one frame', () => {
+      const tc = new Timecode('02:00:00:00', 30);
+      tc.subtract(1);
+      assert.strictEqual('01:59:59:29', tc.toString());
+    });
+
+    it('Should decrement by one second when subtracting 30 frames from 30NDF timecode', () => {
+      const tc = new Timecode('04:00:01:00', 30);
+      tc.subtract(30);
+      assert.strictEqual('04:00:00:00', tc.toString());
+    });
+
+    it('Should decrement by one minute when subtracting 1800 frames from 30NDF timecode', () => {
+      const tc = new Timecode('01:00:00:00', 30);
+      tc.subtract(30 * 60);
+      assert.strictEqual('00:59:00:00', tc.toString());
+    });
+
+    it('Should decrement by one hour when subtracting 108000 frames from 30NDF timecode', () => {
+      const tc = new Timecode('01:00:00:00', 30);
+      tc.subtract(30 * 3600);
+      assert.strictEqual('00:00:00:00', tc.toString());
+    });
+
+    it('Should subract passed string as Timecode', () => {
+      const tc = new Timecode('01:00:00:00', 30);
+      tc.subtract('00:33:21:04');
+      assert.strictEqual('00:26:38:26', tc.toString());
+    });
+
+    it('Should roll over the 24-hour mark', () => {
+      const tc = new Timecode('00:00:00:00', 29.97);
+      tc.subtract(1);
+      assert.strictEqual(tc.toString(), '23;59;59;29');
+    });
   });
 
   describe('Fuzz Testing', () => {
     it('Should return the same fields as are passed in for 1000 Non-Drop Timecodes', () => {
-      const frameRates = [23.98, 24, 25, 30, 50, 60];
+      const frameRates = [23.98, 24, 25, 30];
 
       function generateRandomTimecodeFields(frameRate) {
         return {
