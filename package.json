@@ -1,6 +1,6 @@
 {
-  "name": "smpte-timecode",
-  "description": "A JavaScript module for working with SMPTE timecode",
+  "name": "timecode-boss",
+  "description": "A ES6 JavaScript module for working with SMPTE timecode",
   "main": "./src/timecode.js",
   "version": "1.0.0",
   "author": {
@@ -18,7 +18,7 @@
   },
   "scripts": {
     "test": "mocha",
-    "test-coverage": "nyc --reporter=html mocha "
+    "test-coverage": "nyc --reporter=text mocha"
   },
   "devDependencies": {
     "eslint": "^4.19.1",
