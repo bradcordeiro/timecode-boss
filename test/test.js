@@ -31,34 +31,66 @@ describe('Timecode', () => {
       assert.strictEqual(tc.toString(), '01:00:00:00');
     });
 
-    it('Should accept {hours, minutes, seconds, frames} and framerate of 29.97', () => {
+    it('Should accept { hours, minutes, seconds, frames } and framerate of 29.97', () => {
       const tc = new Timecode({
         hours: 1,
-        minutes: 0,
-        seconds: 0,
-        frames: 0,
+        minutes: 2,
+        seconds: 3,
+        frames: 4,
       }, 29.97);
 
       assert.strictEqual(tc.frameRate, 29.97, 'frameRate');
       assert.strictEqual(tc.getHours(), 1, 'Hours field');
-      assert.strictEqual(tc.getMinutes(), 0, 'Minutes field');
-      assert.strictEqual(tc.getSeconds(), 0, 'Seconds field');
-      assert.strictEqual(tc.getFrames(), 0, 'Frames field');
+      assert.strictEqual(tc.getMinutes(), 2, 'Minutes field');
+      assert.strictEqual(tc.getSeconds(), 3, 'Seconds field');
+      assert.strictEqual(tc.getFrames(), 4, 'Frames field');
     });
 
-    it('Should accept {"hours", "minutes", "seconds", "frames" } and framerate of 29.97', () => {
+    it('Should accept { "hours", "minutes", "seconds", "frames" } and framerate of 29.97', () => {
       const tc = new Timecode({
-        hours: '1',
-        minutes: '0',
-        seconds: '0',
-        frames: '0',
+        hours: '01',
+        minutes: '02',
+        seconds: '03',
+        frames: '04',
       }, 29.97);
 
       assert.strictEqual(tc.frameRate, 29.97, 'frameRate');
       assert.strictEqual(tc.getHours(), 1, 'Hours field');
-      assert.strictEqual(tc.getMinutes(), 0, 'Minutes field');
-      assert.strictEqual(tc.getSeconds(), 0, 'Seconds field');
-      assert.strictEqual(tc.getFrames(), 0, 'Frames field');
+      assert.strictEqual(tc.getMinutes(), 2, 'Minutes field');
+      assert.strictEqual(tc.getSeconds(), 3, 'Seconds field');
+      assert.strictEqual(tc.getFrames(), 4, 'Frames field');
+    });
+
+    it('Should accept { hours }', () => {
+      const tc = new Timecode({
+        hours: 1,
+      }, 29.97);
+
+      assert.strictEqual(tc.getHours(), 1);
+    });
+
+    it('Should accept { minutes }', () => {
+      const tc = new Timecode({
+        minutes: 2,
+      }, 29.97);
+
+      assert.strictEqual(tc.getMinutes(), 2);
+    });
+
+    it('Should accept { seconds }', () => {
+      const tc = new Timecode({
+        seconds: 3,
+      }, 29.97);
+
+      assert.strictEqual(tc.getSeconds(), 3, 'Seconds field');
+    });
+
+    it('Should accept { frames }', () => {
+      const tc = new Timecode({
+        frames: 4,
+      }, 29.97);
+
+      assert.strictEqual(tc.getFrames(), 4, 'Frames field');
     });
 
     it('Should accept a Date object', () => {
