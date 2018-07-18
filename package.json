@@ -2,7 +2,7 @@
   "name": "timecode-boss",
   "description": "A ES6 JavaScript module for working with SMPTE timecode",
   "main": "./timecode/timecode.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "Brad Cordeiro",
     "email": "brad.cordeiro@gmail.com",
