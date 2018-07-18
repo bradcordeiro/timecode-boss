@@ -17,8 +17,8 @@ In theory it supports any frame rate, but tests are only written to check for co
 
 Property | Type | Description
 ---------|------|------------
-frameCount | Number | A number representing the total number of frames in the Timecode represents. Timecode methods will coerce this into an integer, but will not check for integer-ness if this property is manually changed, which is not advised.
-frameRate | Number | A floating-point number representing the playback speed of the Timecode. Though any frame rate should work here, only common broadcast frame rates are tested (see Tests for a list).
+frameCount | Number | A number representing the total number of frames in the Timecode represents. Timecode class setters will coerce this into an integer, but will not check for integer-ness if this property is manually changed.
+frameRate | Number | A floating-point number representing the playback speed of the Timecode. Though any frame rate should work here, only common broadcast frame rates are tested (see [Testing](#testing) for a list).
 
 ### Methods
 
