@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 const assert = require('assert');
-const Timecode = require('../src/timecode');
+const Timecode = require('./timecode');
 
 describe('Timecode', () => {
   describe('Constructor', () => {

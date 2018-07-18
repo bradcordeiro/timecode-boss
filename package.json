@@ -1,24 +1,24 @@
 {
   "name": "timecode-boss",
   "description": "A ES6 JavaScript module for working with SMPTE timecode",
-  "main": "./src/timecode.js",
+  "main": "./timecode/timecode.js",
   "version": "1.0.0",
   "author": {
     "name": "Brad Cordeiro",
     "email": "brad.cordeiro@gmail.com",
     "url": "http://www.bradc.com/"
   },
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/bradcordeiro/timecode-boss"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bradcordeiro/timecode-boss"
   },
   "bugs": {
-    "url" : "https://github.com/bradcordeiro/timecode-boss/issues",
-    "email" : "me@bradc.com"
+    "url": "https://github.com/bradcordeiro/timecode-boss/issues",
+    "email": "me@bradc.com"
   },
   "scripts": {
-    "test": "mocha",
-    "test-coverage": "nyc --reporter=text mocha"
+    "test": "mocha ./timecode/timecode.test.js",
+    "test-coverage": "nyc --reporter=text mocha ./timecode/timecode.test.js"
   },
   "devDependencies": {
     "eslint": "^4.19.1",
