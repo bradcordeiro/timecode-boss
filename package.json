@@ -8,6 +8,14 @@
     "email": "me@bradc.com",
     "url": "http://www.bradc.com/"
   },
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/bradcordeiro/timecode-boss"
+  },
+  "bugs": {
+    "url" : "https://github.com/bradcordeiro/timecode-boss/issues",
+    "email" : "me@bradc.com"
+  },
   "scripts": {
     "test": "mocha",
     "test-coverage": "nyc --reporter=html mocha "
