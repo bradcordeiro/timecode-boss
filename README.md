@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/bradcordeiro/timecode-boss.svg?branch=master)](https://travis-ci.org/bradcordeiro/timecode-boss)
 
-This is a ES6 module fthat provies a class **Timecode** with properties and methods to work with SMPTE timecode.
+This is a ES6 module that provies a class **Timecode** with properties and methods to work with SMPTE timecode.
 
 Many thanks to the BBC's [Ingex](http://ingex.sourceforge.net), which was written in C++ and was influental on how the math in this module should work.
 
