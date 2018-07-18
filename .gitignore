@@ -1,7 +1,9 @@
-
-node_modules
 .DS_Store
 .vscode
-package-lock.json
+
+node_modules
+
+coverage
+.nyc_output
 
 
