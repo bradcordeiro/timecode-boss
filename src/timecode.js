@@ -14,8 +14,7 @@ class Timecode {
   set(input) {
     if (input instanceof Timecode) {
       this.frameCount = input.frameCount;
-      this.frameRate = input.frameCount;
-      this.rollOver24Hours();
+      this.frameRate = input.frameRate;
     } else if (input instanceof Date) {
       this.setFrameCountFromDate(input);
     } else if (TimecodeRegex.test(input)) {
@@ -41,9 +40,6 @@ class Timecode {
     // TODO: Make this less clumsy
     if (this.isDropFrame() && ff < 2 && ss === '00' && mm % 10 !== 0) {
       this.setFrames(parseInt(ff, 10) + 2);
-      if (process.env.NODE_ENV === 'development') {
-        console.warn(`Invalid drop frame timecode string was used (${input}). It has been adjusted to ${this.toString()}`);
-      }
     } else {
       this.setFrames(ff);
     }
@@ -77,33 +73,70 @@ class Timecode {
     return `${h}${c}${m}${c}${s}${c}${f}`;
   }
 
+  toObject(returnType, padded) {
+    if (returnType && returnType.toLowerCase() === 'string') {
+      if (padded === true) {
+        return {
+          hours: this.getHours().toString(10).padStart(2, '0'),
+          minutes: this.getMinutes().toString(10).padStart(2, '0'),
+          seconds: this.getSeconds().toString(10).padStart(2, '0'),
+          frames: this.getFrames().toString(10).padStart(2, '0'),
+        };
+      }
+
+      return {
+        hours: this.getHours().toString(10),
+        minutes: this.getMinutes().toString(10),
+        seconds: this.getSeconds().toString(10),
+        frames: this.getFrames().toString(10),
+      };
+    }
+
+    return {
+      hours: this.getHours(),
+      minutes: this.getMinutes(),
+      seconds: this.getSeconds(),
+      frames: this.getFrames(),
+    };
+  }
+
   getHours() {
+    // Control rolling over the 24 hour mark or under 0
+    const maxFrames = this.framesPerHour() * 24;
+    if (this.frameCount >= maxFrames) this.frameCount %= maxFrames;
+    if (this.frameCount < 0) this.frameCount += maxFrames;
+
     return Math.floor(this.frameCount / this.framesPerHour());
   }
 
   setHours(hours) {
-    if (Number.isNaN(hours)) throw new TypeError(`Cannot set hours to ${hours}`);
-
     const hh = (parseInt(hours, 10) % 24);
+
+    if (Number.isNaN(hh)) throw new TypeError(`Cannot set hours to ${hours}`);
+
     this.frameCount -= this.framesInHoursField();
     this.frameCount += hh * this.framesPerHour();
-    this.rollOver24Hours();
     return this;
   }
 
   getMinutes() {
-    let remainingFrames = this.frameCount - this.framesInHoursField();
-    const tenMinutes = Math.floor(remainingFrames / this.framesPer10Minute());
-    remainingFrames -= tenMinutes * this.framesPer10Minute();
-    const singleMinutes = Math.floor(remainingFrames / this.framesPerMinute());
+    const framesInHoursField = this.framesInHoursField();
+    const framesPer10Minute = this.framesPer10Minute();
+    const framesPerMinute = this.framesPerMinute();
+    let remainingFrames = this.frameCount - framesInHoursField;
+    const tenMinutes = Math.floor(remainingFrames / framesPer10Minute);
+    remainingFrames -= tenMinutes * framesPer10Minute;
+    // min() is required to handle rollling over 24 hours or under 0
+    const singleMinutes = Math.min(Math.floor(remainingFrames / framesPerMinute), 9);
 
     return (tenMinutes * 10) + singleMinutes;
   }
 
   setMinutes(minutes) {
-    if (Number.isNaN(minutes)) throw new TypeError(`Cannot set minutes to ${minutes}`);
-
     const mm = parseInt(minutes, 10);
+
+    if (Number.isNaN(mm)) throw new TypeError(`Cannot set minutes to ${minutes}`);
+
     this.frameCount -= this.framesInMinutesField();
     this.frameCount += Math.floor(mm / 10) * this.framesPer10Minute();
     this.frameCount += (mm % 10) * this.framesPerMinute();
@@ -116,9 +149,10 @@ class Timecode {
   }
 
   setSeconds(seconds) {
-    if (Number.isNaN(seconds)) throw new TypeError(`Cannot set minutes to ${seconds}`);
-
     const ss = parseInt(seconds, 10);
+
+    if (Number.isNaN(ss)) throw new TypeError(`Cannot set minutes to ${seconds}`);
+
     this.frameCount -= this.framesInSecondsField();
     this.frameCount += ss * this.nominalFrameRate();
     return this;
@@ -126,16 +160,19 @@ class Timecode {
 
   getFrames() {
     let remainingFrames = this.frameCount - this.framesInHoursField();
+    remainingFrames -= this.framesToDrop();
     remainingFrames -= this.framesInMinutesField();
+    remainingFrames += this.framesToDrop();
     remainingFrames -= this.framesInSecondsField();
 
     return remainingFrames % this.nominalFrameRate();
   }
 
   setFrames(frames) {
-    if (Number.isNaN(frames)) throw new TypeError(`Cannot set minutes to ${frames}`);
-
     const ff = parseInt(frames, 10);
+
+    if (Number.isNaN(ff)) throw new TypeError(`Cannot set minutes to ${frames}`);
+
     this.frameCount -= this.getFrames();
     this.frameCount += ff;
     return this;
@@ -155,9 +192,7 @@ class Timecode {
      * 60    -> 30
      */
 
-    let fps = this.frameRate;
-
-    if (fps > 30) fps /= 2;
+    const fps = this.frameRate > 30 ? this.frameRate / 2 : this.frameRate;
 
     return Math.round(fps);
   }
@@ -215,8 +250,6 @@ class Timecode {
       this.frameCount += addend.frameCount;
     }
 
-    this.rollOver24Hours();
-
     return this;
   }
 
@@ -227,16 +260,7 @@ class Timecode {
       this.frameCount -= subtrahend.frameCount;
     }
 
-    this.rollOver24Hours();
-
     return this;
-  }
-
-  rollOver24Hours() {
-    const maxFrames = (this.framesPerHour() * 24);
-
-    this.frameCount += maxFrames; // protect against negative frameCount
-    this.frameCount %= maxFrames; // protect against going over 24 hours
   }
 }
 
