@@ -13,14 +13,18 @@ In theory it supports any frame rate, but tests are only written to check for co
 
 ## Usage
 
-### Properties
+### Installation
+
+	$ npm install timecode-boss
+
+### Class Properties
 
 Property | Type | Description
 ---------|------|------------
 frameCount | Number | A number representing the total number of frames in the Timecode represents. Timecode class setters will coerce this into an integer, but will not check for integer-ness if this property is manually changed.
 frameRate | Number | A floating-point number representing the playback speed of the Timecode. Though any frame rate should work here, only common broadcast frame rates are tested (see [Testing](#testing) for a list).
 
-### Methods
+### Class Methods
 
 #### Constructor
 
@@ -51,23 +55,23 @@ Return an integer representing the relevant field.
 
 #### Setters
 
-| Method | Argument
-|--------|---------
-| setHours(*hours*) | Number
-| setMinutes(*minutes*) | Number
-| setSeconds(*seconds*) | Number
-| setFrames(*frames*) | Number
+| Method | Argument Type | Return Type
+|--------|-------------- | -----------
+| setHours(*hours*) | Number | Timecode
+| setMinutes(*minutes*) | Number | Timecode
+| setSeconds(*seconds*) | Number | Timecode
+| setFrames(*frames*) | Number | Timecode
 
 Sets the relevant field. The Timecode object is returned, allowing these methods to be chained. Calling these methods with no argument, or with a type that cannont be coerced to an integer, will throw a TypeError.
 
 #### Arithmetic
 
-| Method | Argument
-|--------|---------
-| add(*addend*) | Timecode
-| subtract(*subtrahend*) | Timecode
+| Method | Argument Type | Return Type
+|--------|-------------- | -----------
+| add(*addend*) | Timecode, String, Number, Object, or Date | Timecode
+| subtract(*subtrahend*) | Timecode, String, Number, Object, or Date | Timecode
 
-Adds the addend to or subtracts the subtrahend from the calling Timecode, and returns the updated calling Timecode.
+Adds the addend to or subtracts the subtrahend from the calling Timecode, and returns the updated calling Timecode. Any of the types available to use in the Timecode constructor above are available to use as arguments to these methods.
 
 #### Other Helpers
 | Method | Returns 
@@ -75,10 +79,10 @@ Adds the addend to or subtracts the subtrahend from the calling Timecode, and re
 | isDropFrame() | Boolean
 
 Returns *true* if the Timecode object is being calculated in drop-frame mode (29.97 or 59.94 frame rates).
-
-### Example Usage
-
-	const Timecode = require("timecode");
+ 
+ #### Example 
+ 
+	const Timecode = require("timecode-boss");
 
 	const tc = new Timecode("01:00:00:00", 29.97);
 	tc.add(4);
