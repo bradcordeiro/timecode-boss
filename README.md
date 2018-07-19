@@ -62,6 +62,15 @@ Return an integer representing the relevant field.
 
 Sets the relevant field. The Timecode object is returned, allowing these methods to be chained. Calling these methods with no argument, or with a type that cannont be coerced to an integer, will throw a TypeError.
 
+#### Arithmetic
+
+| Method | Argument
+|--------|---------
+| add(*addend*) | Timecode
+| subtract(*subtrahend*) | Timecode
+
+Adds the addend to or subtracts the subtrahend from the calling Timecode, and returns the updated calling Timecode.
+
 #### Other Helpers
 | Method | Returns 
 |--------|--------

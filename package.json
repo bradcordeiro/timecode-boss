@@ -17,15 +17,14 @@
     "email": "me@bradc.com"
   },
   "scripts": {
-    "test": "mocha ./timecode/timecode.test.js",
-    "test-coverage": "nyc --reporter=text mocha ./timecode/timecode.test.js"
+    "test": "nyc mocha ./timecode/timecode.test.js && nyc report --reporter=text-lcov | coveralls"
   },
   "devDependencies": {
+    "coveralls": "^3.0.2",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^13.0.0",
     "eslint-plugin-import": "^2.13.0",
     "mocha": "^5.2.0",
-    "istanbul": "^0.4.5",
     "nyc": "^12.0.2"
   }
 }
