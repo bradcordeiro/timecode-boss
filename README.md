@@ -94,12 +94,7 @@ Test values were written using [Avid Media Composer](http://www.avid.com/media-c
     $ npm install
     $ npm test
 
-Test coverage is checked using [Istanbul](https://istanbul.js.org). Version 1.0.0 has 100% coverage.
-
-    $ npm install
-    $ npm run test-coverage
-
-This will generate an HTML test coverage report in `./coverage/`.
+Test coverage is checked using [Istanbul](https://istanbul.js.org)'s command-line interface, and submitted to [coveralls](https://coveralls.io). Version 1.0.0 has 100% coverage.
 
 ### Contributing
 
