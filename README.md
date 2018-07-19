@@ -1,6 +1,4 @@
-# timecode-boss
-
-[![Build Status](https://travis-ci.org/bradcordeiro/timecode-boss.svg?branch=master)](https://travis-ci.org/bradcordeiro/timecode-boss)
+# timecode-boss • [![Build Status](https://travis-ci.org/bradcordeiro/timecode-boss.svg?branch=master)](https://travis-ci.org/bradcordeiro/timecode-boss) [![Coverage Status](https://coveralls.io/repos/github/bradcordeiro/timecode-boss/badge.svg?branch=switch-to-coveralls)](https://coveralls.io/github/bradcordeiro/timecode-boss?branch=switch-to-coveralls)
 
 This is a ES6 module that provies a class **Timecode** with properties and methods to work with SMPTE timecode.
 
