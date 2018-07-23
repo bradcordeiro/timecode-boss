@@ -71,7 +71,7 @@ Sets the relevant field. The Timecode object is returned, allowing these methods
 | add(*addend*) | Timecode, String, Number, Object, or Date | Timecode
 | subtract(*subtrahend*) | Timecode, String, Number, Object, or Date | Timecode
 
-Adds the addend to or subtracts the subtrahend from the calling Timecode, and returns the updated calling Timecode. Any of the types available to use in the Timecode constructor above are available to use as arguments to these methods.
+Adds the addend to or subtracts the subtrahend from the calling Timecode, and returns a new Timecode. Any of the types available to use in the Timecode constructor above are available to use as arguments to these methods.
 
 #### Other Helpers
 | Method | Returns 

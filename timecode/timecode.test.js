@@ -204,21 +204,21 @@ describe('Timecode', () => {
     });
 
     it('Should skip first 2 frames for even minute', () => {
-      const tc = new Timecode('01:00:59:29', 29.97);
-      tc.add(1);
-      assert.strictEqual(tc.toString(), '01;01;00;02');
-      tc.add(1);
-      assert.strictEqual(tc.toString(), '01;01;00;03');
-      tc.add(1);
-      assert.strictEqual(tc.toString(), '01;01;00;04');
+      const tc1 = new Timecode('01:00:59:29', 29.97);
+      let tc2 = tc1.add(1);
+      assert.strictEqual(tc2.toString(), '01;01;00;02');
+      tc2 = tc2.add(1);
+      assert.strictEqual(tc2.toString(), '01;01;00;03');
+      tc2 = tc2.add(1);
+      assert.strictEqual(tc2.toString(), '01;01;00;04');
     });
 
     it('Should not skip the first 2 frames of each 10th minute', () => {
-      const tc = new Timecode('01:09:59:29', 29.97);
-      tc.add(1);
-      assert.strictEqual(tc.toString(), '01;10;00;00');
-      tc.add(1);
-      assert.strictEqual(tc.toString(), '01;10;00;01');
+      const tc1 = new Timecode('01:09:59:29', 29.97);
+      let tc2 = tc1.add(1);
+      assert.strictEqual(tc2.toString(), '01;10;00;00');
+      tc2 = tc2.add(1);
+      assert.strictEqual(tc2.toString(), '01;10;00;01');
     });
 
     it('Should convert an invalid drop-frame timecode passed as input', () => {
@@ -387,89 +387,117 @@ describe('Timecode', () => {
 
   describe('Addition', () => {
     it('Should increment by 1 hour when adding another Timecode of "01:00:00:00 at 30', () => {
-      const tc = new Timecode('01:00:00:00', 30);
-      tc.add(new Timecode('01:00:00:00', 30));
-      assert.strictEqual('02:00:00:00', tc.toString());
+      const tc1 = new Timecode('01:00:00:00', 30);
+      const tc2 = tc1.add(new Timecode('01:00:00:00', 30));
+
+      assert.strictEqual('01:00:00:00', tc1.toString()); // original is not modified
+      assert.strictEqual('02:00:00:00', tc2.toString());
     });
 
     it('Should add one frame', () => {
-      const tc = new Timecode('01:00:00:00', 30);
-      tc.add(1);
-      assert.strictEqual('01:00:00:01', tc.toString());
+      const tc1 = new Timecode('01:00:00:00', 30);
+      const tc2 = tc1.add(1);
+
+      assert.strictEqual('01:00:00:00', tc1.toString()); // original is not modified
+      assert.strictEqual('01:00:00:01', tc2.toString());
     });
 
     it('Should increment by one second when adding 30 frames to 30NDF timecode', () => {
-      const tc = new Timecode('01:00:00:00', 30);
-      tc.add(30);
-      assert.strictEqual('01:00:01:00', tc.toString());
+      const tc1 = new Timecode('01:00:00:00', 30);
+      const tc2 = tc1.add(30);
+
+      assert.strictEqual('01:00:00:00', tc1.toString()); // original is not modified
+      assert.strictEqual('01:00:01:00', tc2.toString());
     });
 
     it('Should increment by one minute when adding 1800 frames to 30NDF timecode', () => {
-      const tc = new Timecode('01:00:00:00', 30);
-      tc.add(30 * 60);
-      assert.strictEqual('01:01:00:00', tc.toString());
+      const tc1 = new Timecode('01:00:00:00', 30);
+      const tc2 = tc1.add(30 * 60);
+
+      assert.strictEqual('01:00:00:00', tc1.toString()); // original is not modified
+      assert.strictEqual('01:01:00:00', tc2.toString());
     });
 
     it('Should increment by one hour when adding 108000 frames to 30NDF timecode', () => {
-      const tc = new Timecode('01:00:00:00', 30);
-      tc.add(30 * 3600);
-      assert.strictEqual('02:00:00:00', tc.toString());
+      const tc1 = new Timecode('01:00:00:00', 30);
+      const tc2 = tc1.add(30 * 3600);
+
+      assert.strictEqual('01:00:00:00', tc1.toString()); // original is not modified
+      assert.strictEqual('02:00:00:00', tc2.toString());
     });
 
     it('Should add passed string as Timecode', () => {
-      const tc = new Timecode('01:00:00:00', 30);
-      tc.add('00:33:22:11');
-      assert.strictEqual('01:33:22:11', tc.toString());
+      const tc1 = new Timecode('01:00:00:00', 30);
+      const tc2 = tc1.add('00:33:22:11');
+
+      assert.strictEqual('01:00:00:00', tc1.toString()); // original is not modified
+      assert.strictEqual('01:33:22:11', tc2.toString());
     });
 
     it('Should roll over the 24-hour mark', () => {
-      const tc = new Timecode('23:59:59:29', 29.97);
-      tc.add(1);
-      assert.strictEqual(tc.toString(), '00;00;00;00');
+      const tc1 = new Timecode('23:59:59:29', 29.97);
+      const tc2 = tc1.add(1);
+
+      assert.strictEqual(tc1.toString(), '23;59;59;29'); // original is not modified
+      assert.strictEqual(tc2.toString(), '00;00;00;00');
     });
   });
 
   describe('Subtraction', () => {
     it('Should decrement by 1 hour subtracting adding another Timecode of "01:00:00:00 at 30', () => {
-      const tc = new Timecode('04:00:00:00', 30);
-      tc.subtract(new Timecode('01:00:00:00', 30));
-      assert.strictEqual('03:00:00:00', tc.toString());
+      const tc1 = new Timecode('04:00:00:00', 30);
+      const tc2 = tc1.subtract(new Timecode('01:00:00:00', 30));
+
+      assert.strictEqual('04:00:00:00', tc1.toString());
+      assert.strictEqual('03:00:00:00', tc2.toString());
     });
 
     it('Should subtract one frame', () => {
-      const tc = new Timecode('02:00:00:00', 30);
-      tc.subtract(1);
-      assert.strictEqual('01:59:59:29', tc.toString());
+      const tc1 = new Timecode('02:00:00:00', 30);
+      const tc2 = tc1.subtract(1);
+
+      assert.strictEqual('02:00:00:00', tc1.toString());
+      assert.strictEqual('01:59:59:29', tc2.toString());
     });
 
     it('Should decrement by one second when subtracting 30 frames from 30NDF timecode', () => {
-      const tc = new Timecode('04:00:01:00', 30);
-      tc.subtract(30);
-      assert.strictEqual('04:00:00:00', tc.toString());
+      const tc1 = new Timecode('04:00:01:00', 30);
+      const tc2 = tc1.subtract(30);
+
+      assert.strictEqual('04:00:01:00', tc1.toString());
+      assert.strictEqual('04:00:00:00', tc2.toString());
     });
 
     it('Should decrement by one minute when subtracting 1800 frames from 30NDF timecode', () => {
-      const tc = new Timecode('01:00:00:00', 30);
-      tc.subtract(30 * 60);
-      assert.strictEqual('00:59:00:00', tc.toString());
+      const tc1 = new Timecode('01:00:00:00', 30);
+      const tc2 = tc1.subtract(30 * 60);
+
+      assert.strictEqual('01:00:00:00', tc1.toString());
+      assert.strictEqual('00:59:00:00', tc2.toString());
     });
 
     it('Should decrement by one hour when subtracting 108000 frames from 30NDF timecode', () => {
-      const tc = new Timecode('01:00:00:00', 30);
-      tc.subtract(30 * 3600);
-      assert.strictEqual('00:00:00:00', tc.toString());
+      const tc1 = new Timecode('01:00:00:00', 30);
+      const tc2 = tc1.subtract(30 * 3600);
+
+      assert.strictEqual('01:00:00:00', tc1.toString());
+      assert.strictEqual('00:00:00:00', tc2.toString());
     });
 
     it('Should subract passed string as Timecode', () => {
-      const tc = new Timecode('01:00:00:00', 30);
-      tc.subtract('00:33:21:04');
-      assert.strictEqual('00:26:38:26', tc.toString());
+      const tc1 = new Timecode('01:00:00:00', 30);
+      const tc2 = tc1.subtract('00:33:21:04');
+
+      assert.strictEqual('01:00:00:00', tc1.toString());
+      assert.strictEqual('00:26:38:26', tc2.toString());
     });
 
     it('Should roll over the 24-hour mark', () => {
-      const tc = new Timecode('00:00:00:00', 29.97);
-      tc.subtract(1);
-      assert.strictEqual(tc.toString(), '23;59;59;29');
+      const tc1 = new Timecode('00:00:00:00', 29.97);
+      const tc2 = tc1.subtract(1);
+
+      assert.strictEqual(tc1.toString(), '00;00;00;00');
+      assert.strictEqual(tc2.toString(), '23;59;59;29');
     });
   });
 

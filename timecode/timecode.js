@@ -244,23 +244,27 @@ class Timecode {
   }
 
   add(addend) {
+    const tc = new Timecode(this);
+
     if (!(addend instanceof Timecode)) {
-      this.frameCount += new Timecode(addend, this.frameRate).frameCount;
+      tc.frameCount += new Timecode(addend, this.frameRate).frameCount;
     } else {
-      this.frameCount += addend.frameCount;
+      tc.frameCount += addend.frameCount;
     }
 
-    return this;
+    return tc;
   }
 
   subtract(subtrahend) {
+    const tc = new Timecode(this);
+
     if (!(subtrahend instanceof Timecode)) {
-      this.frameCount -= new Timecode(subtrahend, this.frameRate).frameCount;
+      tc.frameCount -= new Timecode(subtrahend, this.frameRate).frameCount;
     } else {
-      this.frameCount -= subtrahend.frameCount;
+      tc.frameCount -= subtrahend.frameCount;
     }
 
-    return this;
+    return tc;
   }
 }
 
