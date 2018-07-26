@@ -26,7 +26,7 @@ tc.add() returns a new timecode, starting from the original *tc* instance and ad
 ## Developing
 
 ### Prerequisites
-This module has no dependences. It was written using Eslint to conform to the Airbnb JavaScript Style Guide. Tests are run using Mocha, and code coverage is tested with Istanbul's command-line interface, nyc.
+This module has two dependencies: Tests are run using [Mocha](https://mochajs.org), and code coverage is tested with Istanbul's command-line interface, [nyc](https://github.com/istanbuljs/nyc).
 
 ### Setting up Dev
 
@@ -35,14 +35,14 @@ git clone https://github.com/bradcordeiro/timecode-boss
 cd timecode-boss
 ```
 
-If you don't have mocha installed globally, you can install it locally:
+To run tests:
 
 ```shell
 npm install mocha
 npm test
 ```
 
-If you don't have nyc installed locally and want to check code coverage, you can install it locally as well:
+To check test coverage:
 
 ```shell
 npm install nyc
@@ -59,10 +59,10 @@ Test files live alongside implementation files.
 
 Tests are mostly written to ensure accurate arithmetic given different framerates. Expected values were written using [Avid Media Composer](http://www.avid.com/media-composer)'s built-in timecode calculator to verify correct values.
 
-Tests are run with mocha, which is not included in the devDependencies, but can be used by installing locally
+Tests are run with [Mocha](https://mochajs.org), which is included in devDependencies and can be used by installing locally:
 
 ```shell
-npm install mocha
+npm install
 npm test
 ```
 
