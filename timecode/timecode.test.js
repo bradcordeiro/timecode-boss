@@ -284,50 +284,28 @@ describe('Timecode', () => {
 
   describe('Object Converstion', () => {
     it('Should return an Object of integers when called with no arguments', () => {
-      const tc = new Timecode('01:02:03:04', 30);
+      const tc = new Timecode();
 
       assert.deepStrictEqual({
-        hours: 1,
-        minutes: 2,
-        seconds: 3,
-        frames: 4,
-      }, tc.toObject());
-    });
-
-    it('Should return an Object of unpadded strings when called with ("string")', () => {
-      const tc = new Timecode('01:02:03:04', 30);
-
-      assert.deepStrictEqual({
-        hours: '1',
-        minutes: '2',
-        seconds: '3',
-        frames: '4',
-      }, tc.toObject('string'));
-    });
-
-    it('Should return an Object of with correct-length strings when called with ("string")', () => {
-      const tc = new Timecode('11:22:33:16', 30);
-
-      assert.deepStrictEqual({
-        hours: '11',
-        minutes: '22',
-        seconds: '33',
-        frames: '16',
-      }, tc.toObject('string'));
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+        frames: 0,
+      }, tc.getFields());
     });
 
     it('Should return an Object of padded strings when called with ("string", true)', () => {
-      const tc = new Timecode('01:02:03:04', 30);
+      const tc = new Timecode('01:12:33:15', 30);
 
       assert.deepStrictEqual({
         hours: '01',
-        minutes: '02',
-        seconds: '03',
-        frames: '04',
-      }, tc.toObject('string', true));
+        minutes: '12',
+        seconds: '33',
+        frames: '15',
+      }, tc.getFields(true));
     });
 
-    it('Should return an Object without padding values that don\'t need itwhen called with ("string", true)', () => {
+    it('Should return an Object without padding values that don\'t need itwhen called with (true)', () => {
       const tc = new Timecode('11:22:33:16', 30);
 
       assert.deepStrictEqual({
@@ -335,7 +313,16 @@ describe('Timecode', () => {
         minutes: '22',
         seconds: '33',
         frames: '16',
-      }, tc.toObject('string', true));
+      }, tc.getFields(true));
+    });
+
+    it('toObject() should return an object with only frameCount and frameRate properties', () => {
+      const tc = new Timecode('11:22:33:16', 30);
+      const obj = tc.toObject();
+
+      assert.strictEqual(Object.keys(obj).length, 2);
+      assert.strictEqual(Object.prototype.hasOwnProperty.call(obj, 'frameCount'), true);
+      assert.strictEqual(Object.prototype.hasOwnProperty.call(obj, 'frameRate'), true);
     });
   });
 

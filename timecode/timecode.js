@@ -2,10 +2,9 @@ const TimecodeRegex = /(\d{1,2})\D(\d{1,2})\D(\d{1,2})\D(\d{1,2})/;
 
 class Timecode {
   constructor(timecode, frameRate) {
-    this.frameRate = 29.97;
+    this.frameRate = frameRate || 29.97;
     this.frameCount = 0;
 
-    if (frameRate) this.frameRate = frameRate;
     if (timecode) this.set(timecode);
 
     return this;
@@ -52,7 +51,7 @@ class Timecode {
     if (Object.prototype.hasOwnProperty.call(input, 'minutes')) this.setMinutes(input.minutes);
     if (Object.prototype.hasOwnProperty.call(input, 'seconds')) this.setSeconds(input.seconds);
     if (Object.prototype.hasOwnProperty.call(input, 'frames')) this.setFrames(input.frames);
-
+  
     return this;
   }
 
@@ -73,22 +72,17 @@ class Timecode {
     return `${h}${c}${m}${c}${s}${c}${f}`;
   }
 
-  toObject(returnType, padded) {
-    if (returnType && returnType.toLowerCase() === 'string') {
-      if (padded === true) {
-        return {
-          hours: this.getHours().toString(10).padStart(2, '0'),
-          minutes: this.getMinutes().toString(10).padStart(2, '0'),
-          seconds: this.getSeconds().toString(10).padStart(2, '0'),
-          frames: this.getFrames().toString(10).padStart(2, '0'),
-        };
-      }
+  toObject() {
+    return Object.assign({}, this);;
+  }
 
+  getFields(paddedString) {
+    if (paddedString === true) {
       return {
-        hours: this.getHours().toString(10),
-        minutes: this.getMinutes().toString(10),
-        seconds: this.getSeconds().toString(10),
-        frames: this.getFrames().toString(10),
+        hours: this.getHours().toString(10).padStart(2, '0'),
+        minutes: this.getMinutes().toString(10).padStart(2, '0'),
+        seconds: this.getSeconds().toString(10).padStart(2, '0'),
+        frames: this.getFrames().toString(10).padStart(2, '0'),
       };
     }
 

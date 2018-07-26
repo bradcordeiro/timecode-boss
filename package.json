@@ -15,16 +15,13 @@
   },
   "bugs": {
     "url": "https://github.com/bradcordeiro/timecode-boss/issues",
-    "email": "me@bradc.com"
+    "email": "brad.cordeiro@gmail.com"
   },
   "scripts": {
-    "test": "nyc mocha ./timecode/timecode.test.js && nyc report --reporter=text-lcov | coveralls"
+    "test": "mocha timecode/timecode.test.js",
+    "test-coverage": "nyc mocha timecode/timecode.test.js"
   },
-  "devDependencies": {
-    "coveralls": "^3.0.2",
-    "eslint": "^4.19.1",
-    "eslint-config-airbnb-base": "^13.0.0",
-    "eslint-plugin-import": "^2.13.0",
+  "dependencies": {
     "mocha": "^5.2.0",
     "nyc": "^12.0.2"
   }
