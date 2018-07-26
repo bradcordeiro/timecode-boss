@@ -2,7 +2,7 @@
   "name": "timecode-boss",
   "description": "A ES6 JavaScript module for working with SMPTE timecode",
   "main": "./timecode/timecode.js",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "license": "MIT",
   "author": {
     "name": "Brad Cordeiro",
@@ -20,9 +20,5 @@
   "scripts": {
     "test": "mocha timecode/timecode.test.js",
     "test-coverage": "nyc mocha timecode/timecode.test.js"
-  },
-  "dependencies": {
-    "mocha": "^5.2.0",
-    "nyc": "^12.0.2"
   }
 }
