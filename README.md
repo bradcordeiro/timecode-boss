@@ -1,25 +1,25 @@
-# Name of the project &middot; [![Build Status](https://travis-ci.org/bradcordeiro/timecode-boss.svg?branch=master)](https://travis-ci.org/bradcordeiro/timecode-boss) [![Coverage Status](https://coveralls.io/repos/github/bradcordeiro/timecode-boss/badge.svg?branch=switch-to-coveralls)](https://coveralls.io/github/bradcordeiro/timecode-boss?branch=switch-to-coveralls) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/bradcordeiro/timecode-boss/blob/master/LICENSE)
+# timecode-boss &middot; [![npm version](https://badge.fury.io/js/timecode-boss.svg)](https://badge.fury.io/js/timecode-boss) [![Build Status](https://travis-ci.org/bradcordeiro/timecode-boss.svg?branch=master)](https://travis-ci.org/bradcordeiro/timecode-boss) [![Coverage Status](https://coveralls.io/repos/github/bradcordeiro/timecode-boss/badge.svg?branch=switch-to-coveralls)](https://coveralls.io/github/bradcordeiro/timecode-boss?branch=switch-to-coveralls) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/bradcordeiro/timecode-boss/blob/master/LICENSE)
 
 This is a JavaScript (ES6) module that provies a class **Timecode** with properties and methods to work with SMPTE timecode.
 
 ## Installing / Getting started
-
-A quick introduction of the minimal setup you need to get a hello world up &
-running.
 
 ```shell
 npm install --save timecode-boss
 ```
 
 ```javascript
+const Timecode = require('timecode-boss');
+
 let tc = new Timecode('01:10:25:13', 29.97); // Timecode { frameRate: 29.97, frameCount: 126637 }
 tc.toString(); // '01;10;25;13'
 tc.minutes(); // 10
+
 let laterTc = tc.add('00:04:59:28'); // { frameRate: 29.97, frameCount: 135629 }
 laterTc.toString(); // '01;15;25;13'
 ```
 
-This construct a Timecode instance named *tc* from a string representation (*'01:10:25:13'*), with a framerate of *29.97*. On creation, each field of the timecode string is converted to a frame count and added to a total frame count. Calling toString() calculates each field and returns a new timecode string.
+This constructs a Timecode instance named *tc* from a string representation (*'01:10:25:13'*), with a framerate of *29.97*. On creation, each field of the timecode string is converted to a frame count and added to a total frame count. Calling toString() calculates each field and returns a new timecode string.
 
 tc.add() returns a new timecode, starting from the original *tc* instance and adding a timecode of *'00:04:59:28'*. The value of the second Timecode instance is correct, when using drop-frame timecode.
 
@@ -66,7 +66,7 @@ npm install mocha
 npm test
 ```
 
-If you encounter incorrect math being performed and would like to submit a pull request to add a test for it without including a patch for the module itself, that would be very welcome and I'll do my best to work out the bug.
+If you encounter incorrect math being performed and would like to submit a pull request to add a test for it without including a patch for the module itself, that would be very welcome and I'll do my best to work out the bug. Or just a bug report is great.
 
 I try to maintain 100% test coverage, but don't require all pull requests to maintain that number. I'm happy to write some tests, but please try to include tests for major funcionality you change or add.
 
@@ -74,14 +74,14 @@ I try to maintain 100% test coverage, but don't require all pull requests to mai
 
 This module was written according to the [Airbnb Javascript Style Guide](https://github.com/airbnb/javascript) . [eslint](https://eslint.org) was used to stay consistent. An *.eslintrc.json* file is included in source control.
 
-## Api Reference
+## Timecode Class API Reference
+
+#### Properties
 
 Property | Type | Description
 ---------|------|------------
 frameCount | Number | A number representing the total number of frames in the Timecode represents. Timecode class setters will coerce this into an integer, but will not check for integer-ness if this property is manually changed.
 frameRate | Number | A floating-point number representing the playback speed of the Timecode. Though any frame rate should work here, only common broadcast frame rates are tested (see [Testing](#testing) for a list).
-
-### Class Methods
 
 #### Constructor
 
@@ -136,6 +136,7 @@ Adds the addend to or subtracts the subtrahend from the calling Timecode, and re
 | isDropFrame() | Boolean | Returns *true* if the Timecode object is being calculated in drop-frame mode (29.97 or 59.94 frame rates).
 | toString() | String | Returns a formatted string in the format 'hh:mm:ss:ff'. Colons are used as a field separator for non-drop-frame timecodes, semi-colons for drop-frame
 | toObject() | Object | Returns an object with the Timecode's *frameCount* and *frameRate* properties.
+| getFields(boolean) | Object | Returns an object with the properties *hours*, *minutes*,  *seconds*, and *frames*. If the boolean argument is *true*, the property values are strings, padded to a width of 2.
 
 ## Licensing
 
