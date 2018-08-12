@@ -1,9 +1,22 @@
 const TimecodeRegex = /(\d{1,2})\D(\d{1,2})\D(\d{1,2})\D(\d{1,2})/;
+const secondCeiling = 60;
+const minuteCeiling = 60;
+const hourCeiling = 24;
 
 class Timecode {
   constructor(timecode, frameRate) {
-    this.frameRate = frameRate || 29.97;
-    this.frameCount = 0;
+    this.hours = 0;
+    this.minutes = 0;
+    this.seconds = 0;
+    this.frames = 0;
+
+    if (frameRate) {
+      this.frameRate = frameRate;
+    } else if (timecode instanceof Timecode) {
+      this.frameRate = timecode.frameRate;
+    } else {
+      this.frameRate = 29.97;
+    }
 
     if (timecode) this.set(timecode);
 
@@ -11,17 +24,14 @@ class Timecode {
   }
 
   set(input) {
-    if (input instanceof Timecode) {
-      this.frameCount = input.frameCount;
-      this.frameRate = input.frameRate;
-    } else if (input instanceof Date) {
-      this.setFrameCountFromDate(input);
-    } else if (TimecodeRegex.test(input)) {
-      this.setFrameCountFromString(input);
-    } else if (typeof input === 'number') {
-      this.frameCount = Math.floor(input);
+    if (input instanceof Date) {
+      this.setFieldsFromDate(input);
     } else if (typeof input === 'object') {
-      this.setFrameCountFromObject(input);
+      this.setFieldsFromObject(input);
+    } else if (TimecodeRegex.test(input)) {
+      this.setFieldsFromString(input);
+    } else if (typeof input === 'number') {
+      this.setFieldsFromFrameCount(input);
     } else {
       throw new TypeError(`Invalid timecode parameter "${input}"`);
     }
@@ -29,7 +39,25 @@ class Timecode {
     return this;
   }
 
-  setFrameCountFromString(input) {
+  setFieldsFromFrameCount(input) {
+    let remainingFrames = input;
+
+    this.setHours(Math.trunc(remainingFrames / this.framesPerHour()));
+    remainingFrames -= this.framesInHoursField();
+
+    const tenMinutes = Math.trunc(remainingFrames / this.framesPer10Minute());
+    remainingFrames -= this.framesPer10Minute() * tenMinutes;
+    const singleMinutes = Math.trunc(remainingFrames / this.framesPerMinute());
+    this.setMinutes((tenMinutes * 10) + singleMinutes);
+    remainingFrames -= singleMinutes * this.framesPerMinute();
+
+    this.setSeconds(Math.trunc(remainingFrames / this.nominalFrameRate()));
+    remainingFrames -= this.framesInSecondsField();
+
+    this.setFrames(remainingFrames);
+  }
+
+  setFieldsFromString(input) {
     const [, hh, mm, ss, ff] = TimecodeRegex.exec(input);
 
     this.setHours(hh);
@@ -46,61 +74,34 @@ class Timecode {
     return this;
   }
 
-  setFrameCountFromObject(input) {
+  setFieldsFromObject(input) {
     if (Object.prototype.hasOwnProperty.call(input, 'hours')) this.setHours(input.hours);
     if (Object.prototype.hasOwnProperty.call(input, 'minutes')) this.setMinutes(input.minutes);
     if (Object.prototype.hasOwnProperty.call(input, 'seconds')) this.setSeconds(input.seconds);
     if (Object.prototype.hasOwnProperty.call(input, 'frames')) this.setFrames(input.frames);
-  
+
     return this;
   }
 
-  setFrameCountFromDate(date) {
+  setFieldsFromDate(date) {
     this.setHours(date.getHours());
     this.setMinutes(date.getMinutes());
     this.setSeconds(date.getSeconds());
-    this.setFrames(Math.floor(date.getMilliseconds() / this.nominalFrameRate()));
+    this.setFrames(Math.trunc(date.getMilliseconds() / this.nominalFrameRate()));
     return this;
   }
 
   toString() {
     const c = this.separator();
-    const h = this.getHours().toString(10).padStart(2, '0');
-    const m = this.getMinutes().toString(10).padStart(2, '0');
-    const s = this.getSeconds().toString(10).padStart(2, '0');
-    const f = this.getFrames().toString(10).padStart(2, '0');
+    const h = this.hours.toString(10).padStart(2, '0');
+    const m = this.minutes.toString(10).padStart(2, '0');
+    const s = this.seconds.toString(10).padStart(2, '0');
+    const f = this.frames.toString(10).padStart(2, '0');
     return `${h}${c}${m}${c}${s}${c}${f}`;
   }
 
   toObject() {
-    return Object.assign({}, this);;
-  }
-
-  getFields(paddedString) {
-    if (paddedString === true) {
-      return {
-        hours: this.getHours().toString(10).padStart(2, '0'),
-        minutes: this.getMinutes().toString(10).padStart(2, '0'),
-        seconds: this.getSeconds().toString(10).padStart(2, '0'),
-        frames: this.getFrames().toString(10).padStart(2, '0'),
-      };
-    }
-
-    return {
-      hours: this.getHours(),
-      minutes: this.getMinutes(),
-      seconds: this.getSeconds(),
-      frames: this.getFrames(),
-    };
-  }
-
-  getHours() {
-    // Control rolling over the 24 hour mark or under 0
-    const maxFrames = this.framesPerHour() * 24;
-    if (this.frameCount >= maxFrames) this.frameCount %= maxFrames;
-    if (this.frameCount < 0) this.frameCount += maxFrames;
-
-    return Math.floor(this.frameCount / this.framesPerHour());
+    return Object.assign({}, this);
   }
 
   setHours(hours) {
@@ -108,22 +109,11 @@ class Timecode {
 
     if (Number.isNaN(hh)) throw new TypeError(`Cannot set hours to ${hours}`);
 
-    this.frameCount -= this.framesInHoursField();
-    this.frameCount += hh * this.framesPerHour();
+    this.hours = hh % hourCeiling;
+
+    if (this.hours < 0) this.hours += hourCeiling;
+
     return this;
-  }
-
-  getMinutes() {
-    const framesInHoursField = this.framesInHoursField();
-    const framesPer10Minute = this.framesPer10Minute();
-    const framesPerMinute = this.framesPerMinute();
-    let remainingFrames = this.frameCount - framesInHoursField;
-    const tenMinutes = Math.floor(remainingFrames / framesPer10Minute);
-    remainingFrames -= tenMinutes * framesPer10Minute;
-    // min() is required to handle rollling over 24 hours or under 0
-    const singleMinutes = Math.min(Math.floor(remainingFrames / framesPerMinute), 9);
-
-    return (tenMinutes * 10) + singleMinutes;
   }
 
   setMinutes(minutes) {
@@ -131,15 +121,22 @@ class Timecode {
 
     if (Number.isNaN(mm)) throw new TypeError(`Cannot set minutes to ${minutes}`);
 
-    this.frameCount -= this.framesInMinutesField();
-    this.frameCount += Math.floor(mm / 10) * this.framesPer10Minute();
-    this.frameCount += (mm % 10) * this.framesPerMinute();
-    return this;
-  }
+    this.minutes = mm % minuteCeiling;
+    this.setHours(this.hours + Math.trunc(mm / minuteCeiling));
 
-  getSeconds() {
-    const remaining = this.frameCount - this.framesInHoursField() - this.framesInMinutesField();
-    return Math.floor(remaining / this.nominalFrameRate());
+    if (this.minutes < 0) {
+      this.minutes += minuteCeiling;
+      this.setHours(this.hours - 1);
+    }
+
+    if (this.isDropFrame()
+          && this.minutes % 10 !== 0
+          && this.seconds === 0
+          && this.frames === 0) {
+      this.frames = 2;
+    }
+
+    return this;
   }
 
   setSeconds(seconds) {
@@ -147,33 +144,34 @@ class Timecode {
 
     if (Number.isNaN(ss)) throw new TypeError(`Cannot set minutes to ${seconds}`);
 
-    this.frameCount -= this.framesInSecondsField();
-    this.frameCount += ss * this.nominalFrameRate();
+    this.seconds = ss % secondCeiling;
+
+    this.setMinutes(this.minutes + Math.trunc(ss / secondCeiling));
+
+    if (this.seconds < 0) {
+      this.seconds += secondCeiling;
+      this.setMinutes(this.minutes - 1);
+    }
+
     return this;
-  }
-
-  getFrames() {
-    let remainingFrames = this.frameCount - this.framesInHoursField();
-    remainingFrames -= this.framesToDrop();
-    remainingFrames -= this.framesInMinutesField();
-    remainingFrames += this.framesToDrop();
-    remainingFrames -= this.framesInSecondsField();
-
-    return remainingFrames % this.nominalFrameRate();
   }
 
   setFrames(frames) {
     const ff = parseInt(frames, 10);
 
-    if (Number.isNaN(ff)) throw new TypeError(`Cannot set minutes to ${frames}`);
+    if (Number.isNaN(ff)) throw new TypeError(`Cannot set frames to ${frames}`);
 
-    this.frameCount -= this.getFrames();
-    this.frameCount += ff;
+    const nominalFrameRate = this.nominalFrameRate();
+    this.frames = ff % nominalFrameRate;
+
+    this.setSeconds(this.seconds + Math.trunc(ff / nominalFrameRate));
+
+    if (this.frames < 0) {
+      this.frames += this.nominalFrameRate();
+      this.setSeconds(this.seconds - 1);
+    }
+
     return this;
-  }
-
-  convert(frameRate) {
-    return new Timecode(this.frameCount, frameRate);
   }
 
   nominalFrameRate() {
@@ -181,14 +179,15 @@ class Timecode {
      * 25    -> 25
      * 29.97 -> 30
      * 30    -> 30
-     * 50    -> 25
-     * 59.94 -> 30
-     * 60    -> 30
      */
+    return Math.round(this.frameRate);
+  }
 
-    const fps = this.frameRate > 30 ? this.frameRate / 2 : this.frameRate;
-
-    return Math.round(fps);
+  frameCount() {
+    return this.framesInHoursField()
+      + this.framesInMinutesField()
+      + this.framesInSecondsField()
+      + this.frames;
   }
 
   framesPerHour() {
@@ -212,9 +211,6 @@ class Timecode {
     // 29.97 frames per second
     if (this.frameRate > 29 && this.frameRate < 30) return true;
 
-    // 59.94 frames per second
-    if (this.frameRate > 59 && this.frameRate < 60) return true;
-
     return false;
   }
 
@@ -223,28 +219,31 @@ class Timecode {
   }
 
   framesInHoursField() {
-    return this.getHours() * this.framesPerHour();
+    return this.hours * this.framesPerHour();
   }
 
   framesInMinutesField() {
     return (
-      (Math.floor(this.getMinutes() / 10) * this.framesPer10Minute())
-        + ((this.getMinutes() % 10) * this.framesPerMinute())
+      (Math.trunc(this.minutes / 10) * this.framesPer10Minute())
+        + ((this.minutes % 10) * this.framesPerMinute())
     );
   }
 
   framesInSecondsField() {
-    return this.getSeconds() * this.nominalFrameRate();
+    return this.seconds * this.nominalFrameRate();
   }
 
   add(addend) {
     const tc = new Timecode(this);
 
     if (!(addend instanceof Timecode)) {
-      tc.frameCount += new Timecode(addend, this.frameRate).frameCount;
-    } else {
-      tc.frameCount += addend.frameCount;
+      return tc.add(new Timecode(addend, this.frameRate));
     }
+
+    tc.setHours(this.hours + addend.hours);
+    tc.setMinutes(this.minutes + addend.minutes);
+    tc.setSeconds(this.seconds + addend.seconds);
+    tc.setFrames(this.frames + addend.frames);
 
     return tc;
   }
@@ -253,10 +252,13 @@ class Timecode {
     const tc = new Timecode(this);
 
     if (!(subtrahend instanceof Timecode)) {
-      tc.frameCount -= new Timecode(subtrahend, this.frameRate).frameCount;
-    } else {
-      tc.frameCount -= subtrahend.frameCount;
+      return tc.subtract(new Timecode(subtrahend, this.frameRate));
     }
+
+    tc.setHours(this.hours - subtrahend.hours);
+    tc.setMinutes(this.minutes - subtrahend.minutes);
+    tc.setSeconds(this.seconds - subtrahend.seconds);
+    tc.setFrames(this.frames - subtrahend.frames);
 
     return tc;
   }

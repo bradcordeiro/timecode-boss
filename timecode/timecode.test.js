@@ -4,24 +4,27 @@ const Timecode = require('./timecode');
 
 describe('Timecode', () => {
   describe('Constructor', () => {
-    it('Should default to a frameCount of 0 and frameRate of 29.97', () => {
+    it('Should default to all fields at 0 and frameRate of 29.97', () => {
       const tc = new Timecode();
 
-      assert.strictEqual(0, tc.frameCount);
+      assert.strictEqual(0, tc.hours);
+      assert.strictEqual(0, tc.minutes);
+      assert.strictEqual(0, tc.seconds);
+      assert.strictEqual(0, tc.frames);
       assert.strictEqual(29.97, tc.frameRate);
     });
 
-    it('Should accept timecode of "01:00:00:00" and frameRate of 29.97', () => {
-      const tc = new Timecode('01:00:00:00', 29.97);
+    it('Should accept timecode of "01:00:00:00" and frameRate of 30', () => {
+      const tc = new Timecode('01:00:00:00', 30);
 
-      assert.strictEqual(tc.frameRate, 29.97, 'frameRate');
-      assert.strictEqual(tc.toString(), '01;00;00;00');
+      assert.strictEqual(tc.frameRate, 30, 'frameRate');
+      assert.strictEqual(tc.toString(), '01:00:00:00');
     });
 
     it('Should accept a frameCount and frameRate of 29.97', () => {
       const tc = new Timecode(1633998, 29.97);
 
-      assert.strictEqual(tc.frameCount, 1633998, 'frameCount');
+      assert.strictEqual(tc.frameCount(), 1633998, 'frameCount');
       assert.strictEqual(tc.frameRate, 29.97, 'frameRate');
     });
 
@@ -40,10 +43,10 @@ describe('Timecode', () => {
       }, 29.97);
 
       assert.strictEqual(tc.frameRate, 29.97, 'frameRate');
-      assert.strictEqual(tc.getHours(), 1, 'Hours field');
-      assert.strictEqual(tc.getMinutes(), 2, 'Minutes field');
-      assert.strictEqual(tc.getSeconds(), 3, 'Seconds field');
-      assert.strictEqual(tc.getFrames(), 4, 'Frames field');
+      assert.strictEqual(tc.hours, 1, 'Hours field');
+      assert.strictEqual(tc.minutes, 2, 'Minutes field');
+      assert.strictEqual(tc.seconds, 3, 'Seconds field');
+      assert.strictEqual(tc.frames, 4, 'Frames field');
     });
 
     it('Should accept { "hours", "minutes", "seconds", "frames" } and framerate of 29.97', () => {
@@ -55,10 +58,10 @@ describe('Timecode', () => {
       }, 29.97);
 
       assert.strictEqual(tc.frameRate, 29.97, 'frameRate');
-      assert.strictEqual(tc.getHours(), 1, 'Hours field');
-      assert.strictEqual(tc.getMinutes(), 2, 'Minutes field');
-      assert.strictEqual(tc.getSeconds(), 3, 'Seconds field');
-      assert.strictEqual(tc.getFrames(), 4, 'Frames field');
+      assert.strictEqual(tc.hours, 1, 'Hours field');
+      assert.strictEqual(tc.minutes, 2, 'Minutes field');
+      assert.strictEqual(tc.seconds, 3, 'Seconds field');
+      assert.strictEqual(tc.frames, 4, 'Frames field');
     });
 
     it('Should accept { hours }', () => {
@@ -66,7 +69,7 @@ describe('Timecode', () => {
         hours: 1,
       }, 29.97);
 
-      assert.strictEqual(tc.getHours(), 1);
+      assert.strictEqual(tc.hours, 1);
     });
 
     it('Should accept { minutes }', () => {
@@ -74,7 +77,7 @@ describe('Timecode', () => {
         minutes: 2,
       }, 29.97);
 
-      assert.strictEqual(tc.getMinutes(), 2);
+      assert.strictEqual(tc.minutes, 2);
     });
 
     it('Should accept { seconds }', () => {
@@ -82,7 +85,7 @@ describe('Timecode', () => {
         seconds: 3,
       }, 29.97);
 
-      assert.strictEqual(tc.getSeconds(), 3, 'Seconds field');
+      assert.strictEqual(tc.seconds, 3, 'Seconds field');
     });
 
     it('Should accept { frames }', () => {
@@ -90,7 +93,7 @@ describe('Timecode', () => {
         frames: 4,
       }, 29.97);
 
-      assert.strictEqual(tc.getFrames(), 4, 'Frames field');
+      assert.strictEqual(tc.frames, 4, 'Frames field');
     });
 
     it('Should accept a Date object', () => {
@@ -101,21 +104,22 @@ describe('Timecode', () => {
     });
 
     it('Should deep copy another Timecode object', () => {
-      const original = new Timecode(48579, 59.94);
+      const original = new Timecode(48579, 30); // 00:26:59:09
       const copy = new Timecode(original);
 
-      assert.strictEqual(copy.frameCount, 48579);
-      assert.strictEqual(copy.frameRate, 59.94);
+      original.hours = 0;
+      original.minutes = 0;
+      original.seconds = 0;
+      original.frames = 0;
+      original.frameRate = 30;
 
-      original.add(1);
-
-      assert.strictEqual(copy.frameCount, 48579);
-      assert.strictEqual(copy.frameRate, 59.94);
+      assert.strictEqual(copy.frameCount(), 48579);
+      assert.strictEqual(original.frameCount(), 0);
     });
 
     it('Should roll over to 0 at 24 hours', () => {
-      const tc = new Timecode('24:00:00:00', 29.97);
-      assert.strictEqual(tc.toString(), '00;00;00;00');
+      const tc = new Timecode('24:00:00:00', 30);
+      assert.strictEqual(tc.toString(), '00:00:00:00');
     });
 
     it('Should throw a TypeError on an invalid input string', () => {
@@ -150,21 +154,6 @@ describe('Timecode', () => {
       tc.frameRate = 30;
       assert.strictEqual(tc.nominalFrameRate(), 30);
     });
-
-    it('Should use 25 for 50', () => {
-      tc.frameRate = 50;
-      assert.strictEqual(tc.nominalFrameRate(), 25);
-    });
-
-    it('Should use 30 for 59.94', () => {
-      tc.frameRate = 59.94;
-      assert.strictEqual(tc.nominalFrameRate(), 30);
-    });
-
-    it('Should use 30 for 60', () => {
-      tc.frameRate = 60;
-      assert.strictEqual(tc.nominalFrameRate(), 30);
-    });
   });
 
   describe('Drop Frame Detection', () => {
@@ -190,16 +179,6 @@ describe('Timecode', () => {
 
     it('30.00 is considered Non-Drop Frame', () => {
       const tc = new Timecode(0, 30.00);
-      assert.strictEqual(tc.isDropFrame(), false);
-    });
-
-    it('59.94 is considered Drop Frame', () => {
-      const tc = new Timecode(0, 59.94);
-      assert.strictEqual(tc.isDropFrame(), true);
-    });
-
-    it('60.00 is considered Non-Drop Frame', () => {
-      const tc = new Timecode(0, 60.00);
       assert.strictEqual(tc.isDropFrame(), false);
     });
 
@@ -267,22 +246,22 @@ describe('Timecode', () => {
   describe('Getters', () => {
     it('Empty constructed Timecode returns 0 for all fields', () => {
       const tc = new Timecode();
-      assert.strictEqual(tc.getHours(), 0, 'Hours field should be 0');
-      assert.strictEqual(tc.getMinutes(), 0, 'Minutes field should be 0');
-      assert.strictEqual(tc.getSeconds(), 0, 'Seconds field should be 0');
-      assert.strictEqual(tc.getFrames(), 0, 'Frames field should be 0');
+      assert.strictEqual(tc.hours, 0, 'Hours field should be 0');
+      assert.strictEqual(tc.minutes, 0, 'Minutes field should be 0');
+      assert.strictEqual(tc.seconds, 0, 'Seconds field should be 0');
+      assert.strictEqual(tc.frames, 0, 'Frames field should be 0');
     });
 
     it('Timecode constructed with ("01:00:00:00", 29.97) returns accurate fields', () => {
       const tc = new Timecode('01:00:00:00', 29.97);
-      assert.strictEqual(tc.getHours(), 1, 'Hours field should be 1');
-      assert.strictEqual(tc.getMinutes(), 0, 'Minutes field should be 0');
-      assert.strictEqual(tc.getSeconds(), 0, 'Seconds field should be 0');
-      assert.strictEqual(tc.getFrames(), 0, 'Frames field should be 0');
+      assert.strictEqual(tc.hours, 1, 'Hours field should be 1');
+      assert.strictEqual(tc.minutes, 0, 'Minutes field should be 0');
+      assert.strictEqual(tc.seconds, 0, 'Seconds field should be 0');
+      assert.strictEqual(tc.frames, 0, 'Frames field should be 0');
     });
   });
 
-  describe('Object Converstion', () => {
+  describe('Object Conversion', () => {
     it('Should return an Object of integers when called with no arguments', () => {
       const tc = new Timecode();
 
@@ -291,84 +270,20 @@ describe('Timecode', () => {
         minutes: 0,
         seconds: 0,
         frames: 0,
-      }, tc.getFields());
+        frameRate: 29.97,
+      }, tc.toObject());
     });
 
-    it('Should return an Object of padded strings when called with ("string", true)', () => {
-      const tc = new Timecode('01:12:33:15', 30);
-
-      assert.deepStrictEqual({
-        hours: '01',
-        minutes: '12',
-        seconds: '33',
-        frames: '15',
-      }, tc.getFields(true));
-    });
-
-    it('Should return an Object without padding values that don\'t need itwhen called with (true)', () => {
-      const tc = new Timecode('11:22:33:16', 30);
-
-      assert.deepStrictEqual({
-        hours: '11',
-        minutes: '22',
-        seconds: '33',
-        frames: '16',
-      }, tc.getFields(true));
-    });
-
-    it('toObject() should return an object with only frameCount and frameRate properties', () => {
+    it('toObject() should return an object with only fields and frameRate properties', () => {
       const tc = new Timecode('11:22:33:16', 30);
       const obj = tc.toObject();
 
-      assert.strictEqual(Object.keys(obj).length, 2);
-      assert.strictEqual(Object.prototype.hasOwnProperty.call(obj, 'frameCount'), true);
+      assert.strictEqual(Object.keys(obj).length, 5);
+      assert.strictEqual(Object.prototype.hasOwnProperty.call(obj, 'hours'), true);
+      assert.strictEqual(Object.prototype.hasOwnProperty.call(obj, 'minutes'), true);
+      assert.strictEqual(Object.prototype.hasOwnProperty.call(obj, 'seconds'), true);
+      assert.strictEqual(Object.prototype.hasOwnProperty.call(obj, 'frames'), true);
       assert.strictEqual(Object.prototype.hasOwnProperty.call(obj, 'frameRate'), true);
-    });
-  });
-
-  describe('Frame Rate Conversion', () => {
-    const tc = new Timecode(1289434, 30);
-
-    it('Should convert to 23.98 FPS', () => {
-      const converted = tc.convert(23.98);
-
-      assert.strictEqual(converted.toString(), '14:55:26:10');
-    });
-
-    it('Should convert to 24 FPS', () => {
-      const converted = tc.convert(24);
-
-      assert.strictEqual(converted.toString(), '14:55:26:10');
-    });
-
-    it('Should convert to 25 FPS', () => {
-      const converted = tc.convert(25);
-
-      assert.strictEqual(converted.toString(), '14:19:37:09');
-    });
-
-    it('Should convert to 29.97 FPS', () => {
-      const converted = tc.convert(29.97);
-
-      assert.strictEqual(converted.toString(), '11;57;04;06');
-    });
-
-    it('Should convert to 30 FPS', () => {
-      const converted = tc.convert(30);
-
-      assert.strictEqual(converted.toString(), '11:56:21:04');
-    });
-
-    it('Should convert to 50 FPS using 25 FPS base', () => {
-      const converted = tc.convert(50);
-
-      assert.strictEqual(converted.toString(), '14:19:37:09');
-    });
-
-    it('Should convert to 59.94 FPS using 29.97 FPS base', () => {
-      const converted = tc.convert(59.94);
-
-      assert.strictEqual(converted.toString(), '11;57;04;06');
     });
   });
 
@@ -401,8 +316,8 @@ describe('Timecode', () => {
       const tc1 = new Timecode('01:00:00:00', 30);
       const tc2 = tc1.add(30 * 60);
 
-      assert.strictEqual('01:00:00:00', tc1.toString()); // original is not modified
-      assert.strictEqual('01:01:00:00', tc2.toString());
+      assert.strictEqual(tc1.toString(), '01:00:00:00'); // original is not modified
+      assert.strictEqual(tc2.toString(), '01:01:00:00');
     });
 
     it('Should increment by one hour when adding 108000 frames to 30NDF timecode', () => {
@@ -422,11 +337,11 @@ describe('Timecode', () => {
     });
 
     it('Should roll over the 24-hour mark', () => {
-      const tc1 = new Timecode('23:59:59:29', 29.97);
+      const tc1 = new Timecode('23:59:59:29', 30);
       const tc2 = tc1.add(1);
 
-      assert.strictEqual(tc1.toString(), '23;59;59;29'); // original is not modified
-      assert.strictEqual(tc2.toString(), '00;00;00;00');
+      assert.strictEqual(tc1.toString(), '23:59:59:29'); // original is not modified
+      assert.strictEqual(tc2.toString(), '00:00:00:00');
     });
   });
 
@@ -443,8 +358,8 @@ describe('Timecode', () => {
       const tc1 = new Timecode('02:00:00:00', 30);
       const tc2 = tc1.subtract(1);
 
-      assert.strictEqual('02:00:00:00', tc1.toString());
-      assert.strictEqual('01:59:59:29', tc2.toString());
+      assert.strictEqual(tc1.toString(), '02:00:00:00');
+      assert.strictEqual(tc2.toString(), '01:59:59:29');
     });
 
     it('Should decrement by one second when subtracting 30 frames from 30NDF timecode', () => {
@@ -511,10 +426,10 @@ describe('Timecode', () => {
 
         const tc = new Timecode(timecodeFields, frameRate);
 
-        assert.strictEqual(tc.getHours(), timecodeFields.hours);
-        assert.strictEqual(tc.getMinutes(), timecodeFields.minutes);
-        assert.strictEqual(tc.getSeconds(), timecodeFields.seconds);
-        assert.strictEqual(tc.getFrames(), timecodeFields.frames);
+        assert.strictEqual(tc.hours, timecodeFields.hours);
+        assert.strictEqual(tc.minutes, timecodeFields.minutes);
+        assert.strictEqual(tc.seconds, timecodeFields.seconds);
+        assert.strictEqual(tc.frames, timecodeFields.frames);
       }
     });
   });
