@@ -1,7 +1,7 @@
 const TimecodeRegex = /(\d{1,2})\D(\d{1,2})\D(\d{1,2})\D(\d{1,2})/;
-const secondCeiling = 60;
-const minuteCeiling = 60;
-const hourCeiling = 24;
+const secondsInOneMinute = 60;
+const minutesInOneHour = 60;
+const hoursInOneDay = 24;
 
 class Timecode {
   constructor(timecode, frameRate) {
@@ -63,13 +63,7 @@ class Timecode {
     this.setHours(hh);
     this.setMinutes(mm);
     this.setSeconds(ss);
-
-    // TODO: Make this less clumsy
-    if (this.isDropFrame() && ff < 2 && ss === '00' && mm % 10 !== 0) {
-      this.setFrames(parseInt(ff, 10) + 2);
-    } else {
-      this.setFrames(ff);
-    }
+    this.setFrames(ff);
 
     return this;
   }
@@ -105,27 +99,31 @@ class Timecode {
   }
 
   setHours(hours) {
+    if (hours === undefined) return this;
+
     const hh = (parseInt(hours, 10) % 24);
 
     if (Number.isNaN(hh)) throw new TypeError(`Cannot set hours to ${hours}`);
 
-    this.hours = hh % hourCeiling;
+    this.hours = hh % hoursInOneDay;
 
-    if (this.hours < 0) this.hours += hourCeiling;
+    if (this.hours < 0) this.hours += hoursInOneDay;
 
     return this;
   }
 
   setMinutes(minutes) {
+    if (minutes === undefined) return this;
+
     const mm = parseInt(minutes, 10);
 
     if (Number.isNaN(mm)) throw new TypeError(`Cannot set minutes to ${minutes}`);
 
-    this.minutes = mm % minuteCeiling;
-    this.setHours(this.hours + Math.trunc(mm / minuteCeiling));
+    this.minutes = mm % minutesInOneHour;
+    this.setHours(this.hours + Math.trunc(mm / minutesInOneHour));
 
     if (this.minutes < 0) {
-      this.minutes += minuteCeiling;
+      this.minutes += minutesInOneHour;
       this.setHours(this.hours - 1);
     }
 
@@ -140,16 +138,18 @@ class Timecode {
   }
 
   setSeconds(seconds) {
+    if (seconds === undefined) return this;
+
     const ss = parseInt(seconds, 10);
 
     if (Number.isNaN(ss)) throw new TypeError(`Cannot set minutes to ${seconds}`);
 
-    this.seconds = ss % secondCeiling;
+    this.seconds = ss % secondsInOneMinute;
 
-    this.setMinutes(this.minutes + Math.trunc(ss / secondCeiling));
+    this.setMinutes(this.minutes + Math.trunc(ss / secondsInOneMinute));
 
     if (this.seconds < 0) {
-      this.seconds += secondCeiling;
+      this.seconds += secondsInOneMinute;
       this.setMinutes(this.minutes - 1);
     }
 
@@ -157,6 +157,8 @@ class Timecode {
   }
 
   setFrames(frames) {
+    if (frames === undefined) return this;
+
     const ff = parseInt(frames, 10);
 
     if (Number.isNaN(ff)) throw new TypeError(`Cannot set frames to ${frames}`);
@@ -169,6 +171,10 @@ class Timecode {
     if (this.frames < 0) {
       this.frames += this.nominalFrameRate();
       this.setSeconds(this.seconds - 1);
+    }
+
+    if (this.isDropFrame() && this.frames < 2 && this.seconds === 0 && this.minutes % 10 !== 0) {
+      this.frames += 2;
     }
 
     return this;
@@ -261,6 +267,36 @@ class Timecode {
     tc.setFrames(this.frames - subtrahend.frames);
 
     return tc;
+  }
+
+  pulldown(frameRate) {
+    if (typeof frameRate !== 'number') throw new TypeError(`Cannot pulldown to framerate of ${frameRate}`);
+
+    const pulledDown = new Timecode(this);
+    pulledDown.frameRate = frameRate;
+
+    let gcd = this.nominalFrameRate();
+    let y = pulledDown.nominalFrameRate();
+    while (y > 0) {
+      const t = y;
+      y = gcd % y;
+      gcd = t;
+    }
+
+    const frameRateNumerator = pulledDown.nominalFrameRate() / gcd;
+    const frameRateDenominator = this.nominalFrameRate() / gcd;
+
+    pulledDown.setFrames((Math.round((this.frames * frameRateNumerator) / frameRateDenominator)));
+
+    return pulledDown;
+  }
+
+  pullup(frameRate) {
+    return this.pulldown(frameRate);
+  }
+
+  isPullDownFrame() {
+    return (this.frames + 3) % 5 === 0;
   }
 }
 

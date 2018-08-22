@@ -2,7 +2,7 @@
   "name": "timecode-boss",
   "description": "A ES6 JavaScript module for working with SMPTE timecode",
   "main": "./timecode/timecode.js",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "license": "MIT",
   "author": {
     "name": "Brad Cordeiro",
@@ -28,6 +28,7 @@
   "dependencies": {
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^13.0.0",
-    "eslint-plugin-import": "^2.13.0"
+    "eslint-plugin-import": "^2.13.0",
+    "npm": "^6.4.0"
   }
 }

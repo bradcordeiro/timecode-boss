@@ -530,4 +530,30 @@ describe('Timecode', () => {
       assert.strictEqual(tc2.frames, 29);
     });
   });
+
+  describe('Pulldown', () => {
+    it('pulldown() converts 23 frames at 23.98 to 29 frames at 29.97', () => {
+      const tc1 = new Timecode('01:00:00:23', 23.98);
+      const tc2 = tc1.pulldown(29.97);
+
+      assert.strictEqual(tc2.frames, 29);
+      assert.strictEqual(tc2.frameRate, 29.97);
+    });
+
+    it('pulldown() converts 10 frames at 29.97 to 8 frames at 23.98', () => {
+      const tc1 = new Timecode('02:00:00:10', 29.97);
+      const tc2 = tc1.pulldown(23.98);
+
+      assert.strictEqual(tc2.frames, 8);
+      assert.strictEqual(tc2.frameRate, 23.98);
+    });
+
+    it('pullup() functions as alias to pulldown()', () => {
+      const tc1 = new Timecode('02:00:00:10', 29.97);
+      const tc2 = tc1.pullup(23.98);
+
+      assert.strictEqual(tc2.frames, 8);
+      assert.strictEqual(tc2.frameRate, 23.98);
+    });
+  });
 });
