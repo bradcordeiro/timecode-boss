@@ -19,7 +19,7 @@ let laterTc = tc.add('00:04:59:28'); // { frameRate: 29.97, frameCount: 135629 }
 laterTc.toString(); // '01;15;25;13'
 ```
 
-This constructs a Timecode instance named *tc* from a string representation (*'01:10:25:13'*), with a framerate of *29.97*. On creation, each field of the timecode string is converted to a frame count and added to a total frame count. Calling toString() calculates each field and returns a new timecode string.
+This constructs a Timecode instance named *tc* from a string representation (*'01:10:25:13'*), with a framerate of *29.97*. On creation, each field of the timecode string is stored in the properties *hours*, *minutes*, *seconds*, and *frames*. Calling toString() joins those fields with a separator.
 
 tc.add() returns a new timecode, starting from the original *tc* instance and adding a timecode of *'00:04:59:28'*. The value of the second Timecode instance is correct, when using drop-frame timecode.
 
@@ -51,7 +51,7 @@ npm run test-coverage
 
 ## Versioning
 
-This package uses [SemVer](http://semver.org/) for versioning. Version 1.0.0 was kind of written in a vacuum, once I started using it to build an actual web application, I realized how many useless or poorly-thought out methods it had, and renamed, added, and deleted many from the public interface, leading to a rapid increase to version 2.0.0.
+This package uses [SemVer](http://semver.org/) for versioning. Version 1.0.0 was kind of written in a vacuum, once I started using it to build an actual web application, I realized how many useless or poorly-thought out methods it had, and renamed, added, and deleted many from the public interface, leading to a rapid increase to versions 2 and then 3.0.0.
 
 ## Tests
 
@@ -59,10 +59,10 @@ Test files live alongside implementation files.
 
 Tests are mostly written to ensure accurate arithmetic given different framerates. Expected values were written using [Avid Media Composer](http://www.avid.com/media-composer)'s built-in timecode calculator to verify correct values.
 
-Tests are run with [Mocha](https://mochajs.org), which is included in devDependencies and can be used by installing locally:
+Tests are run with [Mocha](https://mochajs.org):
 
 ```shell
-npm install
+npm install -g mocha
 npm test
 ```
 
@@ -74,14 +74,21 @@ I try to maintain 100% test coverage, but don't require all pull requests to mai
 
 This module was written according to the [Airbnb Javascript Style Guide](https://github.com/airbnb/javascript) . [eslint](https://eslint.org) was used to stay consistent. An *.eslintrc.json* file is included in source control.
 
+```shell
+npm install -g eslint eslint-config-airbnb-base eslint-plugin-import
+```
+
 ## Timecode Class API Reference
 
 #### Properties
 
 Property | Type | Description
 ---------|------|------------
-frameCount | Number | A number representing the total number of frames in the Timecode represents. Timecode class setters will coerce this into an integer, but will not check for integer-ness if this property is manually changed.
-frameRate | Number | A floating-point number representing the playback speed of the Timecode. Though any frame rate should work here, only common broadcast frame rates are tested (see [Testing](#testing) for a list).
+hours     | Number | A number representing the hours field
+minutes   | Number | A number representing the minutes field
+seconds   | Number | A number representing the seconds field
+frames    | Number | A number representing the frames field
+frameRate | Number | A Number representing the playback speed of the Timecode. Though any frame rate should work here, only common broadcast frame rates are tested (see [Testing](#testing) for a list).
 
 #### Constructor
 
@@ -89,37 +96,28 @@ frameRate | Number | A floating-point number representing the playback speed of 
 |--------|----------
 | new Timecode() | (timecode, frameRate)
 
-Constructs a Timecode object. `frameRate` defaults to *29.97* if not passed, and `timecode` defaults to *0* if not passed. 
+Constructs a Timecode object. All fields default to 0 if the constructor is called with no arguments, and `frameRate` defaults to *29.97* if that argument is not passed.
 
 The Constructor accepts:
 
-* A Number representing the frame count
 * Another Timecode instance
-* A Date instance
 * A string in the format "00:00:00:00"
 * A JavaScript Object with one or more of the properties *hours*, *minutes*,  *seconds*, or *frames*.
-
-#### Getters
-
-| Method | Returns 
-|--------|--------
-| getHours() | Number
-| getMinutes() | Number
-| getSeconds() | Number
-| getFrames() | Number
-
-Return an integer representing the relevant field.
+* A Number representing the frame count
+* A Date instance
 
 #### Setters
 
 | Method | Argument Type | Return Type
 |--------|-------------- | -----------
-| setHours(*hours*) | Number | Timecode
-| setMinutes(*minutes*) | Number | Timecode
-| setSeconds(*seconds*) | Number | Timecode
-| setFrames(*frames*) | Number | Timecode
+| setHours(*hours*)     | Number | Timecode (*this*)
+| setMinutes(*minutes*) | Number | Timecode (*this*)
+| setSeconds(*seconds*) | Number | Timecode (*this*)
+| setFrames(*frames*)   | Number | Timecode (*this*)
 
-Sets the relevant field. The Timecode object is returned, allowing these methods to be chained. Calling these methods with no argument, or with a type that cannont be coerced to an integer, will throw a TypeError.
+Sets the relevant field. The Timecode object is returned, allowing these methods to be chained. Calling these methods with a type that cannont be coerced to an integer will throw a TypeError.
+
+If an argument overflows a field, the next larger field will be incremented accordingly. For example, calling *setMinutes(72)* will set the minutes to 12, and increment the hours field by 1. Setting the hours above 24 will overflow the hours and they will be recalculated starting from 0.
 
 #### Arithmetic
 
@@ -128,15 +126,24 @@ Sets the relevant field. The Timecode object is returned, allowing these methods
 | add(*addend*) | Timecode, String, Number, Object, or Date | Timecode
 | subtract(*subtrahend*) | Timecode, String, Number, Object, or Date | Timecode
 
-Adds the addend to or subtracts the subtrahend from the calling Timecode, and returns a new Timecode. Any of the types available to use in the Timecode constructor above are available to use as arguments to these methods.
+Adds the addend to or subtracts the subtrahend from the calling Timecode, and returns a new Timecode. Any of the types available to use in the Timecode constructor above are available to use as arguments to these methods. If an addend or subtrahend has a different framerate than the calling object, the addend will be converted to the calling object's frame rate (see **Frame Rate Conversion** below).
+
+#### Frame Rate Conversion
+| Method | Argument Type | Return Type
+|--------|-------------- | -----------
+| pulldown(*frameRate*) | Number | Timecode
+| pullup(*frameRate*) | Number | Timecode 
+
+Return a new Timecode object based on the calling object converted to the frame rate passed as an argument. The *hours*, *minutes*,  and *seconds*, fields remain unchanged, and only the frames will be changed, simulating the effect of a pulldown done in a broadcasting system or non-linear editing software.
+
+pullup() is an alias of pulldown().
 
 #### Other Helpers
 | Method | Returns | Description
 |--------|-------- | -----------
-| isDropFrame() | Boolean | Returns *true* if the Timecode object is being calculated in drop-frame mode (29.97 or 59.94 frame rates).
-| toString() | String | Returns a formatted string in the format 'hh:mm:ss:ff'. Colons are used as a field separator for non-drop-frame timecodes, semi-colons for drop-frame
-| toObject() | Object | Returns an object with the Timecode's *frameCount* and *frameRate* properties.
-| getFields(boolean) | Object | Returns an object with the properties *hours*, *minutes*,  *seconds*, and *frames*. If the boolean argument is *true*, the property values are strings, padded to a width of 2.
+| isDropFrame() | Boolean | Returns *true* if the Timecode object is being calculated in drop-frame mode (29.97).
+| toString()    | String  | Returns a formatted string in the format 'hh:mm:ss:ff'. Colons are used as a field separator for non-drop-frame timecodes, semi-colons for drop-frame
+| toObject()    | Object  | Returns an object with the Timecode's *hours*, *minutes*, *seconds*, *frames*, and *frameRate* properties, but no class methods attached.
 
 ## Licensing
 
