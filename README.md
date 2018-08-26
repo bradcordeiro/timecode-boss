@@ -1,4 +1,4 @@
-# timecode-boss &middot; [![npm version](https://badge.fury.io/js/timecode-boss.svg)](https://badge.fury.io/js/timecode-boss) [![Build Status](https://travis-ci.org/bradcordeiro/timecode-boss.svg?branch=master)](https://travis-ci.org/bradcordeiro/timecode-boss) [![Coverage Status](https://coveralls.io/repos/github/bradcordeiro/timecode-boss/badge.svg?branch=switch-to-coveralls)](https://coveralls.io/github/bradcordeiro/timecode-boss?branch=switch-to-coveralls) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/bradcordeiro/timecode-boss/blob/master/LICENSE)
+# timecode-boss &middot; [![npm version](https://badge.fury.io/js/timecode-boss.svg)](https://www.npmjs.com/package/timecode-boss) [![Build Status](https://travis-ci.org/bradcordeiro/timecode-boss.svg?branch=master)](https://travis-ci.org/bradcordeiro/timecode-boss) [![Coverage Status](https://coveralls.io/repos/github/bradcordeiro/timecode-boss/badge.svg?branch=switch-to-coveralls)](https://coveralls.io/github/bradcordeiro/timecode-boss?branch=switch-to-coveralls) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/bradcordeiro/timecode-boss/blob/master/LICENSE)
 
 This is a JavaScript (ES6) module that provies a class **Timecode** with properties and methods to work with SMPTE timecode.
 
@@ -11,11 +11,14 @@ npm install --save timecode-boss
 ```javascript
 const Timecode = require('timecode-boss');
 
-let tc = new Timecode('01:10:25:13', 29.97); // Timecode { frameRate: 29.97, frameCount: 126637 }
+let tc = new Timecode('01:10:25:13', 29.97);
 tc.toString(); // '01;10;25;13'
-tc.minutes(); // 10
+tc.hours;   // 1
+tc.minutes; // 10
+tc.seconds; // 25
+tc.frames ; // 13
 
-let laterTc = tc.add('00:04:59:28'); // { frameRate: 29.97, frameCount: 135629 }
+let laterTc = tc.add('00:04:59:28');
 laterTc.toString(); // '01;15;25;13'
 ```
 
@@ -26,27 +29,13 @@ tc.add() returns a new timecode, starting from the original *tc* instance and ad
 ## Developing
 
 ### Prerequisites
-This module has two dependencies: Tests are run using [Mocha](https://mochajs.org), and code coverage is tested with Istanbul's command-line interface, [nyc](https://github.com/istanbuljs/nyc).
+This module has two development dependencies: Tests are run using [Mocha](https://mochajs.org), and code coverage is tested with Istanbul's command-line interface, [nyc](https://github.com/istanbuljs/nyc).
 
 ### Setting up Dev
 
 ```shell
 git clone https://github.com/bradcordeiro/timecode-boss
 cd timecode-boss
-```
-
-To run tests:
-
-```shell
-npm install mocha
-npm test
-```
-
-To check test coverage:
-
-```shell
-npm install nyc
-npm run test-coverage
 ```
 
 ## Versioning
@@ -64,6 +53,13 @@ Tests are run with [Mocha](https://mochajs.org):
 ```shell
 npm install -g mocha
 npm test
+```
+
+To check test coverage:
+
+```shell
+npm install -g nyc
+npm run test-coverage
 ```
 
 If you encounter incorrect math being performed and would like to submit a pull request to add a test for it without including a patch for the module itself, that would be very welcome and I'll do my best to work out the bug. Or just a bug report is great.

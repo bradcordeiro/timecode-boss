@@ -246,6 +246,10 @@ class Timecode {
       return tc.add(new Timecode(addend, this.frameRate));
     }
 
+    if (this.frameRate !== addend.frameRate) {
+      return tc.add(addend.pulldown(this.frameRate));
+    }
+
     tc.setHours(this.hours + addend.hours);
     tc.setMinutes(this.minutes + addend.minutes);
     tc.setSeconds(this.seconds + addend.seconds);
@@ -261,6 +265,10 @@ class Timecode {
       return tc.subtract(new Timecode(subtrahend, this.frameRate));
     }
 
+    if (this.frameRate !== subtrahend.frameRate) {
+      return tc.subtract(subtrahend.pulldown(this.frameRate));
+    }
+
     tc.setHours(this.hours - subtrahend.hours);
     tc.setMinutes(this.minutes - subtrahend.minutes);
     tc.setSeconds(this.seconds - subtrahend.seconds);
@@ -270,33 +278,20 @@ class Timecode {
   }
 
   pulldown(frameRate) {
-    if (typeof frameRate !== 'number') throw new TypeError(`Cannot pulldown to framerate of ${frameRate}`);
+    const fps = parseFloat(frameRate);
+
+    if (Number.isNaN(fps)) throw new TypeError(`Cannot pulldown to framerate of ${frameRate}`);
 
     const pulledDown = new Timecode(this);
-    pulledDown.frameRate = frameRate;
+    pulledDown.frameRate = fps;
 
-    let gcd = this.nominalFrameRate();
-    let y = pulledDown.nominalFrameRate();
-    while (y > 0) {
-      const t = y;
-      y = gcd % y;
-      gcd = t;
-    }
-
-    const frameRateNumerator = pulledDown.nominalFrameRate() / gcd;
-    const frameRateDenominator = this.nominalFrameRate() / gcd;
-
-    pulledDown.setFrames((Math.round((this.frames * frameRateNumerator) / frameRateDenominator)));
-
-    return pulledDown;
+    return pulledDown.setFrames(
+      Math.round((this.frames * pulledDown.nominalFrameRate()) / this.nominalFrameRate())
+    );
   }
 
   pullup(frameRate) {
     return this.pulldown(frameRate);
-  }
-
-  isPullDownFrame() {
-    return (this.frames + 3) % 5 === 0;
   }
 }
 

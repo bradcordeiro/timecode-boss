@@ -201,25 +201,38 @@ describe('Timecode', () => {
       const tc = new Timecode(0, 30.00);
       assert.strictEqual(tc.isDropFrame(), false);
     });
-    /*
-    it('Should skip first 2 frames for even minute', () => {
-      const tc1 = new Timecode('01:00:59:29', 29.97);
-      let tc2 = tc1.add(1);
-      assert.strictEqual(tc2.toString(), '01;01;00;02');
-      tc2 = tc2.add(1);
-      assert.strictEqual(tc2.toString(), '01;01;00;03');
-      tc2 = tc2.add(1);
-      assert.strictEqual(tc2.toString(), '01;01;00;04');
+  });
+
+  describe('Getters', () => {
+    it('separator() returns ":" for a Timecode at 23.98 frames per second', () => {
+      const tc = new Timecode('02:05:34:15', 23.98);
+
+      assert.strictEqual(tc.separator(), ':');
     });
 
-    it('Should not skip the first 2 frames of each 10th minute', () => {
-      const tc1 = new Timecode('01:09:59:29', 29.97);
-      let tc2 = tc1.add(1);
-      assert.strictEqual(tc2.toString(), '01;10;00;00');
-      tc2 = tc2.add(1);
-      assert.strictEqual(tc2.toString(), '01;10;00;01');
+    it('separator() returns ":" for a Timecode at 24 frames per second', () => {
+      const tc = new Timecode('02:05:34:15', 24);
+
+      assert.strictEqual(tc.separator(), ':');
     });
-  */
+
+    it('separator() returns ":" for a Timecode at 25 frames per second', () => {
+      const tc = new Timecode('02:05:34:15', 25);
+
+      assert.strictEqual(tc.separator(), ':');
+    });
+
+    it('separator() returns ";" for a Timcode at 29.97 fps', () => {
+      const tc = new Timecode('02:05:34:15', 29.97);
+
+      assert.strictEqual(tc.separator(), ';');
+    });
+    
+    it('separator() returns ":" for a Timecode at 30 frames per second', () => {
+      const tc = new Timecode('02:05:34:15', 30);
+
+      assert.strictEqual(tc.separator(), ':');
+    });
   });
 
   describe('Setters', () => {
@@ -457,6 +470,36 @@ describe('Timecode', () => {
       assert.strictEqual(tc2.seconds, 0);
       assert.strictEqual(tc2.frames, 0);
     });
+
+    it('add() skips first 2 frames for even minute in a result', () => {
+      const tc1 = new Timecode('01:00:59:29', 29.97);
+      let tc2 = tc1.add(1);
+      assert.strictEqual(tc2.toString(), '01;01;00;02');
+      tc2 = tc2.add(1);
+      assert.strictEqual(tc2.toString(), '01;01;00;03');
+      tc2 = tc2.add(1);
+      assert.strictEqual(tc2.toString(), '01;01;00;04');
+    });
+
+    it('add() does not skip first 2 frames in 10th minute', () => {
+      const tc1 = new Timecode('01:09:59:29', 29.97);
+      let tc2 = tc1.add(1);
+      assert.strictEqual(tc2.toString(), '01;10;00;00');
+      tc2 = tc2.add(1);
+      assert.strictEqual(tc2.toString(), '01;10;00;01');
+    });
+
+    it('add() performs pulldown on addend with different frameRate', () => {
+      const tc1 = new Timecode('00:07:12:04', 29.97);
+      const tc2 = new Timecode('00:04:16:05', 23.98);
+      const tc3 = tc1.add(tc2);
+
+      assert.strictEqual(tc3.hours, 0);
+      assert.strictEqual(tc3.minutes, 11);
+      assert.strictEqual(tc3.seconds, 28);
+      assert.strictEqual(tc3.frames, 10);
+      assert.strictEqual(tc3.frameRate, 29.97);
+    });
   });
 
   describe('Subtraction', () => {
@@ -529,6 +572,18 @@ describe('Timecode', () => {
       assert.strictEqual(tc2.seconds, 59);
       assert.strictEqual(tc2.frames, 29);
     });
+
+    it('subtract() performs pulldown on subtrahend with different frameRate', () => {
+      const tc1 = new Timecode('00:07:16:04', 29.97);
+      const tc2 = new Timecode('00:04:12:05', 23.98);
+      const tc3 = tc1.subtract(tc2);
+
+      assert.strictEqual(tc3.hours, 0);
+      assert.strictEqual(tc3.minutes, 3);
+      assert.strictEqual(tc3.seconds, 3);
+      assert.strictEqual(tc3.frames, 28);
+      assert.strictEqual(tc3.frameRate, 29.97);
+    });
   });
 
   describe('Pulldown', () => {
@@ -552,6 +607,23 @@ describe('Timecode', () => {
       assert.strictEqual(tc2.seconds, 43);
       assert.strictEqual(tc2.frames, 8);
       assert.strictEqual(tc2.frameRate, 23.98);
+    });
+
+    it('pulldown() accepts a number stored as a string for an argument', () => {
+      const tc1 = new Timecode('02:15:43:10', 29.97);
+      const tc2 = tc1.pulldown('23.98');
+
+      assert.strictEqual(tc2.hours, 2);
+      assert.strictEqual(tc2.minutes, 15);
+      assert.strictEqual(tc2.seconds, 43);
+      assert.strictEqual(tc2.frames, 8);
+      assert.strictEqual(tc2.frameRate, 23.98);
+    });
+
+    it('pulldown() throws a TypeError when called with NaN', () => {
+      const tc = new Timecode('02:15:43:10', 29.97);
+
+      assert.throws(() => tc.pulldown('nope'), TypeError);
     });
 
     it('pullup() functions as alias to pulldown()', () => {
