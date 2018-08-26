@@ -62,17 +62,13 @@ npm install -g nyc
 npm run test-coverage
 ```
 
-If you encounter incorrect math being performed and would like to submit a pull request to add a test for it without including a patch for the module itself, that would be very welcome and I'll do my best to work out the bug. Or just a bug report is great.
+If you encounter incorrect math being performed and would like to submit a pull request to add a test for it without including a patch to fix the problem, that would be very welcome and I'll do my best to work out the bug. Or just a bug report is great.
 
 I try to maintain 100% test coverage, but don't require all pull requests to maintain that number. I'm happy to write some tests, but please try to include tests for major funcionality you change or add.
 
 ## Style guide
 
-This module was written according to the [Airbnb Javascript Style Guide](https://github.com/airbnb/javascript) . [eslint](https://eslint.org) was used to stay consistent. An *.eslintrc.json* file is included in source control.
-
-```shell
-npm install -g eslint eslint-config-airbnb-base eslint-plugin-import
-```
+This module was written according to the [Airbnb Javascript Style Guide](https://github.com/airbnb/javascript) . [eslint](https://eslint.org) was used to stay consistent. An *.eslintrc.json* file is included in source control. The Airbnb guide wasn't chosen for any grand reason, I just like it.
 
 ## Timecode Class API Reference
 
@@ -84,7 +80,7 @@ hours     | Number | A number representing the hours field
 minutes   | Number | A number representing the minutes field
 seconds   | Number | A number representing the seconds field
 frames    | Number | A number representing the frames field
-frameRate | Number | A Number representing the playback speed of the Timecode. Though any frame rate should work here, only common broadcast frame rates are tested (see [Testing](#testing) for a list).
+frameRate | Number | A Number representing the playback speed of the Timecode. Though any frame rate should work here, only common broadcast frame rates are tested (23.98, 24, 25, 29.97, 30).
 
 #### Constructor
 
