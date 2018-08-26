@@ -2,6 +2,7 @@
   "name": "timecode-boss",
   "description": "A ES6 JavaScript module for working with SMPTE timecode",
   "main": "./timecode/timecode.js",
+  "unpkg": "./dist/timecode.min.js",
   "version": "3.0.0",
   "license": "MIT",
   "author": {
@@ -18,11 +19,17 @@
     "email": "brad.cordeiro@gmail.com"
   },
   "scripts": {
+    "build": "babel ./timecode/timecode.js | uglifyjs > dist/timecode.min.js",
     "test": "mocha timecode/timecode.test.js",
-    "test-coverage": "nyc mocha timecode/timecode.test.js"
+    "test-coverage": "nyc mocha timecode/timecode.test.js",
+    "prepublish": "npm run build"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-uglify": "^1.0.2",
+    "babel-preset-env": "^1.7.0",
     "mocha": "^5.2.0",
-    "nyc": "^12.0.2"
+    "nyc": "^12.0.2",
+    "uglify-es": "^3.3.9"
   }
 }
