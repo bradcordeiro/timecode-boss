@@ -137,9 +137,9 @@ describe('Timecode', () => {
 
     it('new Timecode() adds 2 frames to a nonexistent drop-frame timecode argument', () => {
       const tc = new Timecode('01:01:00:00', 29.97);
-      assert.strictEqual(tc.toString(), '01;01;00;02');
+      assert.strictEqual(tc.toString(), '01:01:00;02');
       const tc2 = new Timecode('01:01:00:01', 29.97);
-      assert.strictEqual(tc2.toString(), '01;01;00;03');
+      assert.strictEqual(tc2.toString(), '01:01:00;03');
     });
 
     it('new Timecode() throws a TypeError on an invalid input string', () => {
@@ -177,7 +177,7 @@ describe('Timecode', () => {
   });
 
   describe('Drop Frame Detection', () => {
-    it('isDropFrame() for 23.93 returns false', () => {
+    it('isDropFrame() for 23.98 returns false', () => {
       const tc = new Timecode(0, 23.98);
       assert.strictEqual(tc.isDropFrame(), false);
     });
@@ -227,7 +227,7 @@ describe('Timecode', () => {
 
       assert.strictEqual(tc.separator(), ';');
     });
-    
+
     it('separator() returns ":" for a Timecode at 30 frames per second', () => {
       const tc = new Timecode('02:05:34:15', 30);
 
@@ -474,19 +474,19 @@ describe('Timecode', () => {
     it('add() skips first 2 frames for even minute in a result', () => {
       const tc1 = new Timecode('01:00:59:29', 29.97);
       let tc2 = tc1.add(1);
-      assert.strictEqual(tc2.toString(), '01;01;00;02');
+      assert.strictEqual(tc2.toString(), '01:01:00;02');
       tc2 = tc2.add(1);
-      assert.strictEqual(tc2.toString(), '01;01;00;03');
+      assert.strictEqual(tc2.toString(), '01:01:00;03');
       tc2 = tc2.add(1);
-      assert.strictEqual(tc2.toString(), '01;01;00;04');
+      assert.strictEqual(tc2.toString(), '01:01:00;04');
     });
 
     it('add() does not skip first 2 frames in 10th minute', () => {
       const tc1 = new Timecode('01:09:59:29', 29.97);
       let tc2 = tc1.add(1);
-      assert.strictEqual(tc2.toString(), '01;10;00;00');
+      assert.strictEqual(tc2.toString(), '01:10:00;00');
       tc2 = tc2.add(1);
-      assert.strictEqual(tc2.toString(), '01;10;00;01');
+      assert.strictEqual(tc2.toString(), '01:10:00;01');
     });
 
     it('add() performs pulldown on addend with different frameRate', () => {

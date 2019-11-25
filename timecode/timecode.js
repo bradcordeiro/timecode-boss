@@ -20,7 +20,7 @@ class Timecode {
 
     if (timecode) this.set(timecode);
 
-    return this;
+    this.pullup = this.pulldown;
   }
 
   set(input) {
@@ -91,11 +91,17 @@ class Timecode {
     const m = this.minutes.toString(10).padStart(2, '0');
     const s = this.seconds.toString(10).padStart(2, '0');
     const f = this.frames.toString(10).padStart(2, '0');
-    return `${h}${c}${m}${c}${s}${c}${f}`;
+    return `${h}:${m}:${s}${c}${f}`;
   }
 
   toObject() {
-    return Object.assign({}, this);
+    return {
+      hours: this.hours,
+      minutes: this.minutes,
+      seconds: this.seconds,
+      frames: this.frames,
+      frameRate: this.frameRate,
+    };
   }
 
   setHours(hours) {
@@ -286,12 +292,8 @@ class Timecode {
     pulledDown.frameRate = fps;
 
     return pulledDown.setFrames(
-      Math.round((this.frames * pulledDown.nominalFrameRate()) / this.nominalFrameRate())
+      Math.round((this.frames * pulledDown.nominalFrameRate()) / this.nominalFrameRate()),
     );
-  }
-
-  pullup(frameRate) {
-    return this.pulldown(frameRate);
   }
 }
 
