@@ -102,6 +102,18 @@ describe('Timecode', () => {
       assert.strictEqual(4, tc.frames);
     });
 
+    it('new Timecode() accepts an object containing { frameRate }', () => {
+      const tc = new Timecode({
+        frames: 4,
+      }, 24);
+
+      assert.strictEqual(0, tc.hours);
+      assert.strictEqual(0, tc.minutes);
+      assert.strictEqual(0, tc.seconds);
+      assert.strictEqual(4, tc.frames);
+      assert.strictEqual(24, tc.frameRate);
+    });
+
     it('new Timecode() accepts a Date object', () => {
       const date = new Date(0, 0, 0, 0, 8, 30, 200);
       const tc = new Timecode(date, 29.97);
