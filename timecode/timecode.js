@@ -12,6 +12,8 @@ class Timecode {
 
     if (frameRate) {
       this.frameRate = frameRate;
+    } else if (timecode && timecode.frameRate) {
+      this.frameRate = timecode.frameRate;
     } else if (timecode instanceof Timecode) {
       this.frameRate = timecode.frameRate;
     } else {
@@ -220,8 +222,9 @@ class Timecode {
   }
 
   isDropFrame() {
-    // 29.97 frames per second
+    // 29.97 or 59.94  per second
     if (this.frameRate > 29 && this.frameRate < 30) return true;
+    if (this.frameRate > 59 && this.frameRate < 60) return true;
 
     return false;
   }
