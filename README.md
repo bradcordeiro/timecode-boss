@@ -1,6 +1,6 @@
 # timecode-boss &middot; [![npm version](https://badge.fury.io/js/timecode-boss.svg)](https://www.npmjs.com/package/timecode-boss) [![Build Status](https://travis-ci.org/bradcordeiro/timecode-boss.svg?branch=master)](https://travis-ci.org/bradcordeiro/timecode-boss) [![Coverage Status](https://coveralls.io/repos/github/bradcordeiro/timecode-boss/badge.svg?branch=switch-to-coveralls)](https://coveralls.io/github/bradcordeiro/timecode-boss?branch=switch-to-coveralls) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/bradcordeiro/timecode-boss/blob/master/LICENSE)
 
-This is a JavaScript (ES6) module that provies a class **Timecode** with properties and methods to work with SMPTE timecode.
+This is a JavaScript (ES6) module that provides a class **Timecode** with properties and methods to work with SMPTE timecode.
 
 ## Installing / Getting started
 
@@ -29,7 +29,9 @@ tc.add() returns a new timecode, starting from the original *tc* instance and ad
 ## Developing
 
 ### Prerequisites
-This module has two development dependencies: Tests are run using [Mocha](https://mochajs.org), and code coverage is tested with Istanbul's command-line interface, [nyc](https://github.com/istanbuljs/nyc).
+Tests are run using [Mocha](https://mochajs.org), and code coverage is tested with Istanbul's command-line interface, [nyc](https://github.com/istanbuljs/nyc).
+
+Babel is used to transpile to ES5 and uglify-js is used to minify the source for use in the browser.
 
 ### Setting up Dev
 
@@ -40,7 +42,7 @@ cd timecode-boss
 
 ## Versioning
 
-This package uses [SemVer](http://semver.org/) for versioning. Version 1.0.0 was kind of written in a vacuum, once I started using it to build an actual web application, I realized how many useless or poorly-thought out methods it had, and renamed, added, and deleted many from the public interface, leading to a rapid increase to versions 2 and then 3.0.0.
+This package uses [SemVer](http://semver.org/) for versioning. Version 1.0.0 was kind of written in a vacuum, once I started using it to build an actual web application, I realized how many useless or poorly-thought out methods it had, and renamed, added, and deleted many from the public interface, leading to a rapid increase to versions 2, 3, and 4.
 
 ## Tests
 
@@ -80,7 +82,7 @@ hours     | Number | A number representing the hours field
 minutes   | Number | A number representing the minutes field
 seconds   | Number | A number representing the seconds field
 frames    | Number | A number representing the frames field
-frameRate | Number | A Number representing the playback speed of the Timecode. Though any frame rate should work here, only common broadcast frame rates are tested (23.98, 24, 25, 29.97, 30).
+frameRate | Number | A Number representing the playback speed of the Timecode. Though any frame rate should work here, only common broadcast frame rates are tested (23.98, 24, 25, 29.97, 30, 59.94, and 60).
 
 #### Constructor
 
@@ -133,9 +135,9 @@ pullup() is an alias of pulldown().
 #### Other Helpers
 | Method | Returns | Description
 |--------|-------- | -----------
-| isDropFrame() | Boolean | Returns *true* if the Timecode object is being calculated in drop-frame mode (29.97).
-| toString()    | String  | Returns a formatted string in the format 'hh:mm:ss:ff'. Colons are used as a field separator for non-drop-frame timecodes, semi-colons for drop-frame
-| toObject()    | Object  | Returns an object with the Timecode's *hours*, *minutes*, *seconds*, *frames*, and *frameRate* properties, but no class methods attached.
+| isDropFrame() | Boolean | Returns *true* if the Timecode object is being calculated in drop-frame mode (29.97 or 59.94).
+| toString()    | String  | Returns a string in the format 'hh:mm:ss:ff'. Colons are used as a field separator, though the final separator will be a semi-colon for drop-frame.
+| toObject()    | Object  | Returns an plain JavaScript object with the Timecode's *hours*, *minutes*, *seconds*, *frames*, and *frameRate* properties, but no class methods attached.
 
 ## Licensing
 
