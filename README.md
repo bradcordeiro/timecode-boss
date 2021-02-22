@@ -135,6 +135,7 @@ pullup() is an alias of pulldown().
 #### Other Helpers
 | Method | Returns | Description
 |--------|-------- | -----------
+| fractionalSeconds() | Number | Returns floating-point seconds, with frames converted to milliseconds and added to seconds. Useful for interacting programs that use fractions of a second rather than frames (e.g. ffmpeg).
 | isDropFrame() | Boolean | Returns *true* if the Timecode object is being calculated in drop-frame mode (29.97 or 59.94).
 | toString()    | String  | Returns a string in the format 'hh:mm:ss:ff'. Colons are used as a field separator, though the final separator will be a semi-colon for drop-frame.
 | toObject()    | Object  | Returns an plain JavaScript object with the Timecode's *hours*, *minutes*, *seconds*, *frames*, and *frameRate* properties, but no class methods attached.
