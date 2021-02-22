@@ -3,7 +3,7 @@
   "description": "A ES6 JavaScript module for working with SMPTE timecode",
   "main": "./timecode/timecode.js",
   "unpkg": "./dist/timecode.min.js",
-  "version": "4.1.1",
+  "version": "4.2.0",
   "license": "MIT",
   "author": {
     "name": "Brad Cordeiro",
@@ -19,10 +19,9 @@
     "email": "brad.cordeiro@gmail.com"
   },
   "scripts": {
-    "build": "babel ./timecode/timecode.js | uglifyjs > dist/timecode.min.js",
+    "prepare": "babel ./timecode/timecode.js | uglifyjs > dist/timecode.min.js",
     "test": "mocha timecode/timecode.test.js",
-    "test-coverage": "nyc mocha timecode/timecode.test.js",
-    "prepare": "npm run build"
+    "test-coverage": "nyc mocha timecode/timecode.test.js"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.10",

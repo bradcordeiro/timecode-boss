@@ -33,7 +33,8 @@ declare class Timecode {
   setMinutes(minutes: number) : this 
   setSeconds(seconds: number) : this 
   setFrames(frames : number) : this 
-  frameCount() : number 
+  frameCount() : number
+  fractionalSeconds() : number
   isDropFrame() : boolean 
   add(addend : TimecodeLikeObject | number | string) : Timecode 
   subtract(subtrahend : TimecodeLikeObject | number | string) : Timecode 

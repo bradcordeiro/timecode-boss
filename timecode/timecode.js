@@ -21,8 +21,6 @@ class Timecode {
     }
 
     if (timecode) this.set(timecode);
-
-    this.pullup = this.pulldown;
   }
 
   set(input) {
@@ -204,6 +202,10 @@ class Timecode {
       + this.frames;
   }
 
+  fractionalSeconds() {
+    return this.seconds + this.frames / this.nominalFrameRate();
+  }
+
   framesPerHour() {
     return this.framesPer10Minute() * 6;
   }
@@ -297,6 +299,10 @@ class Timecode {
     return pulledDown.setFrames(
       Math.round((this.frames * pulledDown.nominalFrameRate()) / this.nominalFrameRate()),
     );
+  }
+
+  pullup(frameRate) {
+    return this.pulldown(frameRate);
   }
 }
 
