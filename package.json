@@ -3,7 +3,7 @@
   "description": "A ES6 JavaScript module for working with SMPTE timecode",
   "main": "./timecode/timecode.js",
   "unpkg": "./dist/timecode.min.js",
-  "version": "4.2.0",
+  "version": "4.2.1",
   "license": "MIT",
   "author": {
     "name": "Brad Cordeiro",
@@ -24,16 +24,16 @@
     "test-coverage": "nyc mocha timecode/timecode.test.js"
   },
   "devDependencies": {
-    "@babel/cli": "^7.12.10",
-    "@babel/core": "^7.12.10",
+    "@babel/cli": "^7.13.16",
+    "@babel/core": "^7.14.0",
     "@babel/polyfill": "^7.12.1",
-    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-env": "^7.14.1",
     "babel-plugin-uglify": "^1.0.2",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
-    "mocha": "^7.2.0",
-    "nyc": "^14.0.0",
+    "mocha": "^8.3.2",
+    "nyc": "^15.1.0",
     "uglify-es": "^3.3.9"
   },
   "dependencies": {}
