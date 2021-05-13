@@ -3,6 +3,22 @@ const secondsInOneMinute = 60;
 const minutesInOneHour = 60;
 const hoursInOneDay = 24;
 
+function parseIntOrError(input, errorMessage) {
+  const int = parseInt(input, 10);
+
+  if (Number.isNaN(int)) throw new TypeError(errorMessage);
+
+  return int;
+}
+
+function parseFloatOrError(input, errorMessage) {
+  const float = parseFloat(input);
+
+  if (Number.isNaN(float)) throw new TypeError(errorMessage);
+
+  return float;
+}
+
 class Timecode {
   constructor(timecode, frameRate) {
     this.hours = 0;
@@ -13,8 +29,6 @@ class Timecode {
     if (frameRate) {
       this.frameRate = frameRate;
     } else if (timecode && timecode.frameRate) {
-      this.frameRate = timecode.frameRate;
-    } else if (timecode instanceof Timecode) {
       this.frameRate = timecode.frameRate;
     } else {
       this.frameRate = 29.97;
@@ -107,9 +121,7 @@ class Timecode {
   setHours(hours) {
     if (hours === undefined) return this;
 
-    const hh = (parseInt(hours, 10) % 24);
-
-    if (Number.isNaN(hh)) throw new TypeError(`Cannot set hours to ${hours}`);
+    const hh = parseIntOrError(hours, `Cannot set hours to ${hours}`);
 
     this.hours = hh % hoursInOneDay;
 
@@ -121,9 +133,7 @@ class Timecode {
   setMinutes(minutes) {
     if (minutes === undefined) return this;
 
-    const mm = parseInt(minutes, 10);
-
-    if (Number.isNaN(mm)) throw new TypeError(`Cannot set minutes to ${minutes}`);
+    const mm = parseIntOrError(minutes, `Cannot set minutes to ${minutes}`);
 
     this.minutes = mm % minutesInOneHour;
     this.setHours(this.hours + Math.trunc(mm / minutesInOneHour));
@@ -146,9 +156,7 @@ class Timecode {
   setSeconds(seconds) {
     if (seconds === undefined) return this;
 
-    const ss = parseInt(seconds, 10);
-
-    if (Number.isNaN(ss)) throw new TypeError(`Cannot set minutes to ${seconds}`);
+    const ss = parseIntOrError(seconds, `Cannot set minutes to ${seconds}`);
 
     this.seconds = ss % secondsInOneMinute;
 
@@ -165,9 +173,7 @@ class Timecode {
   setFrames(frames) {
     if (frames === undefined) return this;
 
-    const ff = parseInt(frames, 10);
-
-    if (Number.isNaN(ff)) throw new TypeError(`Cannot set frames to ${frames}`);
+    const ff = parseIntOrError(frames, `Cannot set frames to ${frames}`);
 
     const nominalFrameRate = this.nominalFrameRate();
     this.frames = ff % nominalFrameRate;
@@ -289,9 +295,7 @@ class Timecode {
   }
 
   pulldown(frameRate) {
-    const fps = parseFloat(frameRate);
-
-    if (Number.isNaN(fps)) throw new TypeError(`Cannot pulldown to framerate of ${frameRate}`);
+    const fps = parseFloatOrError(frameRate, `Cannot pulldown to framerate of ${frameRate}`);
 
     const pulledDown = new Timecode(this);
     pulledDown.frameRate = fps;

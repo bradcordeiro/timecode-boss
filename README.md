@@ -12,14 +12,14 @@ npm install --save timecode-boss
 const Timecode = require('timecode-boss');
 
 let tc = new Timecode('01:10:25:13', 29.97);
-tc.toString(); // '01;10;25;13'
+tc.toString(); // '01:10:25;13'
 tc.hours;   // 1
 tc.minutes; // 10
 tc.seconds; // 25
 tc.frames ; // 13
 
 let laterTc = tc.add('00:04:59:28');
-laterTc.toString(); // '01;15;25;13'
+laterTc.toString(); // '01:15:25;13'
 ```
 
 This constructs a Timecode instance named *tc* from a string representation (*'01:10:25:13'*), with a framerate of *29.97*. On creation, each field of the timecode string is stored in the properties *hours*, *minutes*, *seconds*, and *frames*. Calling toString() joins those fields with a separator.
