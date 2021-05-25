@@ -114,7 +114,7 @@ class Timecode {
     const s = this.seconds.toString(10).padStart(2, '0');
     const mm = this.milliseconds().toString(10).substr(2);
 
-    return `${h}:${m}:${s}:${mm}`;
+    return `${h}:${m}:${s},${mm}`;
   }
 
   toObject() {
