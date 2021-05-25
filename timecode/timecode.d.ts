@@ -27,13 +27,15 @@ declare class Timecode {
   private framesInMinutesField() : number
   private framesInSecondsField() : number
 
-  toString() : string 
+  toString() : string
+  toSRTString() : string
   toObject() : TimecodeLikeObject 
   setHours(hours: number) : this 
   setMinutes(minutes: number) : this 
   setSeconds(seconds: number) : this 
   setFrames(frames : number) : this 
   frameCount() : number
+  milliseconds() : number
   fractionalSeconds() : number
   isDropFrame() : boolean 
   add(addend : TimecodeLikeObject | number | string) : Timecode 

@@ -108,6 +108,15 @@ class Timecode {
     return `${h}:${m}:${s}${c}${f}`;
   }
 
+  toSRTString() {
+    const h = this.hours.toString(10).padStart(2, '0');
+    const m = this.minutes.toString(10).padStart(2, '0');
+    const s = this.seconds.toString(10).padStart(2, '0');
+    const mm = this.milliseconds().toString(10).substr(2);
+
+    return `${h}:${m}:${s}:${mm}`;
+  }
+
   toObject() {
     return {
       hours: this.hours,
@@ -209,7 +218,7 @@ class Timecode {
   }
 
   fractionalSeconds() {
-    return this.seconds + this.frames / this.nominalFrameRate();
+    return this.seconds + this.milliseconds();
   }
 
   framesPerHour() {
@@ -222,6 +231,10 @@ class Timecode {
 
   framesPerMinute() {
     return (60 * this.nominalFrameRate()) - this.framesToDrop();
+  }
+
+  milliseconds() {
+    return this.frames / this.nominalFrameRate();
   }
 
   framesToDrop() {
