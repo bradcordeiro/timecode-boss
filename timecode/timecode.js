@@ -112,11 +112,9 @@ class Timecode {
     const h = this.hours.toString(10).padStart(2, '0');
     const m = this.minutes.toString(10).padStart(2, '0');
     const s = this.seconds.toString(10).padStart(2, '0');
-    let mm = this.milliseconds().toString(10).substr(2);
 
-    if (mm !== '') {
-      mm = `,${mm.substr(0, 3)}`;
-    }
+    const milliseconds = this.milliseconds().toString(10).substr(2, 3);
+    const mm = milliseconds.padEnd(3, '0');
 
     return `${h}:${m}:${s}${mm}`;
   }
