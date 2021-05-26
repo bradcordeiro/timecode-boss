@@ -84,7 +84,6 @@ describe('Timecode', () => {
         seconds: 3,
       });
 
-
       assert.strictEqual(0, tc.hours);
       assert.strictEqual(0, tc.minutes);
       assert.strictEqual(3, tc.seconds);
@@ -455,7 +454,6 @@ describe('Timecode', () => {
     it('add() adds 1 hour when adding 108000 frames to 30NDF timecode', () => {
       const tc1 = new Timecode('01:00:00:00', 30);
       const tc2 = tc1.add(108000);
-
 
       assert.strictEqual(tc2.hours, 2);
       assert.strictEqual(tc2.minutes, 0);

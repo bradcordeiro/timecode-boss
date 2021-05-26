@@ -37,6 +37,7 @@ class Timecode {
     if (timecode) this.set(timecode);
   }
 
+  // select a setting method based on input type
   set(input) {
     if (input instanceof Date) {
       this.setFieldsFromDate(input);
@@ -71,6 +72,7 @@ class Timecode {
     this.setFrames(remainingFrames);
   }
 
+  // Parses timecode fields from a string in the format 00:00:00:00
   setFieldsFromString(input) {
     const [, hh, mm, ss, ff] = TimecodeRegex.exec(input);
 
@@ -82,6 +84,7 @@ class Timecode {
     return this;
   }
 
+  // Sets timecode fields from an object with the same property names
   setFieldsFromObject(input) {
     if (Object.prototype.hasOwnProperty.call(input, 'hours')) this.setHours(input.hours);
     if (Object.prototype.hasOwnProperty.call(input, 'minutes')) this.setMinutes(input.minutes);
@@ -91,6 +94,7 @@ class Timecode {
     return this;
   }
 
+  // Converts a date object to timecode
   setFieldsFromDate(date) {
     this.setHours(date.getHours());
     this.setMinutes(date.getMinutes());
@@ -99,6 +103,7 @@ class Timecode {
     return this;
   }
 
+  // Returns a string in the format HH:MM:SS:FF
   toString() {
     const c = this.separator();
     const h = this.hours.toString(10).padStart(2, '0');
@@ -108,6 +113,7 @@ class Timecode {
     return `${h}:${m}:${s}${c}${f}`;
   }
 
+  // Returns a string in the format HH:MM:SS,mmm, with mmm being fractional seconds
   toSRTString() {
     const h = this.hours.toString(10).padStart(2, '0');
     const m = this.minutes.toString(10).padStart(2, '0');
@@ -119,6 +125,7 @@ class Timecode {
     return `${h}:${m}:${s},${mm}`;
   }
 
+  // Returns new plain javascript object with field and framerate properties
   toObject() {
     return {
       hours: this.hours,
@@ -129,18 +136,24 @@ class Timecode {
     };
   }
 
+  // Set hours, with some validation
   setHours(hours) {
     if (hours === undefined) return this;
 
     const hh = parseIntOrError(hours, `Cannot set hours to ${hours}`);
 
+    // Hours should not be higher than 23, and should restart counting up from 0 after 23
     this.hours = hh % hoursInOneDay;
 
-    if (this.hours < 0) this.hours += hoursInOneDay;
+    // Hours should not be less than 0, and should count down from 24 if negative
+    while (this.hours < 0) this.hours += hoursInOneDay;
+
+    this.incrementIfDropFrame();
 
     return this;
   }
 
+  // Set Minutes, with some validation
   setMinutes(minutes) {
     if (minutes === undefined) return this;
 
@@ -149,21 +162,18 @@ class Timecode {
     this.minutes = mm % minutesInOneHour;
     this.setHours(this.hours + Math.trunc(mm / minutesInOneHour));
 
+    // minutes should not be negative, and should borrow from the hours instead
     if (this.minutes < 0) {
       this.minutes += minutesInOneHour;
       this.setHours(this.hours - 1);
     }
 
-    if (this.isDropFrame()
-          && this.minutes % 10 !== 0
-          && this.seconds === 0
-          && this.frames === 0) {
-      this.frames = 2;
-    }
+    this.incrementIfDropFrame();
 
     return this;
   }
 
+  // Set seconds, with some validation
   setSeconds(seconds) {
     if (seconds === undefined) return this;
 
@@ -178,9 +188,12 @@ class Timecode {
       this.setMinutes(this.minutes - 1);
     }
 
+    this.incrementIfDropFrame();
+
     return this;
   }
 
+  // Set frames, withj some validation
   setFrames(frames) {
     if (frames === undefined) return this;
 
@@ -196,9 +209,7 @@ class Timecode {
       this.setSeconds(this.seconds - 1);
     }
 
-    if (this.isDropFrame() && this.frames < 2 && this.seconds === 0 && this.minutes % 10 !== 0) {
-      this.frames += 2;
-    }
+    this.incrementIfDropFrame();
 
     return this;
   }
@@ -250,6 +261,13 @@ class Timecode {
     if (this.frameRate > 59 && this.frameRate < 60) return true;
 
     return false;
+  }
+
+  incrementIfDropFrame() {
+    // Drop frame skips frame 00 and frame 01 on every even minute but not every tenth minute
+    if (this.isDropFrame() && this.frames < 2 && this.seconds === 0 && this.minutes % 10 !== 0) {
+      this.frames += 2;
+    }
   }
 
   separator() {
