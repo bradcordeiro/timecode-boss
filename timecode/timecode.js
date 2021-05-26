@@ -115,7 +115,7 @@ class Timecode {
     let mm = this.milliseconds().toString(10).substr(2);
 
     if (mm !== '') {
-      mm = `,${mm}`;
+      mm = `,${mm.substr(0, 3)}`;
     }
 
     return `${h}:${m}:${s}${mm}`;
