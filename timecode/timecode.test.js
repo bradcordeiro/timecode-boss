@@ -597,14 +597,14 @@ describe('Timecode', () => {
   });
 
   describe('Pulldown', () => {
-    it('pulldown() converts 23 frames at 23.98 to 29 frames at 29.97', () => {
-      const tc1 = new Timecode('01:18:34:23', 23.98);
-      const tc2 = tc1.pulldown(29.97);
+    it('pulldown() converts 01:07:10:16 at 23.98 to 01:07:11;04 at 29.97', () => {
+      const tc1 = new Timecode('01:07:10:16', 23.98);
+      const tc2 = tc1.pulldown(29.97, '01:00:00:00');
 
       assert.strictEqual(tc2.hours, 1);
-      assert.strictEqual(tc2.minutes, 18);
-      assert.strictEqual(tc2.seconds, 34);
-      assert.strictEqual(tc2.frames, 29);
+      assert.strictEqual(tc2.minutes, 7);
+      assert.strictEqual(tc2.seconds, 11);
+      assert.strictEqual(tc2.frames, 4);
       assert.strictEqual(tc2.frameRate, 29.97);
     });
 
