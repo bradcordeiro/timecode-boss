@@ -244,6 +244,12 @@ describe('Timecode', () => {
 
       assert.strictEqual(tc.separator(), ':');
     });
+
+    it('fractionalSeconds() returns 5.5 for 00:00:05:12 at 23.98', () => {
+      const tc = new Timecode('00:00:05:12', 23.98);
+
+      assert.strictEqual(tc.fractionalSeconds(), 5.5);
+    });
   });
 
   describe('Setters', () => {
