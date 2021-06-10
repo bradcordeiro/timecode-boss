@@ -23,6 +23,9 @@
     "test": "mocha timecode/timecode.test.js",
     "test-coverage": "nyc mocha timecode/timecode.test.js"
   },
+  "eslintConfig": {
+    "extends": "airbnb-base"
+  },
   "devDependencies": {
     "@babel/cli": "^7.13.16",
     "@babel/core": "^7.14.0",
