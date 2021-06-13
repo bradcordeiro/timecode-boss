@@ -223,6 +223,22 @@ class Timecode {
     return Math.round(this.frameRate);
   }
 
+  exactFrameRate() {
+    if (this.frameRate > 59 && this.frameRate < 60) {
+      return 60000 / 1001;
+    }
+
+    if (this.frameRate > 29 && this.frameRate < 30) {
+      return 30000 / 1001;
+    }
+
+    if (this.frameRate > 23 && this.frameRate < 24) {
+      return 24000 / 1001;
+    }
+
+    return this.frameRate;
+  }
+
   frameCount() {
     return this.framesInHoursField()
       + this.framesInMinutesField()
@@ -327,19 +343,25 @@ class Timecode {
     return tc;
   }
 
-  pulldown(frameRate) {
+  pulldown(frameRate, start = 0) {
     const fps = parseFloatOrError(frameRate, `Cannot pulldown to framerate of ${frameRate}`);
 
-    const pulledDown = new Timecode(this);
-    pulledDown.frameRate = fps;
+    const oldBase = new Timecode(start, this.frameRate);
+    const newBase = new Timecode(start, fps);
+    const output = new Timecode(0, fps);
 
-    return pulledDown.setFrames(
-      Math.round((this.frames * pulledDown.nominalFrameRate()) / this.nominalFrameRate()),
-    );
+    let outputFrames = this.subtract(oldBase).frameCount();
+    outputFrames *= output.nominalFrameRate();
+    outputFrames /= this.nominalFrameRate();
+    outputFrames = Math.ceil(outputFrames);
+
+    output.set(outputFrames);
+
+    return output.add(newBase);
   }
 
-  pullup(frameRate) {
-    return this.pulldown(frameRate);
+  pullup(frameRate, base) {
+    return this.pulldown(frameRate, base);
   }
 }
 
