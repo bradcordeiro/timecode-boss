@@ -104,12 +104,15 @@ The Constructor accepts:
 
 | Method | Argument Type | Return Type
 |--------|-------------- | -----------
+| set(*input*)          | timecode | Timecode (*this*)
 | setHours(*hours*)     | Number | Timecode (*this*)
 | setMinutes(*minutes*) | Number | Timecode (*this*)
 | setSeconds(*seconds*) | Number | Timecode (*this*)
 | setFrames(*frames*)   | Number | Timecode (*this*)
 
-Sets the relevant field. The Timecode object is returned, allowing these methods to be chained. Calling these methods with a type that cannont be coerced to an integer will throw a TypeError.
+set(*input) sets the timecode objects fields according to its argument, and accepts any of the types the constructor accepts.
+
+There are also setters for each individual field. The Timecode object is returned, allowing these methods to be chained. Calling these methods with a type that cannont be coerced to an integer will throw a TypeError.
 
 If an argument overflows a field, the next larger field will be incremented accordingly. For example, calling *setMinutes(72)* will set the minutes to 12, and increment the hours field by 1. Setting the hours above 24 will overflow the hours and they will be recalculated starting from 0.
 

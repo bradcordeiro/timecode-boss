@@ -17,7 +17,6 @@ declare class Timecode {
 
   constructor(timecode: TimecodeLikeObject | number | string, frameRate?: number)
 
-  private set(input: TimecodeLikeObject | number | string) : this
   private setFieldsFromFrameCount(input: number) : Timecode
   private setFieldsFromString(input: string) : Timecode
   private setFieldsFromObject(input: TimecodeLikeObject) : Timecode 
@@ -26,7 +25,8 @@ declare class Timecode {
   private framesInHoursField() : number 
   private framesInMinutesField() : number
   private framesInSecondsField() : number
-
+  
+  set(input: TimecodeLikeObject | number | string) : this
   toString() : string
   toSRTString() : string
   toObject() : TimecodeLikeObject 
@@ -40,6 +40,6 @@ declare class Timecode {
   isDropFrame() : boolean 
   add(addend : TimecodeLikeObject | number | string) : Timecode 
   subtract(subtrahend : TimecodeLikeObject | number | string) : Timecode 
-  pulldown(frameRate: number) : Timecode 
-  pullup(frameRate: number) : Timecode 
+  pulldown(frameRate: number, start: TimecodeLikeObject | number | string) : Timecode 
+  pullup(frameRate: number, start: TimecodeLikeObject | number | string) : Timecode 
 }

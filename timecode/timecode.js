@@ -355,7 +355,7 @@ class Timecode {
     outputFrames /= this.nominalFrameRate();
     outputFrames = Math.ceil(outputFrames);
 
-    output.set(outputFrames);
+    output.setFieldsFromFrameCount(outputFrames);
 
     return output.add(newBase);
   }
