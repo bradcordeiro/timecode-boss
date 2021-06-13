@@ -125,10 +125,10 @@ Adds the addend to or subtracts the subtrahend from the calling Timecode, and re
 #### Frame Rate Conversion
 | Method | Argument Type | Return Type
 |--------|-------------- | -----------
-| pulldown(*frameRate*) | Number | Timecode
-| pullup(*frameRate*) | Number | Timecode 
+| pulldown(*frameRate*, *\[start\]*) | Number, Any | Timecode
+| pullup(*frameRate*, *\[start\]*) | Number, Any | Timecode 
 
-Return a new Timecode object based on the calling object converted to the frame rate passed as an argument. The *hours*, *minutes*,  and *seconds*, fields remain unchanged, and only the frames will be changed, simulating the effect of a pulldown done in a broadcasting system or non-linear editing software.
+Return a new Timecode object based on the calling object converted to the frame rate passed as an argument, where the conversion would result in frames being added for the new framerate. This is useful for, for example, a converting a 23.98 timecode to a 29.97 drop-frame timecode using a [3:2 pulldown](https://en.wikipedia.org/wiki/Three-two_pull_down). The first argument is the timecode to convert to, and the second argument is an optional start time of the sequence being pulled down, which affects the output. The second argument can be any type accepted by the Timecode object constructor.
 
 pullup() is an alias of pulldown().
 
