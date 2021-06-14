@@ -26,10 +26,10 @@ declare class Timecode {
   private framesInMinutesField() : number
   private framesInSecondsField() : number
   
-  set(input: TimecodeLikeObject | number | string) : this
   toString() : string
-  toSRTString() : string
+  toSRTString(realTime : boolean) : string
   toObject() : TimecodeLikeObject 
+  set(input: TimecodeLikeObject | number | string) : this
   setHours(hours: number) : this 
   setMinutes(minutes: number) : this 
   setSeconds(seconds: number) : this 

@@ -605,6 +605,19 @@ describe('Timecode', () => {
   });
 
   describe('Pulldown', () => {
+    it('Returns a new object', () => {
+      const tc1 = new Timecode('01:07:10:16', 23.98);
+      const tc2 = tc1.pulldown(29.97, '01:00:00:00');
+
+      assert.strictEqual(tc1 === tc2, false);
+
+      assert.strictEqual(tc1.frameRate, 23.98);
+      assert.strictEqual(1, tc1.hours, 'Source hours were mutated');
+      assert.strictEqual(7, tc1.minutes, 'Source Minutes were mutated');
+      assert.strictEqual(10, tc1.seconds, 'Source Seconds were mutated');
+      assert.strictEqual(16, tc1.frames, 'Source Frames were mutated');
+    });
+
     it('converts 01:07:10:16 at 23.98 to 01:07:11;04 at 29.97', () => {
       const tc1 = new Timecode('01:07:10:16', 23.98);
       const tc2 = tc1.pulldown(29.97, '01:00:00:00');

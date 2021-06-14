@@ -110,9 +110,9 @@ The Constructor accepts:
 | setSeconds(*seconds*) | Number | Timecode (*this*)
 | setFrames(*frames*)   | Number | Timecode (*this*)
 
-set(*input) sets the timecode objects fields according to its argument, and accepts any of the types the constructor accepts.
+set(*input*) sets the timecode objects fields according to its argument, and accepts any of the types the constructor accepts.
 
-There are also setters for each individual field. The Timecode object is returned, allowing these methods to be chained. Calling these methods with a type that cannont be coerced to an integer will throw a TypeError.
+There are also setters for each individual field. The Timecode object is returned, allowing these methods to be chained. Calling these methods with a type that cannot be coerced to an integer will throw a TypeError.
 
 If an argument overflows a field, the next larger field will be incremented accordingly. For example, calling *setMinutes(72)* will set the minutes to 12, and increment the hours field by 1. Setting the hours above 24 will overflow the hours and they will be recalculated starting from 0.
 
@@ -131,19 +131,19 @@ Adds the addend to or subtracts the subtrahend from the calling Timecode, and re
 | pulldown(*frameRate*, *\[start\]*) | Number, Any | Timecode
 | pullup(*frameRate*, *\[start\]*) | Number, Any | Timecode 
 
-Return a new Timecode object based on the calling object converted to the frame rate passed as an argument, where the conversion would result in frames being added for the new framerate. This is useful for, for example, a converting a 23.98 timecode to a 29.97 drop-frame timecode using a [3:2 pulldown](https://en.wikipedia.org/wiki/Three-two_pull_down). The first argument is the timecode to convert to, and the second argument is an optional start time of the sequence being pulled down, which affects the output. The second argument can be any type accepted by the Timecode object constructor.
+Return a new Timecode object based on the calling object converted to the frame rate passed as an argument, where the conversion would result in frames being added for the new framerate. This is useful for, for example, a converting a 23.98 timecode to a 29.97 drop-frame timecode using a [3:2 pulldown](https://en.wikipedia.org/wiki/Three-two_pull_down). The first argument is the framerate to convert to, and the second argument is an optional start time of the sequence being pulled down, which affects the output. The second argument can be any type accepted by the Timecode object constructor.
 
 pullup() is an alias of pulldown().
 
 #### Other Helpers
-| Method | Returns | Description
-|--------|-------- | -----------
-| milliseconds() | Number | Returns floating-point milliseconds representing the frames field only.
-| fractionalSeconds() | Number | Returns floating-point seconds, with frames converted to milliseconds and added to seconds. Useful for interacting programs that use fractions of a second rather than frames (e.g. ffmpeg).
-| isDropFrame() | Boolean | Returns *true* if the Timecode object is being calculated in drop-frame mode (29.97 or 59.94).
-| toString()    | String  | Returns a string in the format 'hh:mm:ss:ff'. Colons are used as a field separator, though the final separator will be a semi-colon for drop-frame.
-| toSRTString() | String  | Returns a string in the format 'hh:mm:ss,iii...' where 'iii...' are milliseconds rather than frames.
-| toObject()    | Object  | Returns an plain JavaScript object with the Timecode's *hours*, *minutes*, *seconds*, *frames*, and *frameRate* properties, but no class methods attached.
+| Method | Argument Type | Return Type | Description
+|--------|-------- |-------- | -----------
+| milliseconds() |  | Number | Returns floating-point milliseconds representing the frames field only.
+| fractionalSeconds() |  | Number | Returns floating-point seconds, with frames converted to milliseconds and added to seconds. Useful for interacting programs that use fractions of a second rather than frames (e.g. ffmpeg).
+| isDropFrame() |   | Boolean | Returns *true* if the Timecode object is being calculated in drop-frame mode (29.97 or 59.94).
+| toString()    |   | String  | Returns a string in the format 'hh:mm:ss:ff'. Colons are used as a field separator, though the final separator will be a semi-colon for drop-frame.
+| toSRTString(realTime) | Boolean | String  | Returns a string in the format 'hh:mm:ss,iii...' where 'iii...' are milliseconds rather than frames, the format used for SRT subtitles. SRT subtitles use real time, not timecode, and timecodes in some framerates do not match real time. If the optional argument is **true** the result will be in real time.
+| toObject()    |    | Object  | Returns an plain JavaScript object with the Timecode's *hours*, *minutes*, *seconds*, *frames*, and *frameRate* properties, but no class methods attached.
 
 ## Licensing
 

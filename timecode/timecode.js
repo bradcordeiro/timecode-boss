@@ -114,12 +114,18 @@ class Timecode {
   }
 
   // Returns a string in the format HH:MM:SS,mmm, with mmm being fractional seconds
-  toSRTString() {
-    const h = this.hours.toString(10).padStart(2, '0');
-    const m = this.minutes.toString(10).padStart(2, '0');
-    const s = this.seconds.toString(10).padStart(2, '0');
+  toSRTString(realTime = false) {
+    let tc = this;
 
-    const milliseconds = this.milliseconds().toString(10).substr(2, 3);
+    if (realTime === true) {
+      tc = this.pulldown(29.97);
+    }
+
+    const h = tc.hours.toString(10).padStart(2, '0');
+    const m = tc.minutes.toString(10).padStart(2, '0');
+    const s = tc.seconds.toString(10).padStart(2, '0');
+
+    const milliseconds = tc.milliseconds().toString(10).substr(2, 3);
     const mm = milliseconds.padEnd(3, '0');
 
     return `${h}:${m}:${s},${mm}`;
@@ -214,6 +220,7 @@ class Timecode {
     return this;
   }
 
+  // Many timecode calculations require the framerate to be rounded up, this returns that
   nominalFrameRate() {
     /* 23.98 -> 24
      * 25    -> 25
@@ -223,6 +230,7 @@ class Timecode {
     return Math.round(this.frameRate);
   }
 
+  // Returns the exact framerate for framerates which are not integers
   exactFrameRate() {
     if (this.frameRate > 59 && this.frameRate < 60) {
       return 60000 / 1001;
@@ -239,6 +247,7 @@ class Timecode {
     return this.frameRate;
   }
 
+  // Returns the total number of frames that this Timecode represents
   frameCount() {
     return this.framesInHoursField()
       + this.framesInMinutesField()
