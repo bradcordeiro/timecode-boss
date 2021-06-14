@@ -3,10 +3,8 @@
     [
       "@babel/env",
       {
-        "targets": 
-          {
-            "browsers": ["last 2 versions", "safari >= 9"]
-          }
+        "useBuiltIns": "entry",
+        "corejs": "2.6.12"
       }
     ]
   ]
