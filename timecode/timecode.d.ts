@@ -26,6 +26,7 @@ declare class Timecode {
   private framesInMinutesField() : number
   private framesInSecondsField() : number
   
+  static isValidTimecodeString(str : string) : boolean
   toString() : string
   toSRTString(realTime : boolean) : string
   toObject() : TimecodeLikeObject 

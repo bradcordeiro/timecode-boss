@@ -158,6 +158,34 @@ describe('Timecode', () => {
     });
   });
 
+  describe('Static Methods', () => {
+    describe('isValidTimecodeString()', () => {
+      it('returns true for 4 sets of 2 digits separated by colons', () => {
+        assert.strictEqual(Timecode.isValidTimecodeString('12:23:45:67'), true);
+      });
+
+      it('returns true for 4 sets of 2 digits separated by semicolons', () => {
+        assert.strictEqual(Timecode.isValidTimecodeString('00;11;22;33'), true);
+      });
+
+      it('returns true for 4 sets of 1-2 digits separated by colons', () => {
+        assert.strictEqual(Timecode.isValidTimecodeString('1:23:4:56'), true);
+      });
+
+      it('returns true for 4 sets of 1 digit separated by semicolons', () => {
+        assert.strictEqual(Timecode.isValidTimecodeString('1:2:3:4'), true);
+      });
+
+      it('returns false for 3 sets of 2 digits separated by semicolons', () => {
+        assert.strictEqual(Timecode.isValidTimecodeString('01:23:45'), false);
+      });
+
+      it('returns false for 2 sets of 2 digits separated by semicolons', () => {
+        assert.strictEqual(Timecode.isValidTimecodeString('56:43'), false);
+      });
+    });
+  });
+
   describe('Nominal Frame Rates', () => {
     const tc = new Timecode();
 

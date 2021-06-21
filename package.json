@@ -3,7 +3,7 @@
   "description": "A ES6 JavaScript module for working with SMPTE timecode",
   "main": "./timecode/timecode.js",
   "unpkg": "./dist/timecode.min.js",
-  "version": "4.4.3",
+  "version": "4.5.0",
   "license": "MIT",
   "author": {
     "name": "Brad Cordeiro",

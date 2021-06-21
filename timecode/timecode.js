@@ -37,13 +37,17 @@ class Timecode {
     if (timecode) this.set(timecode);
   }
 
+  static isValidTimecodeString(str) {
+    return TimecodeRegex.test(str);
+  }
+
   // select a setting method based on input type
   set(input) {
     if (input instanceof Date) {
       this.setFieldsFromDate(input);
     } else if (typeof input === 'object') {
       this.setFieldsFromObject(input);
-    } else if (TimecodeRegex.test(input)) {
+    } else if (Timecode.isValidTimecodeString(input)) {
       this.setFieldsFromString(input);
     } else if (typeof input === 'number') {
       this.setFieldsFromFrameCount(input);
