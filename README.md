@@ -1,6 +1,6 @@
 # timecode-boss &middot; [![npm version](https://badge.fury.io/js/timecode-boss.svg)](https://www.npmjs.com/package/timecode-boss) [![Build Status](https://travis-ci.org/bradcordeiro/timecode-boss.svg?branch=master)](https://travis-ci.org/bradcordeiro/timecode-boss) [![Coverage Status](https://coveralls.io/repos/github/bradcordeiro/timecode-boss/badge.svg?branch=switch-to-coveralls)](https://coveralls.io/github/bradcordeiro/timecode-boss?branch=switch-to-coveralls) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/bradcordeiro/timecode-boss/blob/master/LICENSE)
 
-This is a JavaScript (ES6) module that provides a class **Timecode** with properties and methods to work with SMPTE timecode.
+This is a JavaScript module that provides a **Timecode** class with properties and methods to work with SMPTE timecode.
 
 ## Installing / Getting started
 
@@ -24,7 +24,7 @@ laterTc.toString(); // '01:15:25;13'
 
 This constructs a Timecode instance named *tc* from a string representation (*'01:10:25:13'*), with a framerate of *29.97*. On creation, each field of the timecode string is stored in the properties *hours*, *minutes*, *seconds*, and *frames*. Calling toString() joins those fields with a separator.
 
-tc.add() returns a new timecode, starting from the original *tc* instance and adding a timecode of *'00:04:59:28'*. The value of the second Timecode instance is correct, when using drop-frame timecode.
+tc.add() returns a new timecode, starting from the original *tc* instance and adding a timecode of *'00:04:59:28'*. The result is assigned to *laterTC* and the original *tc* object is not mutated.
 
 ## Developing
 
@@ -82,7 +82,7 @@ hours     | Number | A number representing the hours field
 minutes   | Number | A number representing the minutes field
 seconds   | Number | A number representing the seconds field
 frames    | Number | A number representing the frames field
-frameRate | Number | A Number representing the playback speed of the Timecode. Though any frame rate should work here, only common broadcast frame rates are tested (23.98, 24, 25, 29.97, 30, 59.94, and 60).
+frameRate | Number | A Number representing the playback speed of the Timecode. Though any frame rate should work here, only common broadcast frame rates are tested (23.98, 24, 25, 29.97, 30, 50, 59.94, and 60).
 
 #### Constructor
 
@@ -92,13 +92,15 @@ frameRate | Number | A Number representing the playback speed of the Timecode. T
 
 Constructs a Timecode object. All fields default to 0 if the constructor is called with no arguments, and `frameRate` defaults to *29.97* if that argument is not passed.
 
-The Constructor accepts:
+The first parameter of the Constructor accepts:
 
 * Another Timecode instance
 * A string in the format "00:00:00:00"
 * A JavaScript Object with one or more of the properties *hours*, *minutes*,  *seconds*, or *frames*.
 * A Number representing the frame count
 * A Date instance
+
+The second parameter is a frame rate.
 
 #### Setters
 
