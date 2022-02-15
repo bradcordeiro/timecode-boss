@@ -141,6 +141,15 @@ describe('Timecode', () => {
     it('new Timecode() throws a TypeError on an invalid input string', () => {
       assert.throws(() => new Timecode('safds'), TypeError);
     });
+
+    it ('new Timcode() doesn\'t increment for drop-frame before all fields are set', () => {
+      const tc = new Timecode('01:01:57:00');
+
+      assert.strictEqual(1, tc.hours);
+      assert.strictEqual(1, tc.minutes);
+      assert.strictEqual(57, tc.seconds);
+      assert.strictEqual(0, tc.frames);
+    });
   });
 
   describe('Static Methods', () => {

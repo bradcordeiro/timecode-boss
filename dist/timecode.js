@@ -52,17 +52,24 @@ var Timecode = (function () {
             var minutes = parseInt(mm, 10);
             var seconds = parseInt(ss, 10);
             var frames = parseInt(ff, 10);
-            this.setHours(hours);
-            this.setMinutes(minutes);
-            this.setSeconds(seconds);
-            this.setFrames(frames);
+            return this.setFieldsFromObject({
+                hours: hours,
+                minutes: minutes,
+                seconds: seconds,
+                frames: frames,
+            });
         }
-        else {
-            throw new TypeError("Invalid timecode string ".concat(input));
-        }
-        return this;
+        throw new TypeError("Invalid timecode string ".concat(input));
     };
     Timecode.prototype.setFieldsFromObject = function (input) {
+        if (input.hours)
+            this.hours = input.hours;
+        if (input.minutes)
+            this.minutes = input.minutes;
+        if (input.seconds)
+            this.seconds = input.seconds;
+        if (input.frames)
+            this.frames = input.frames;
         if (input.hours)
             this.setHours(input.hours);
         if (input.minutes)
@@ -74,11 +81,12 @@ var Timecode = (function () {
         return this;
     };
     Timecode.prototype.setFieldsFromDate = function (date) {
-        this.setHours(date.getHours());
-        this.setMinutes(date.getMinutes());
-        this.setSeconds(date.getSeconds());
-        this.setFrames(Math.trunc(date.getMilliseconds() / this.nominalFrameRate()));
-        return this;
+        return this.setFieldsFromObject({
+            hours: date.getHours(),
+            minutes: date.getMinutes(),
+            seconds: date.getSeconds(),
+            frames: Math.trunc(date.getMilliseconds() / this.nominalFrameRate()),
+        });
     };
     Timecode.prototype.valueOf = function () {
         return this.frameCount();

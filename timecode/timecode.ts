@@ -84,21 +84,27 @@ export default class Timecode {
       const seconds = parseInt(ss, 10);
       const frames = parseInt(ff, 10);
 
-      this.setHours(hours);
-      this.setMinutes(minutes);
-      this.setSeconds(seconds);
-      this.setFrames(frames);
-    } else {
-      throw new TypeError(`Invalid timecode string ${input}`);
+      return this.setFieldsFromObject({
+        hours,
+        minutes,
+        seconds,
+        frames,
+      });
     }
 
-    return this;
+    throw new TypeError(`Invalid timecode string ${input}`);
   }
 
   /** Sets timecode fields from an object with any of the
    * properties 'hours', 'minutes', 'seconds', or 'frames'
    */
   private setFieldsFromObject(input: TimecodeAttributes) {
+    // give all fields initial values so the drop-frame incrementing isn't thrown off
+    if (input.hours) this.hours = input.hours;
+    if (input.minutes) this.minutes = input.minutes;
+    if (input.seconds) this.seconds = input.seconds;
+    if (input.frames) this.frames = input.frames;
+
     if (input.hours) this.setHours(input.hours);
     if (input.minutes) this.setMinutes(input.minutes);
     if (input.seconds) this.setSeconds(input.seconds);
@@ -109,11 +115,12 @@ export default class Timecode {
 
   /** Sets the timecode fields from a JavaScript Date object */
   private setFieldsFromDate(date: Date) {
-    this.setHours(date.getHours());
-    this.setMinutes(date.getMinutes());
-    this.setSeconds(date.getSeconds());
-    this.setFrames(Math.trunc(date.getMilliseconds() / this.nominalFrameRate()));
-    return this;
+    return this.setFieldsFromObject({
+      hours: date.getHours(),
+      minutes: date.getMinutes(),
+      seconds: date.getSeconds(),
+      frames: Math.trunc(date.getMilliseconds() / this.nominalFrameRate()),
+    });
   }
 
   /** Overrides the valueOf() method inherited from Object that gets an object's primitive value */
