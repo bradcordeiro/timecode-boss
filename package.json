@@ -1,11 +1,11 @@
 {
   "name": "timecode-boss",
   "description": "A ES6 JavaScript module for working with SMPTE timecode",
-  "main": "./dist/timecode.mjs",
+  "main": "./dist/timecode.js",
   "unpkg": "./dist/timecode.min.js",
   "types": "./dist/timecode.d.ts",
   "type": "module",
-  "version": "5.0.2",
+  "version": "5.0.3",
   "license": "MIT",
   "author": {
     "name": "Brad Cordeiro",
