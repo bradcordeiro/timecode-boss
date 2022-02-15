@@ -1,0 +1,10 @@
+{
+  "files": ["./timecode/timecode.ts"],
+  "compilerOptions": {
+    "declaration": true,
+    "outDir": "./dist",
+    "removeComments": true,
+    "lib": ["ES2017"],
+    "target": "ES5"
+  }
+}

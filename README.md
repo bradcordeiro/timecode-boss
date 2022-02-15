@@ -106,7 +106,6 @@ The second parameter is a frame rate.
 
 | Method | Argument Type | Return Type
 |--------|-------------- | -----------
-| set(*input*)          | timecode | Timecode (*this*)
 | setHours(*hours*)     | Number | Timecode (*this*)
 | setMinutes(*minutes*) | Number | Timecode (*this*)
 | setSeconds(*seconds*) | Number | Timecode (*this*)

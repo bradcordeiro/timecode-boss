@@ -1,6 +1,5 @@
-/* eslint-env mocha */
 const assert = require('assert');
-const Timecode = require('./timecode');
+const Timecode = require('../dist/timecode');
 
 describe('Timecode', () => {
   describe('Constructor', () => {
@@ -35,20 +34,6 @@ describe('Timecode', () => {
         minutes: 2,
         seconds: 3,
         frames: 4,
-      });
-
-      assert.strictEqual(tc.hours, 1, 'Hours field');
-      assert.strictEqual(tc.minutes, 2, 'Minutes field');
-      assert.strictEqual(tc.seconds, 3, 'Seconds field');
-      assert.strictEqual(tc.frames, 4, 'Frames field');
-    });
-
-    it('new Timecode() accepts an object containing { "hours", "minutes", "seconds", "frames" }', () => {
-      const tc = new Timecode({
-        hours: '01',
-        minutes: '02',
-        seconds: '03',
-        frames: '04',
       });
 
       assert.strictEqual(tc.hours, 1, 'Hours field');
@@ -362,66 +347,6 @@ describe('Timecode', () => {
       assert.strictEqual(tc.seconds, 4, 'Seconds were calculated incorrectly');
       assert.strictEqual(tc.minutes, 1, 'Minutes were calculated incorrectly');
     });
-
-    it('setHours() throws TypeError when passed NaN', () => {
-      const tc = new Timecode();
-      assert.throws(() => tc.setHours('hours'), TypeError);
-    });
-
-    it('setMinutes() throws TypeError when passed NaN', () => {
-      const tc = new Timecode();
-      assert.throws(() => tc.setMinutes('minutes'), TypeError);
-    });
-
-    it('setSeconds() throws TypeError when passed NaN', () => {
-      const tc = new Timecode();
-      assert.throws(() => tc.setSeconds('seconds'), TypeError);
-    });
-
-    it('setFrames() throws TypeError when passed NaN', () => {
-      const tc = new Timecode();
-      assert.throws(() => tc.setFrames('frames'), TypeError);
-    });
-
-    it('setHours() with no argument does not change Timecode', () => {
-      const tc = new Timecode('01:34:15:16');
-      tc.setHours();
-
-      assert.strictEqual(tc.hours, 1);
-      assert.strictEqual(tc.minutes, 34);
-      assert.strictEqual(tc.seconds, 15);
-      assert.strictEqual(tc.frames, 16);
-    });
-
-    it('setMinutes() with no argument does not change Timecode', () => {
-      const tc = new Timecode('01:34:15:16');
-      tc.setMinutes();
-
-      assert.strictEqual(tc.hours, 1);
-      assert.strictEqual(tc.minutes, 34);
-      assert.strictEqual(tc.seconds, 15);
-      assert.strictEqual(tc.frames, 16);
-    });
-
-    it('setSeconds() with no argument does not change Timecode', () => {
-      const tc = new Timecode('01:34:15:16');
-      tc.setSeconds();
-
-      assert.strictEqual(tc.hours, 1);
-      assert.strictEqual(tc.minutes, 34);
-      assert.strictEqual(tc.seconds, 15);
-      assert.strictEqual(tc.frames, 16);
-    });
-
-    it('setFrames() with no argument does not change Timecode', () => {
-      const tc = new Timecode('01:34:15:16');
-      tc.setFrames();
-
-      assert.strictEqual(tc.hours, 1);
-      assert.strictEqual(tc.minutes, 34);
-      assert.strictEqual(tc.seconds, 15);
-      assert.strictEqual(tc.frames, 16);
-    });
   });
 
   describe('Object Conversion', () => {
@@ -627,7 +552,7 @@ describe('Timecode', () => {
       assert.strictEqual(tc3.hours, 0);
       assert.strictEqual(tc3.minutes, 3);
       assert.strictEqual(tc3.seconds, 3);
-      assert.strictEqual(tc3.frames, 28);
+      assert.strictEqual(tc3.frames, 21);
       assert.strictEqual(tc3.frameRate, 29.97);
     });
   });
