@@ -1,5 +1,5 @@
-const assert = require('assert');
-const Timecode = require('../dist/timecode');
+import assert from 'assert';
+import Timecode from '../dist/timecode.js';
 
 describe('Timecode', () => {
   describe('Constructor', () => {

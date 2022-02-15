@@ -395,5 +395,3 @@ export default class Timecode {
     return this.pulldown(frameRate, start);
   }
 }
-
-module.exports = Timecode;

@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var TimecodeRegex = /(\d{1,2})\D(\d{1,2})\D(\d{1,2})\D(\d{1,2})/;
 var SecondsInOneMinute = 60;
 var MinutesInOneHour = 60;
@@ -273,5 +271,4 @@ var Timecode = (function () {
     };
     return Timecode;
 }());
-exports.default = Timecode;
-module.exports = Timecode;
+export default Timecode;
