@@ -1,28 +1,19 @@
-interface TimecodeAttributes {
+export type TimecodeAttributes = {
   hours?: number
   minutes?: number
   seconds?: number
   frames?: number
   frameRate?: number
-}
+};
 
 const TimecodeRegex = /(\d{1,2})\D(\d{1,2})\D(\d{1,2})\D(\d{1,2})/;
 const SecondsInOneMinute = 60;
 const MinutesInOneHour = 60;
 const HoursInOneDay = 24;
 
+interface Timecode extends Required<TimecodeAttributes> {}
 /** Class representing a timecode. */
-export default class Timecode {
-  hours: number;
-
-  minutes: number;
-
-  seconds: number;
-
-  frames: number;
-
-  frameRate: number;
-
+class Timecode {
   constructor(timecode: number | string | TimecodeAttributes | Date, frameRate = 29.97) {
     this.hours = 0;
     this.minutes = 0;
@@ -395,3 +386,5 @@ export default class Timecode {
     return this.pulldown(frameRate, start);
   }
 }
+
+export default Timecode;
