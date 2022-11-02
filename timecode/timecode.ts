@@ -163,7 +163,7 @@ class Timecode {
 
   setHours(hours: number) : this {
     // Hours should not be higher than 23, and should restart counting up from 0 after 23
-    this.hours = hours % HoursInOneDay;
+    this.hours = Math.floor(hours) % HoursInOneDay;
 
     // Hours should not be less than 0, and should count down from 24 if negative
     while (this.hours < 0) this.hours += HoursInOneDay;
@@ -175,7 +175,7 @@ class Timecode {
 
   // Set Minutes, with some validation
   setMinutes(minutes: number) : this {
-    this.minutes = minutes % MinutesInOneHour;
+    this.minutes = Math.floor(minutes) % MinutesInOneHour;
     this.setHours(this.hours + Math.trunc(minutes / MinutesInOneHour));
 
     // minutes should not be negative, and should borrow from the hours instead
@@ -191,7 +191,7 @@ class Timecode {
 
   // Set seconds, with some validation
   setSeconds(seconds: number) : this {
-    this.seconds = seconds % SecondsInOneMinute;
+    this.seconds = Math.floor(seconds) % SecondsInOneMinute;
 
     this.setMinutes(this.minutes + Math.trunc(seconds / SecondsInOneMinute));
 
@@ -210,7 +210,7 @@ class Timecode {
     if (frames === undefined) return this;
 
     const nominalFrameRate = this.nominalFrameRate();
-    this.frames = frames % nominalFrameRate;
+    this.frames = Math.floor(frames) % nominalFrameRate;
 
     this.setSeconds(this.seconds + Math.trunc(frames / nominalFrameRate));
 

@@ -120,14 +120,14 @@ var Timecode = (function () {
         };
     };
     Timecode.prototype.setHours = function (hours) {
-        this.hours = hours % HoursInOneDay;
+        this.hours = Math.floor(hours) % HoursInOneDay;
         while (this.hours < 0)
             this.hours += HoursInOneDay;
         this.incrementIfDropFrame();
         return this;
     };
     Timecode.prototype.setMinutes = function (minutes) {
-        this.minutes = minutes % MinutesInOneHour;
+        this.minutes = Math.floor(minutes) % MinutesInOneHour;
         this.setHours(this.hours + Math.trunc(minutes / MinutesInOneHour));
         if (this.minutes < 0) {
             this.minutes += MinutesInOneHour;
@@ -137,7 +137,7 @@ var Timecode = (function () {
         return this;
     };
     Timecode.prototype.setSeconds = function (seconds) {
-        this.seconds = seconds % SecondsInOneMinute;
+        this.seconds = Math.floor(seconds) % SecondsInOneMinute;
         this.setMinutes(this.minutes + Math.trunc(seconds / SecondsInOneMinute));
         if (this.seconds < 0) {
             this.seconds += SecondsInOneMinute;
@@ -150,7 +150,7 @@ var Timecode = (function () {
         if (frames === undefined)
             return this;
         var nominalFrameRate = this.nominalFrameRate();
-        this.frames = frames % nominalFrameRate;
+        this.frames = Math.floor(frames) % nominalFrameRate;
         this.setSeconds(this.seconds + Math.trunc(frames / nominalFrameRate));
         if (this.frames < 0) {
             this.frames += this.nominalFrameRate();

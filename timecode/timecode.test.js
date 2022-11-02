@@ -356,6 +356,47 @@ describe('Timecode', () => {
       assert.strictEqual(tc.seconds, 4, 'Seconds were calculated incorrectly');
       assert.strictEqual(tc.minutes, 1, 'Minutes were calculated incorrectly');
     });
+
+    it('setHours() truncates a fractional hour', () => {
+      const tc = new Timecode('01:20:30:25', 30);
+      tc.setHours(5.7);
+
+      assert.strictEqual(tc.hours, 5, 'Hours were calculated incorrectly');
+      assert.strictEqual(tc.minutes, 20, 'Minutes were calculated incorrectly');
+      assert.strictEqual(tc.seconds, 30, 'Seconds were calculated incorrectly');
+      assert.strictEqual(tc.frames, 25, 'Frames were calculated incorrectly');
+    });
+
+    it('setMinutes() truncates a fractional minute', () => {
+      const tc = new Timecode('01:20:30:25', 30);
+      tc.setMinutes(10.2);
+
+      assert.strictEqual(tc.hours, 1, 'Hours were calculated incorrectly');
+      assert.strictEqual(tc.minutes, 10, 'Minutes were calculated incorrectly');
+      assert.strictEqual(tc.seconds, 30, 'Seconds were calculated incorrectly');
+      assert.strictEqual(tc.frames, 25, 'Frames were calculated incorrectly');
+    });
+
+
+    it('setSeconds() truncates a fractional second', () => {
+      const tc = new Timecode('01:20:30:25', 30);
+      tc.setMinutes(40.2);
+
+      assert.strictEqual(tc.hours, 1, 'Hours were calculated incorrectly');
+      assert.strictEqual(tc.minutes, 40, 'Minutes were calculated incorrectly');
+      assert.strictEqual(tc.seconds, 30, 'Seconds were calculated incorrectly');
+      assert.strictEqual(tc.frames, 25, 'Frames were calculated incorrectly');
+    });
+    
+    it('setFrames truncates a fractional frame', () => {
+      const tc = new Timecode('01:20:30:25', 30);
+      tc.setFrames(28.7);
+
+      assert.strictEqual(tc.hours, 1, 'Hours were calculated incorrectly');
+      assert.strictEqual(tc.minutes, 20, 'Minutes were calculated incorrectly');
+      assert.strictEqual(tc.seconds, 30, 'Seconds were calculated incorrectly');
+      assert.strictEqual(tc.frames, 28, 'Frames were calculated incorrectly');
+    });
   });
 
   describe('Object Conversion', () => {
