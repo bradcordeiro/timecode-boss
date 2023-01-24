@@ -1,4 +1,4 @@
-export declare type TimecodeAttributes = {
+export type TimecodeAttributes = {
     hours?: number;
     minutes?: number;
     seconds?: number;
