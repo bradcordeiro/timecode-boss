@@ -14,6 +14,7 @@ declare class Timecode {
     private setFieldsFromString;
     private setFieldsFromObject;
     private setFieldsFromDate;
+    private getFramesFromMilliseconds;
     valueOf(): number;
     toString(): string;
     toSRTString(realTime?: boolean): string;

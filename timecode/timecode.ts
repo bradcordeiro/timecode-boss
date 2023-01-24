@@ -6,7 +6,8 @@ export type TimecodeAttributes = {
   frameRate?: number
 };
 
-const TimecodeRegex = /(\d{1,2})\D(\d{1,2})\D(\d{1,2})\D(\d{1,2})/;
+const TimeStampRegex = /(\d{1,2}):(\d{1,2}):(\d{1,2})(?:[.,](\d{1,3}))?/;
+const TimecodeRegex = /(\d{1,2})[:;](\d{1,2})[:;](\d{1,2})[:;](\d{1,2})/;
 const SecondsInOneMinute = 60;
 const MinutesInOneHour = 60;
 const HoursInOneDay = 24;
@@ -65,7 +66,7 @@ class Timecode {
 
   /** Parses and sets timecode fields from a string in the format 00:00:00:00 */
   private setFieldsFromString(input: string) : this {
-    const matches = TimecodeRegex.exec(input);
+    let matches = TimecodeRegex.exec(input);
 
     if (matches && matches.length === 5) {
       const [, hh, mm, ss, ff] = matches;
@@ -80,6 +81,26 @@ class Timecode {
         minutes,
         seconds,
         frames,
+      });
+    }
+
+    matches = TimeStampRegex.exec(input);
+
+    if (matches && matches.length >= 4) {
+      const [, hh, mm, ss, ms] = matches;
+
+      const msDefault = ms || 0;
+
+      const hours = parseInt(hh, 10);
+      const minutes = parseInt(mm, 10);
+      const seconds = parseInt(ss, 10);
+      const milliseconds = parseFloat(`0.${msDefault}`);
+
+      return this.setFieldsFromObject({
+        hours,
+        minutes,
+        seconds,
+        frames: this.getFramesFromMilliseconds(milliseconds),
       });
     }
 
@@ -110,8 +131,18 @@ class Timecode {
       hours: date.getHours(),
       minutes: date.getMinutes(),
       seconds: date.getSeconds(),
-      frames: Math.trunc(date.getMilliseconds() / this.nominalFrameRate()),
+      frames: this.getFramesFromMilliseconds(date.getMilliseconds()),
     });
+  }
+
+  private getFramesFromMilliseconds(milliseconds: number) {
+    let fractionalSeconds = milliseconds;
+
+    while (fractionalSeconds > 1 || fractionalSeconds < -1) {
+      fractionalSeconds /= 10;
+    }
+
+    return Math.floor(fractionalSeconds * this.nominalFrameRate());
   }
 
   /** Overrides the valueOf() method inherited from Object that gets an object's primitive value */
@@ -191,13 +222,20 @@ class Timecode {
 
   // Set seconds, with some validation
   setSeconds(seconds: number) : this {
-    this.seconds = Math.floor(seconds) % SecondsInOneMinute;
+    const secondsComponent = Math.floor(seconds);
+    const millisecondsComponent = seconds - secondsComponent;
+
+    this.seconds = Math.floor(secondsComponent) % SecondsInOneMinute;
 
     this.setMinutes(this.minutes + Math.trunc(seconds / SecondsInOneMinute));
 
     if (this.seconds < 0) {
       this.seconds += SecondsInOneMinute;
       this.setMinutes(this.minutes - 1);
+    }
+
+    if (millisecondsComponent !== 0) {
+      this.setFrames(this.getFramesFromMilliseconds(millisecondsComponent));
     }
 
     this.incrementIfDropFrame();

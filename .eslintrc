@@ -12,8 +12,7 @@
         "airbnb-typescript"
     ],
   "rules": {
-    "no-console": ["off"],
-    "max-len": ["warn", { "code": 140, "ignoreComments": true }],
+    "max-len": ["warn", { "code": 120, "ignoreComments": true }],
     "@typescript-eslint/no-empty-interface": ["off"]
   }
 }

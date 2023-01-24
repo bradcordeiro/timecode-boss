@@ -6,26 +6,44 @@ describe('Timecode', () => {
     it('new Timecode() accepts no arguments', () => {
       const tc = new Timecode();
 
-      assert.strictEqual(0, tc.hours, 'Hours are incorrect');
-      assert.strictEqual(0, tc.minutes, 'Minutes are incorrect');
-      assert.strictEqual(0, tc.seconds, 'Seconds are incorrect');
-      assert.strictEqual(0, tc.frames, 'Frames are incorrect');
+      assert.strictEqual(tc.hours, 0, 'Hours are incorrect');
+      assert.strictEqual(tc.minutes, 0, 'Minutes are incorrect');
+      assert.strictEqual(tc.seconds, 0, 'Seconds are incorrect');
+      assert.strictEqual(tc.frames, 0, 'Frames are incorrect');
       assert.strictEqual(29.97, tc.frameRate, 'Frame rate is incorrect');
     });
 
-    it('new Timecode() accepts a string', () => {
+    it('new Timecode() accepts a string in the format 00:00:00:00', () => {
       const tc = new Timecode('01:00:00:00');
 
-      assert.strictEqual(1, tc.hours, 'Hours are incorrect');
-      assert.strictEqual(0, tc.minutes, 'Minutes are incorrect');
-      assert.strictEqual(0, tc.seconds, 'Seconds are incorrect');
-      assert.strictEqual(0, tc.frames, 'Frames are incorrect');
+      assert.strictEqual(tc.hours, 1, 'Hours are incorrect');
+      assert.strictEqual(tc.minutes, 0, 'Minutes are incorrect');
+      assert.strictEqual(tc.seconds, 0, 'Seconds are incorrect');
+      assert.strictEqual(tc.frames, 0, 'Frames are incorrect');
+    });
+
+    it('new Timecode() accepts a string in the format 00:00:00.000', () => {
+      const tc = new Timecode('00:00:21.24');
+
+      assert.strictEqual(tc.hours, 0, 'Hours are incorrect');
+      assert.strictEqual(tc.minutes, 0, 'Minutes are incorrect');
+      assert.strictEqual(tc.seconds, 21, 'Seconds are incorrect');
+      assert.strictEqual(tc.frames, 7, 'Frames are incorrect');
+    });
+
+    it('new Timecode() accepts a string in the format 00:00:00', () => {
+      const tc = new Timecode('00:00:28');
+
+      assert.strictEqual(tc.hours, 0, 'Hours are incorrect');
+      assert.strictEqual(tc.minutes, 0, 'Minutes are incorrect');
+      assert.strictEqual(tc.seconds, 28, 'Seconds are incorrect');
+      assert.strictEqual(tc.frames, 0, 'Frames are incorrect');
     });
 
     it('new Timecode() accepts a Number', () => {
       const tc = new Timecode(1633998);
 
-      assert.strictEqual(1633998, tc.frameCount(), 'this.frameCount() returns incorrect frame count');
+      assert.strictEqual(tc.frameCount(), 1633998, 'this.frameCount() returns incorrect frame count');
     });
 
     it('new Timecode() accepts an object containing { hours, minutes, seconds, frames }', () => {
@@ -47,10 +65,10 @@ describe('Timecode', () => {
         hours: 1,
       });
 
-      assert.strictEqual(1, tc.hours);
-      assert.strictEqual(0, tc.minutes);
-      assert.strictEqual(0, tc.seconds);
-      assert.strictEqual(0, tc.frames);
+      assert.strictEqual(tc.hours, 1);
+      assert.strictEqual(tc.minutes, 0);
+      assert.strictEqual(tc.seconds, 0);
+      assert.strictEqual(tc.frames, 0);
     });
 
     it('new Timecode() accepts an object containing { minutes }', () => {
@@ -58,10 +76,10 @@ describe('Timecode', () => {
         minutes: 2,
       }, 30);
 
-      assert.strictEqual(0, tc.hours);
-      assert.strictEqual(2, tc.minutes);
-      assert.strictEqual(0, tc.seconds);
-      assert.strictEqual(0, tc.frames);
+      assert.strictEqual(tc.hours, 0);
+      assert.strictEqual(tc.minutes, 2);
+      assert.strictEqual(tc.seconds, 0);
+      assert.strictEqual(tc.frames, 0);
     });
 
     it('new Timecode() accepts an object containing { seconds }', () => {
@@ -69,10 +87,10 @@ describe('Timecode', () => {
         seconds: 3,
       });
 
-      assert.strictEqual(0, tc.hours);
-      assert.strictEqual(0, tc.minutes);
-      assert.strictEqual(3, tc.seconds);
-      assert.strictEqual(0, tc.frames);
+      assert.strictEqual(tc.hours, 0);
+      assert.strictEqual(tc.minutes, 0);
+      assert.strictEqual(tc.seconds, 3);
+      assert.strictEqual(tc.frames, 0);
     });
 
     it('new Timecode() accepts an object containing { frames }', () => {
@@ -80,10 +98,10 @@ describe('Timecode', () => {
         frames: 4,
       }, 29.97);
 
-      assert.strictEqual(0, tc.hours);
-      assert.strictEqual(0, tc.minutes);
-      assert.strictEqual(0, tc.seconds);
-      assert.strictEqual(4, tc.frames);
+      assert.strictEqual(tc.hours, 0);
+      assert.strictEqual(tc.minutes, 0);
+      assert.strictEqual(tc.seconds, 0);
+      assert.strictEqual(tc.frames, 4);
     });
 
     it('new Timecode() accepts an object containing { frameRate }', () => {
@@ -91,21 +109,21 @@ describe('Timecode', () => {
         frames: 4,
       }, 24);
 
-      assert.strictEqual(0, tc.hours);
-      assert.strictEqual(0, tc.minutes);
-      assert.strictEqual(0, tc.seconds);
-      assert.strictEqual(4, tc.frames);
-      assert.strictEqual(24, tc.frameRate);
+      assert.strictEqual(tc.hours, 0);
+      assert.strictEqual(tc.minutes, 0);
+      assert.strictEqual(tc.seconds, 0);
+      assert.strictEqual(tc.frames, 4);
+      assert.strictEqual(tc.frameRate, 24);
     });
 
     it('new Timecode() accepts a Date object', () => {
       const date = new Date(0, 0, 0, 0, 8, 30, 200);
       const tc = new Timecode(date, 29.97);
 
-      assert.strictEqual(0, tc.hours);
-      assert.strictEqual(8, tc.minutes);
-      assert.strictEqual(30, tc.seconds);
-      assert.strictEqual(6, tc.frames);
+      assert.strictEqual(tc.hours, 0);
+      assert.strictEqual(tc.minutes, 8);
+      assert.strictEqual(tc.seconds, 30);
+      assert.strictEqual(tc.frames, 6);
     });
 
     it('new Timecode() deep copies another Timecode object', () => {
@@ -125,10 +143,10 @@ describe('Timecode', () => {
     it('new Timecode() resets hours over 24 from 0', () => {
       const tc = new Timecode('24:00:00:00', 30);
 
-      assert.strictEqual(0, tc.hours);
-      assert.strictEqual(0, tc.minutes);
-      assert.strictEqual(0, tc.seconds);
-      assert.strictEqual(0, tc.frames);
+      assert.strictEqual(tc.hours, 0);
+      assert.strictEqual(tc.minutes, 0);
+      assert.strictEqual(tc.seconds, 0);
+      assert.strictEqual(tc.frames, 0);
     });
 
     it('new Timecode() adds 2 frames to a nonexistent drop-frame timecode argument', () => {
@@ -145,10 +163,10 @@ describe('Timecode', () => {
     it ('new Timcode() doesn\'t increment for drop-frame before all fields are set', () => {
       const tc = new Timecode('01:01:57:00');
 
-      assert.strictEqual(1, tc.hours);
-      assert.strictEqual(1, tc.minutes);
-      assert.strictEqual(57, tc.seconds);
-      assert.strictEqual(0, tc.frames);
+      assert.strictEqual(tc.hours, 1);
+      assert.strictEqual(tc.minutes, 1);
+      assert.strictEqual(tc.seconds, 57);
+      assert.strictEqual(tc.frames, 0);
     });
   });
 
@@ -339,14 +357,14 @@ describe('Timecode', () => {
       const tc = new Timecode();
       tc.setSeconds(15);
 
-      assert.strictEqual(15, tc.seconds);
+      assert.strictEqual(tc.seconds, 15);
     });
 
     it('setSeconds() accepts a string', () => {
       const tc = new Timecode();
       tc.setSeconds('15');
 
-      assert.strictEqual(15, tc.seconds);
+      assert.strictEqual(tc.seconds, 15);
     });
 
     it('setSeconds() rolls seconds over 59 into minutes', () => {
@@ -615,10 +633,10 @@ describe('Timecode', () => {
       assert.strictEqual(tc1 === tc2, false);
 
       assert.strictEqual(tc1.frameRate, 23.98);
-      assert.strictEqual(1, tc1.hours, 'Source hours were mutated');
-      assert.strictEqual(7, tc1.minutes, 'Source Minutes were mutated');
-      assert.strictEqual(10, tc1.seconds, 'Source Seconds were mutated');
-      assert.strictEqual(16, tc1.frames, 'Source Frames were mutated');
+      assert.strictEqual(tc1.hours, 1, 'Source hours were mutated');
+      assert.strictEqual(tc1.minutes, 7, 'Source Minutes were mutated');
+      assert.strictEqual(tc1.seconds, 10, 'Source Seconds were mutated');
+      assert.strictEqual(tc1.frames, 16, 'Source Frames were mutated');
     });
 
     it('converts 01:07:10:16 at 23.98 to 01:07:11;04 at 29.97', () => {
@@ -626,10 +644,10 @@ describe('Timecode', () => {
       const tc2 = tc1.pulldown(29.97, '01:00:00:00');
 
       assert.strictEqual(tc2.frameRate, 29.97);
-      assert.strictEqual(1, tc2.hours, 'Hours are incorrect');
-      assert.strictEqual(7, tc2.minutes, 'Minutes are incorrect');
-      assert.strictEqual(11, tc2.seconds, 'Seconds are incorrect');
-      assert.strictEqual(4, tc2.frames, 'Frames are incorrect');
+      assert.strictEqual(tc2.hours, 1, 'Hours are incorrect');
+      assert.strictEqual(tc2.minutes, 7, 'Minutes are incorrect');
+      assert.strictEqual(tc2.seconds, 11, 'Seconds are incorrect');
+      assert.strictEqual(tc2.frames, 4, 'Frames are incorrect');
     });
 
     it('converts 00:42:27:11 at 23.98 to 00:42:30:00 at 29.97', () => {
@@ -637,10 +655,10 @@ describe('Timecode', () => {
       const tc2 = tc1.pulldown(29.97);
 
       assert.strictEqual(tc2.frameRate, 29.97);
-      assert.strictEqual(0, tc2.hours, 'Hours are incorrect');
-      assert.strictEqual(42, tc2.minutes, 'Minutes are incorrect');
-      assert.strictEqual(30, tc2.seconds, 'Seconds are incorrect');
-      assert.strictEqual(0, tc2.frames, 'Frames are incorrect');
+      assert.strictEqual(tc2.hours, 0, 'Hours are incorrect');
+      assert.strictEqual(tc2.minutes, 42, 'Minutes are incorrect');
+      assert.strictEqual(tc2.seconds, 30, 'Seconds are incorrect');
+      assert.strictEqual(tc2.frames, 0, 'Frames are incorrect');
     });
 
     it('returns the same timecode as the input if it also matches the base', () => {
@@ -648,10 +666,10 @@ describe('Timecode', () => {
       const tc2 = tc1.pulldown(29.97, '02:04:56:12');
 
       assert.strictEqual(tc2.frameRate, 29.97);
-      assert.strictEqual(2, tc2.hours, 'Hours are incorrect');
-      assert.strictEqual(4, tc2.minutes, 'Minutes are incorrect');
-      assert.strictEqual(56, tc2.seconds, 'Seconds are incorrect');
-      assert.strictEqual(12, tc2.frames, 'Frames are incorrect');
+      assert.strictEqual(tc2.hours, 2, 'Hours are incorrect');
+      assert.strictEqual(tc2.minutes, 4, 'Minutes are incorrect');
+      assert.strictEqual(tc2.seconds, 56, 'Seconds are incorrect');
+      assert.strictEqual(tc2.frames, 12, 'Frames are incorrect');
     });
   });
 });

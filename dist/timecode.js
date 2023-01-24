@@ -1,4 +1,5 @@
-var TimecodeRegex = /(\d{1,2})\D(\d{1,2})\D(\d{1,2})\D(\d{1,2})/;
+var TimeStampRegex = /(\d{1,2}):(\d{1,2}):(\d{1,2})(?:[.,](\d{1,3}))?/;
+var TimecodeRegex = /(\d{1,2})[:;](\d{1,2})[:;](\d{1,2})[:;](\d{1,2})/;
 var SecondsInOneMinute = 60;
 var MinutesInOneHour = 60;
 var HoursInOneDay = 24;
@@ -57,6 +58,21 @@ var Timecode = (function () {
                 frames: frames,
             });
         }
+        matches = TimeStampRegex.exec(input);
+        if (matches && matches.length >= 4) {
+            var hh = matches[1], mm = matches[2], ss = matches[3], ms = matches[4];
+            var msDefault = ms || 0;
+            var hours = parseInt(hh, 10);
+            var minutes = parseInt(mm, 10);
+            var seconds = parseInt(ss, 10);
+            var milliseconds = parseFloat("0.".concat(msDefault));
+            return this.setFieldsFromObject({
+                hours: hours,
+                minutes: minutes,
+                seconds: seconds,
+                frames: this.getFramesFromMilliseconds(milliseconds),
+            });
+        }
         throw new TypeError("Invalid timecode string ".concat(input));
     };
     Timecode.prototype.setFieldsFromObject = function (input) {
@@ -83,8 +99,15 @@ var Timecode = (function () {
             hours: date.getHours(),
             minutes: date.getMinutes(),
             seconds: date.getSeconds(),
-            frames: Math.trunc(date.getMilliseconds() / this.nominalFrameRate()),
+            frames: this.getFramesFromMilliseconds(date.getMilliseconds()),
         });
+    };
+    Timecode.prototype.getFramesFromMilliseconds = function (milliseconds) {
+        var fractionalSeconds = milliseconds;
+        while (fractionalSeconds > 1 || fractionalSeconds < -1) {
+            fractionalSeconds /= 10;
+        }
+        return Math.floor(fractionalSeconds * this.nominalFrameRate());
     };
     Timecode.prototype.valueOf = function () {
         return this.frameCount();
@@ -137,11 +160,16 @@ var Timecode = (function () {
         return this;
     };
     Timecode.prototype.setSeconds = function (seconds) {
-        this.seconds = Math.floor(seconds) % SecondsInOneMinute;
+        var secondsComponent = Math.floor(seconds);
+        var millisecondsComponent = seconds - secondsComponent;
+        this.seconds = Math.floor(secondsComponent) % SecondsInOneMinute;
         this.setMinutes(this.minutes + Math.trunc(seconds / SecondsInOneMinute));
         if (this.seconds < 0) {
             this.seconds += SecondsInOneMinute;
             this.setMinutes(this.minutes - 1);
+        }
+        if (millisecondsComponent !== 0) {
+            this.setFrames(this.getFramesFromMilliseconds(millisecondsComponent));
         }
         this.incrementIfDropFrame();
         return this;
