@@ -5,7 +5,7 @@
   "unpkg": "./dist/timecode.min.js",
   "types": "./dist/timecode.d.ts",
   "type": "module",
-  "version": "5.0.5",
+  "version": "5.0.6",
   "license": "MIT",
   "author": {
     "name": "Brad Cordeiro",
