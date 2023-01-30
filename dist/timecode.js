@@ -107,7 +107,7 @@ var Timecode = (function () {
         while (fractionalSeconds > 1 || fractionalSeconds < -1) {
             fractionalSeconds /= 10;
         }
-        return Math.floor(fractionalSeconds * this.nominalFrameRate());
+        return Math.trunc(fractionalSeconds * this.nominalFrameRate());
     };
     Timecode.prototype.valueOf = function () {
         return this.frameCount();
@@ -143,14 +143,14 @@ var Timecode = (function () {
         };
     };
     Timecode.prototype.setHours = function (hours) {
-        this.hours = Math.floor(hours) % HoursInOneDay;
+        this.hours = Math.trunc(hours) % HoursInOneDay;
         while (this.hours < 0)
             this.hours += HoursInOneDay;
         this.incrementIfDropFrame();
         return this;
     };
     Timecode.prototype.setMinutes = function (minutes) {
-        this.minutes = Math.floor(minutes) % MinutesInOneHour;
+        this.minutes = Math.trunc(minutes) % MinutesInOneHour;
         this.setHours(this.hours + Math.trunc(minutes / MinutesInOneHour));
         if (this.minutes < 0) {
             this.minutes += MinutesInOneHour;
@@ -160,9 +160,9 @@ var Timecode = (function () {
         return this;
     };
     Timecode.prototype.setSeconds = function (seconds) {
-        var secondsComponent = Math.floor(seconds);
+        var secondsComponent = Math.trunc(seconds);
         var millisecondsComponent = seconds - secondsComponent;
-        this.seconds = Math.floor(secondsComponent) % SecondsInOneMinute;
+        this.seconds = Math.trunc(secondsComponent) % SecondsInOneMinute;
         this.setMinutes(this.minutes + Math.trunc(seconds / SecondsInOneMinute));
         if (this.seconds < 0) {
             this.seconds += SecondsInOneMinute;
@@ -178,7 +178,7 @@ var Timecode = (function () {
         if (frames === undefined)
             return this;
         var nominalFrameRate = this.nominalFrameRate();
-        this.frames = Math.floor(frames) % nominalFrameRate;
+        this.frames = Math.trunc(frames) % nominalFrameRate;
         this.setSeconds(this.seconds + Math.trunc(frames / nominalFrameRate));
         if (this.frames < 0) {
             this.frames += this.nominalFrameRate();
