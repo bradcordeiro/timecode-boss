@@ -60,6 +60,21 @@ describe('Timecode', () => {
       assert.strictEqual(tc.frames, 4, 'Frames field');
     });
 
+    it('new Timecode() accepts an object containing { hours: 0, minutes: 0, seconds: 0, frames: 0 }', () => {
+      const tc = new Timecode({
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+        frames: 0,
+        frameRate: 29.97
+      }, 29.97);
+
+      assert.strictEqual(tc.hours, 0, 'Hours field');
+      assert.strictEqual(tc.minutes, 0, 'Minutes field');
+      assert.strictEqual(tc.seconds, 0, 'Seconds field');
+      assert.strictEqual(tc.frames, 0, 'Frames field');
+    });
+
     it('new Timecode() accepts an object containing { hours }', () => {
       const tc = new Timecode({
         hours: 1,
