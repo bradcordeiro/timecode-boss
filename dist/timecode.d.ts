@@ -5,9 +5,12 @@ export type TimecodeAttributes = {
     frames?: number;
     frameRate?: number;
 };
-interface Timecode extends Required<TimecodeAttributes> {
-}
-declare class Timecode {
+export default class Timecode {
+    hours: number;
+    minutes: number;
+    seconds: number;
+    frames: number;
+    frameRate: number;
     constructor(timecode: number | string | TimecodeAttributes | Date, frameRate?: number);
     static isValidTimecodeString(str: string): boolean;
     private setFieldsFromFrameCount;
@@ -43,4 +46,3 @@ declare class Timecode {
     pulldown(frameRate: number, start?: number): Timecode;
     pullup(frameRate: number, start?: number): Timecode;
 }
-export default Timecode;
