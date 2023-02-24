@@ -1,3 +1,4 @@
+/* eslint-env mocha */
 import assert from 'assert';
 import Timecode from '../dist/timecode.js';
 
@@ -66,7 +67,7 @@ describe('Timecode', () => {
         minutes: 0,
         seconds: 0,
         frames: 0,
-        frameRate: 29.97
+        frameRate: 29.97,
       }, 29.97);
 
       assert.strictEqual(tc.hours, 0, 'Hours field');
@@ -175,7 +176,7 @@ describe('Timecode', () => {
       assert.throws(() => new Timecode('safds'), TypeError);
     });
 
-    it ('new Timcode() doesn\'t increment for drop-frame before all fields are set', () => {
+    it('new Timcode() doesn\'t increment for drop-frame before all fields are set', () => {
       const tc = new Timecode('01:01:57:00');
 
       assert.strictEqual(tc.hours, 1);
@@ -410,7 +411,6 @@ describe('Timecode', () => {
       assert.strictEqual(tc.frames, 25, 'Frames were calculated incorrectly');
     });
 
-
     it('setSeconds() truncates a fractional second', () => {
       const tc = new Timecode('01:20:30:25', 30);
       tc.setMinutes(40.2);
@@ -420,7 +420,7 @@ describe('Timecode', () => {
       assert.strictEqual(tc.seconds, 30, 'Seconds were calculated incorrectly');
       assert.strictEqual(tc.frames, 25, 'Frames were calculated incorrectly');
     });
-    
+
     it('setFrames truncates a fractional frame', () => {
       const tc = new Timecode('01:20:30:25', 30);
       tc.setFrames(28.7);

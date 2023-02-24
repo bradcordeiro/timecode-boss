@@ -4,8 +4,7 @@
   "main": "./dist/timecode.js",
   "unpkg": "./dist/timecode.min.js",
   "types": "./dist/timecode.d.ts",
-  "type": "module",
-  "version": "5.0.7",
+  "version": "6.0.0",
   "license": "MIT",
   "author": {
     "name": "Brad Cordeiro",
@@ -21,11 +20,13 @@
     "email": "brad.cordeiro@gmail.com"
   },
   "scripts": {
-    "build": "tsc && cat ./dist/timecode.js | uglifyjs > ./dist/timecode.min.js",
-    "test": "mocha timecode/timecode.test.js",
+    "build": "rollup --config rollup.config.mjs",
+    "test": "mocha timecode/timecode.test.mjs",
     "test-coverage": "nyc mocha timecode/timecode.test.js"
   },
   "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.0",
+    "@rollup/plugin-typescript": "^11.0.0",
     "@types/node": "^17.0.18",
     "@typescript-eslint/eslint-plugin": "^5.12.0",
     "@typescript-eslint/parser": "^5.12.0",
@@ -34,9 +35,9 @@
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-airbnb-typescript": "^16.1.0",
     "eslint-plugin-import": "^2.25.4",
-    "mocha": "^8.3.2",
+    "mocha": "^10.2.0",
     "nyc": "^15.1.0",
-    "typescript": "^4.5.5",
-    "uglify-es": "^3.3.9"
+    "rollup": "^3.17.2",
+    "typescript": "^4.9.5"
   }
 }
