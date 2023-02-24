@@ -13,7 +13,7 @@ const MinutesInOneHour = 60;
 const HoursInOneDay = 24;
 
 /** Class representing a timecode. */
-export default class Timecode {
+export default class Timecode implements TimecodeAttributes {
   hours: number;
 
   minutes: number;
