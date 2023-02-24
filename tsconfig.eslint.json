@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.json",
+  "files": ["./timecode/timecode.ts", "./timecode/timecode.test.mjs", "rollup.config.mjs"],
+}
