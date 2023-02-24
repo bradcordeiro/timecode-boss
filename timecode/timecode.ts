@@ -12,9 +12,18 @@ const SecondsInOneMinute = 60;
 const MinutesInOneHour = 60;
 const HoursInOneDay = 24;
 
-interface Timecode extends Required<TimecodeAttributes> {}
 /** Class representing a timecode. */
-class Timecode {
+export default class Timecode {
+  hours: number;
+
+  minutes: number;
+
+  seconds: number;
+
+  frames: number;
+
+  frameRate: number;
+
   constructor(timecode: number | string | TimecodeAttributes | Date, frameRate = 29.97) {
     this.hours = 0;
     this.minutes = 0;
@@ -424,5 +433,3 @@ class Timecode {
     return this.pulldown(frameRate, start);
   }
 }
-
-export default Timecode;
