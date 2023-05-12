@@ -114,6 +114,51 @@
             }
             return Math.trunc(fractionalSeconds * this.nominalFrameRate());
         }
+        framesPerHour() {
+            return this.framesPer10Minute() * 6;
+        }
+        framesPer10Minute() {
+            return (this.framesPerMinute() * 10) + this.framesToDrop();
+        }
+        framesPerMinute() {
+            return (60 * this.nominalFrameRate()) - this.framesToDrop();
+        }
+        milliseconds() {
+            return this.frames / this.nominalFrameRate();
+        }
+        framesToDrop() {
+            return this.isDropFrame() ? this.nominalFrameRate() / 15 : 0;
+        }
+        incrementIfDropFrame() {
+            if (this.isDropFrame() && this.frames < 2 && this.seconds === 0 && this.minutes % 10 !== 0) {
+                this.frames += 2;
+            }
+        }
+        separator() {
+            return this.isDropFrame() ? ';' : ':';
+        }
+        framesInHoursField() {
+            return this.hours * this.framesPerHour();
+        }
+        framesInMinutesField() {
+            return ((Math.trunc(this.minutes / 10) * this.framesPer10Minute())
+                + ((this.minutes % 10) * this.framesPerMinute()));
+        }
+        framesInSecondsField() {
+            return this.seconds * this.nominalFrameRate();
+        }
+        static exactFrameRate(frameRate) {
+            if (frameRate > 59 && frameRate < 60) {
+                return 60000 / 1001;
+            }
+            if (frameRate > 29 && frameRate < 30) {
+                return 30000 / 1001;
+            }
+            if (frameRate > 23 && frameRate < 24) {
+                return 24000 / 1001;
+            }
+            return frameRate;
+        }
         valueOf() {
             return this.frameCount();
         }
@@ -194,18 +239,6 @@
         nominalFrameRate() {
             return Math.round(this.frameRate);
         }
-        static exactFrameRate(frameRate) {
-            if (frameRate > 59 && frameRate < 60) {
-                return 60000 / 1001;
-            }
-            if (frameRate > 29 && frameRate < 30) {
-                return 30000 / 1001;
-            }
-            if (frameRate > 23 && frameRate < 24) {
-                return 24000 / 1001;
-            }
-            return frameRate;
-        }
         frameCount() {
             return this.framesInHoursField()
                 + this.framesInMinutesField()
@@ -215,45 +248,12 @@
         fractionalSeconds() {
             return this.seconds + this.milliseconds();
         }
-        framesPerHour() {
-            return this.framesPer10Minute() * 6;
-        }
-        framesPer10Minute() {
-            return (this.framesPerMinute() * 10) + this.framesToDrop();
-        }
-        framesPerMinute() {
-            return (60 * this.nominalFrameRate()) - this.framesToDrop();
-        }
-        milliseconds() {
-            return this.frames / this.nominalFrameRate();
-        }
-        framesToDrop() {
-            return this.isDropFrame() ? this.nominalFrameRate() / 15 : 0;
-        }
         isDropFrame() {
             if (this.frameRate > 29 && this.frameRate < 30)
                 return true;
             if (this.frameRate > 59 && this.frameRate < 60)
                 return true;
             return false;
-        }
-        incrementIfDropFrame() {
-            if (this.isDropFrame() && this.frames < 2 && this.seconds === 0 && this.minutes % 10 !== 0) {
-                this.frames += 2;
-            }
-        }
-        separator() {
-            return this.isDropFrame() ? ';' : ':';
-        }
-        framesInHoursField() {
-            return this.hours * this.framesPerHour();
-        }
-        framesInMinutesField() {
-            return ((Math.trunc(this.minutes / 10) * this.framesPer10Minute())
-                + ((this.minutes % 10) * this.framesPerMinute()));
-        }
-        framesInSecondsField() {
-            return this.seconds * this.nominalFrameRate();
         }
         add(addend) {
             const tc = new Timecode(this);

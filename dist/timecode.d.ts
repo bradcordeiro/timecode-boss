@@ -5,7 +5,7 @@ export type TimecodeAttributes = {
     frames?: number;
     frameRate?: number;
 };
-export default class Timecode {
+export default class Timecode implements TimecodeAttributes {
     hours: number;
     minutes: number;
     seconds: number;
@@ -18,6 +18,17 @@ export default class Timecode {
     private setFieldsFromObject;
     private setFieldsFromDate;
     private getFramesFromMilliseconds;
+    private framesPerHour;
+    private framesPer10Minute;
+    private framesPerMinute;
+    private milliseconds;
+    private framesToDrop;
+    private incrementIfDropFrame;
+    private separator;
+    private framesInHoursField;
+    private framesInMinutesField;
+    private framesInSecondsField;
+    static exactFrameRate(frameRate: number): number;
     valueOf(): number;
     toString(): string;
     toSRTString(realTime?: boolean): string;
@@ -27,20 +38,9 @@ export default class Timecode {
     setSeconds(seconds: number): this;
     setFrames(frames: number): this;
     nominalFrameRate(): number;
-    static exactFrameRate(frameRate: number): number;
     frameCount(): number;
     fractionalSeconds(): number;
-    private framesPerHour;
-    private framesPer10Minute;
-    private framesPerMinute;
-    private milliseconds;
-    private framesToDrop;
     isDropFrame(): boolean;
-    private incrementIfDropFrame;
-    private separator;
-    private framesInHoursField;
-    private framesInMinutesField;
-    private framesInSecondsField;
     add(addend: number | string | TimecodeAttributes | Date): Timecode;
     subtract(subtrahend: number | string | TimecodeAttributes | Date): Timecode;
     pulldown(frameRate: number, start?: number): Timecode;

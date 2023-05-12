@@ -154,6 +154,74 @@ export default class Timecode implements TimecodeAttributes {
     return Math.trunc(fractionalSeconds * this.nominalFrameRate());
   }
 
+  private framesPerHour() : number {
+    return this.framesPer10Minute() * 6;
+  }
+
+  private framesPer10Minute() {
+    return (this.framesPerMinute() * 10) + this.framesToDrop();
+  }
+
+  private framesPerMinute() {
+    return (60 * this.nominalFrameRate()) - this.framesToDrop();
+  }
+
+  private milliseconds() {
+    return this.frames / this.nominalFrameRate();
+  }
+
+  private framesToDrop() {
+    // Dropcount for 29.97 is 2, for 59.94 is 4
+    return this.isDropFrame() ? this.nominalFrameRate() / 15 : 0;
+  }
+
+  private incrementIfDropFrame() {
+    // Drop frame skips frame 00 and frame 01 on every even minute but not every tenth minute
+    if (this.isDropFrame() && this.frames < 2 && this.seconds === 0 && this.minutes % 10 !== 0) {
+      this.frames += 2;
+    }
+  }
+
+  private separator() {
+    return this.isDropFrame() ? ';' : ':';
+  }
+
+  private framesInHoursField() {
+    return this.hours * this.framesPerHour();
+  }
+
+  private framesInMinutesField() {
+    return (
+      (Math.trunc(this.minutes / 10) * this.framesPer10Minute())
+        + ((this.minutes % 10) * this.framesPerMinute())
+    );
+  }
+
+  private framesInSecondsField() {
+    return this.seconds * this.nominalFrameRate();
+  }
+
+  /**
+   * @static
+   * @param {number} frameRate
+   * @returns An exact framerate for framerates which are not integers
+   */
+  static exactFrameRate(frameRate: number) : number {
+    if (frameRate > 59 && frameRate < 60) {
+      return 60000 / 1001; // 59.94
+    }
+
+    if (frameRate > 29 && frameRate < 30) {
+      return 30000 / 1001; // 29.97
+    }
+
+    if (frameRate > 23 && frameRate < 24) {
+      return 24000 / 1001; // 23.98
+    }
+
+    return frameRate;
+  }
+
   /** Overrides the valueOf() method inherited from Object that gets an object's primitive value */
   valueOf() : number {
     return this.frameCount();
@@ -284,27 +352,6 @@ export default class Timecode implements TimecodeAttributes {
   }
 
   /**
-   * @static
-   * @param {number} frameRate
-   * @returns An exact framerate for framerates which are not integers
-   */
-  static exactFrameRate(frameRate: number) : number {
-    if (frameRate > 59 && frameRate < 60) {
-      return 60000 / 1001; // 59.94
-    }
-
-    if (frameRate > 29 && frameRate < 30) {
-      return 30000 / 1001; // 29.97
-    }
-
-    if (frameRate > 23 && frameRate < 24) {
-      return 24000 / 1001; // 23.98
-    }
-
-    return frameRate;
-  }
-
-  /**
    * the total number of frames that this Timecode represents
    */
   frameCount() : number {
@@ -318,27 +365,6 @@ export default class Timecode implements TimecodeAttributes {
     return this.seconds + this.milliseconds();
   }
 
-  private framesPerHour() : number {
-    return this.framesPer10Minute() * 6;
-  }
-
-  private framesPer10Minute() {
-    return (this.framesPerMinute() * 10) + this.framesToDrop();
-  }
-
-  private framesPerMinute() {
-    return (60 * this.nominalFrameRate()) - this.framesToDrop();
-  }
-
-  private milliseconds() {
-    return this.frames / this.nominalFrameRate();
-  }
-
-  private framesToDrop() {
-    // Dropcount for 29.97 is 2, for 59.94 is 4
-    return this.isDropFrame() ? this.nominalFrameRate() / 15 : 0;
-  }
-
   /** Returns true if using drop-frame time */
   isDropFrame() {
     // 29.97 or 59.94  per second
@@ -346,32 +372,6 @@ export default class Timecode implements TimecodeAttributes {
     if (this.frameRate > 59 && this.frameRate < 60) return true;
 
     return false;
-  }
-
-  private incrementIfDropFrame() {
-    // Drop frame skips frame 00 and frame 01 on every even minute but not every tenth minute
-    if (this.isDropFrame() && this.frames < 2 && this.seconds === 0 && this.minutes % 10 !== 0) {
-      this.frames += 2;
-    }
-  }
-
-  private separator() {
-    return this.isDropFrame() ? ';' : ':';
-  }
-
-  private framesInHoursField() {
-    return this.hours * this.framesPerHour();
-  }
-
-  private framesInMinutesField() {
-    return (
-      (Math.trunc(this.minutes / 10) * this.framesPer10Minute())
-        + ((this.minutes % 10) * this.framesPerMinute())
-    );
-  }
-
-  private framesInSecondsField() {
-    return this.seconds * this.nominalFrameRate();
   }
 
   add(addend: number | string | TimecodeAttributes | Date) : Timecode {
