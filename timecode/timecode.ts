@@ -45,10 +45,6 @@ export default class Timecode implements TimecodeAttributes {
     }
   }
 
-  static isValidTimecodeString(str: string) : boolean {
-    return TimecodeRegex.test(str);
-  }
-
   private setFieldsFromFrameCount(input: number) : void {
     // We'll populate the hours, minutes, seconds, and frame fields by finding
     // how many frames will fill the hours, subtracting that from the total, and using
@@ -201,16 +197,13 @@ export default class Timecode implements TimecodeAttributes {
     return this.seconds * this.nominalFrameRate();
   }
 
-  private compareFields(comp: Timecode) : number[] {
-    return [
-      this.hours - comp.hours,
-      this.minutes - comp.minutes,
-      this.seconds - comp.seconds,
-      this.frames - comp.frames,
-    ];
+  /** Returns true if the string can be parsed into a timecode */
+  static isValidTimecodeString(str: string) : boolean {
+    return TimecodeRegex.test(str);
   }
 
-  static compare(a: Timecode, b: Timecode) : number {
+  /* Compares two timecodes. Signature matches the signature of JavaScript's Array.sort() compare function */
+  static compare(a: Timecode, b: Timecode) : -1 | 0 | 1 {
     if (a.hours > b.hours) return 1;
     if (a.hours < b.hours) return -1;
 
@@ -226,11 +219,7 @@ export default class Timecode implements TimecodeAttributes {
     return 0;
   }
 
-  /**
-   * @static
-   * @param {number} frameRate
-   * @returns An exact framerate for framerates which are not integers
-   */
+  /* Returns an exact framerate for non-integer framerates */
   static exactFrameRate(frameRate: number) : number {
     if (frameRate > 59 && frameRate < 60) {
       return 60000 / 1001; // 59.94

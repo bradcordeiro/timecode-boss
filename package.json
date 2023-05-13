@@ -4,7 +4,7 @@
   "main": "./dist/timecode.js",
   "unpkg": "./dist/timecode.min.js",
   "types": "./dist/timecode.d.ts",
-  "version": "6.0.1",
+  "version": "6.1.0",
   "license": "MIT",
   "author": {
     "name": "Brad Cordeiro",

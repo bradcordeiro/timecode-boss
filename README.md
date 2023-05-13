@@ -84,6 +84,14 @@ seconds   | Number | A number representing the seconds field
 frames    | Number | A number representing the frames field
 frameRate | Number | A Number representing the playback speed of the Timecode. Though any frame rate should work here, only common broadcast frame rates are tested (23.98, 24, 25, 29.97, 30, 50, 59.94, and 60).
 
+#### Static Methods
+
+| Method | Argument Type | Return Type | Description
+|--------|-------------- | ----------- | -----------
+| isValidTimecodeString(*str*)     | String | Boolean | Returns true if the string can be parsed into a Timecode
+| compare(*a*, *b*) | Timecode, Timecode | Number | Compare function matching the signature of Array.sort(). Returns -1 if a is before b, 1 if a is after b, ore 0 if they are equal
+| exactFrameRate(*frameRate*) | Number | Number | Returns the exact float frame rate used for a framerate between two integers
+
 #### Constructor
 
 | Method | Arguments
