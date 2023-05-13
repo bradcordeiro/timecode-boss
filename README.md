@@ -123,6 +123,17 @@ There are also setters for each individual field. The Timecode object is returne
 
 If an argument overflows a field, the next larger field will be incremented accordingly. For example, calling *setMinutes(72)* will set the minutes to 12, and increment the hours field by 1. Setting the hours above 24 will overflow the hours and they will be recalculated starting from 0.
 
+#### Comparisons
+
+| Method | Argument Type | Return Type
+|--------|-------------- | -----------
+| isBefore(*tc*)     | Timecode | Boolean
+| isAfter(*tc*) | Timecode | Boolean
+| isSame(*tc*) | Timecode | Boolean
+| isBetween(*tc*)   | Timecode | Boolean
+
+Compare *this* Timecode to another timecode passed as an argument.
+
 #### Arithmetic
 
 | Method | Argument Type | Return Type
