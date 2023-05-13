@@ -2,6 +2,8 @@
 import assert from 'assert';
 import Timecode from '../dist/timecode.js'; /* eslint-disable-line import/extensions */
 
+const frameRates = [23.98, 24, 25, 29.97, 30, 50, 59.94, 60];
+
 describe('Timecode', () => {
   describe('Constructor', () => {
     it('new Timecode() accepts no arguments', () => {
@@ -694,8 +696,6 @@ describe('Timecode', () => {
           so it's best skipped most of the time
       */
       it.skip('works for every possible timecode', () => {
-        const frameRates = [23.98, 24, 25, 29.97, 30, 50, 59.94, 60];
-
         for (let r = 0; r < frameRates.length; r += 1) {
           const nominalFrameRate = parseInt(frameRates[r], 10);
 
@@ -973,11 +973,79 @@ describe('Timecode', () => {
               const tc2 = new Timecode({ ...attributes, hours: i }, 29.97);
               const tc3 = new Timecode({ ...attributes, hours: j }, 29.97);
 
+              /* eslint-disable max-len */
               if (h > i && h < j) {
                 assert.strictEqual(tc1.isBetween(tc2, tc3), true, `${tc1.toString()} not between ${tc2.toString()} and ${tc3.toString()}`);
               } else {
                 assert.strictEqual(tc1.isBetween(tc2, tc3), false, `${tc1.toString()} between ${tc2.toString()} and ${tc3.toString()}`);
               }
+              /* eslint-enable max-len */
+            }
+          }
+        }
+      });
+
+      it('Accurate for a timecodes with a minutes difference', () => {
+        const attributes = { hours: 0, seconds: 0, frames: 0 };
+
+        for (let h = 0; h < 60; h += 1) {
+          for (let i = 0; i < 60; i += 1) {
+            for (let j = 0; j < 60; j += 1) {
+              const tc1 = new Timecode({ ...attributes, minutes: h }, 29.97);
+              const tc2 = new Timecode({ ...attributes, minutes: i }, 29.97);
+              const tc3 = new Timecode({ ...attributes, minutes: j }, 29.97);
+
+              /* eslint-disable max-len */
+              if (h > i && h < j) {
+                assert.strictEqual(tc1.isBetween(tc2, tc3), true, `${tc1.toString()} not between ${tc2.toString()} and ${tc3.toString()}`);
+              } else {
+                assert.strictEqual(tc1.isBetween(tc2, tc3), false, `${tc1.toString()} between ${tc2.toString()} and ${tc3.toString()}`);
+              }
+              /* eslint-enable max-len */
+            }
+          }
+        }
+      });
+
+      it('Accurate for a timecodes with a seconds difference', () => {
+        const attributes = { hours: 0, minutes: 0, frames: 0 };
+
+        for (let h = 0; h < 60; h += 1) {
+          for (let i = 0; i < 60; i += 1) {
+            for (let j = 0; j < 60; j += 1) {
+              const tc1 = new Timecode({ ...attributes, seconds: h }, 29.97);
+              const tc2 = new Timecode({ ...attributes, seconds: i }, 29.97);
+              const tc3 = new Timecode({ ...attributes, seconds: j }, 29.97);
+
+              /* eslint-disable max-len */
+              if (h > i && h < j) {
+                assert.strictEqual(tc1.isBetween(tc2, tc3), true, `${tc1.toString()} not between ${tc2.toString()} and ${tc3.toString()}`);
+              } else {
+                assert.strictEqual(tc1.isBetween(tc2, tc3), false, `${tc1.toString()} between ${tc2.toString()} and ${tc3.toString()}`);
+              }
+              /* eslint-enable max-len */
+            }
+          }
+        }
+      });
+
+      it('Accurate for a timecodes with a frames difference', () => {
+        const attributes = { hours: 0, minutes: 0, seconds: 0 };
+
+        for (let h = 0; h < 30; h += 1) {
+          for (let i = 0; i < 30; i += 1) {
+            for (let j = 0; j < 30; j += 1) {
+              const tc1 = new Timecode({ ...attributes, frames: h }, 29.97);
+              const tc2 = new Timecode({ ...attributes, frames: i }, 29.97);
+              const tc3 = new Timecode({ ...attributes, frames: j }, 29.97);
+
+              /* eslint-disable max-len */
+              if (h > i && h < j) {
+                assert.strictEqual(tc1.isBetween(tc2, tc3), true, `${tc1.toString()} not between ${tc2.toString()} and ${tc3.toString()}`);
+              } else {
+                assert.strictEqual(tc1.isBetween(tc2, tc3), false, `${tc1.toString()} between ${tc2.toString()} and ${tc3.toString()}`);
+              }
+              /* eslint-enable max-len */
             }
           }
         }
