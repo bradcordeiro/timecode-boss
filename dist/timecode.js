@@ -155,6 +155,25 @@
                 this.frames - comp.frames,
             ];
         }
+        static compare(a, b) {
+            if (a.hours > b.hours)
+                return 1;
+            if (a.hours < b.hours)
+                return -1;
+            if (a.minutes > b.minutes)
+                return 1;
+            if (a.minutes < b.minutes)
+                return -1;
+            if (a.seconds > b.seconds)
+                return 1;
+            if (a.seconds < b.seconds)
+                return -1;
+            if (a.frames > b.frames)
+                return 1;
+            if (a.frames < b.frames)
+                return -1;
+            return 0;
+        }
         static exactFrameRate(frameRate) {
             if (frameRate > 59 && frameRate < 60) {
                 return 60000 / 1001;
@@ -308,32 +327,13 @@
             return this.pulldown(frameRate, start);
         }
         isBefore(timecode) {
-            if (this.hours > timecode.hours)
-                return false;
-            if (this.hours < timecode.hours)
-                return true;
-            if (this.minutes > timecode.minutes)
-                return false;
-            if (this.minutes < timecode.minutes)
-                return true;
-            if (this.seconds > timecode.seconds)
-                return false;
-            if (this.seconds < timecode.seconds)
-                return true;
-            return this.frames < timecode.frames;
+            return Timecode.compare(this, timecode) === -1;
         }
         isSame(timecode) {
-            const [hours, minutes, seconds, frames] = this.compareFields(timecode);
-            if (hours !== 0)
-                return false;
-            if (minutes !== 0)
-                return false;
-            if (seconds !== 0)
-                return false;
-            return frames === 0;
+            return Timecode.compare(this, timecode) === 0;
         }
         isAfter(timecode) {
-            return !this.isBefore(timecode) && !this.isSame(timecode);
+            return Timecode.compare(this, timecode) === 1;
         }
         isBetween(earlyTimecode, laterTimecode) {
             return this.isAfter(earlyTimecode) && this.isBefore(laterTimecode);

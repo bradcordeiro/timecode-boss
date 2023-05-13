@@ -459,32 +459,15 @@ export default class Timecode implements TimecodeAttributes {
   }
 
   isBefore(timecode: Timecode) : boolean {
-    if (this.hours > timecode.hours) return false;
-    if (this.hours < timecode.hours) return true;
-
-    if (this.minutes > timecode.minutes) return false;
-    if (this.minutes < timecode.minutes) return true;
-
-    if (this.seconds > timecode.seconds) return false;
-    if (this.seconds < timecode.seconds) return true;
-
-    return this.frames < timecode.frames;
+    return Timecode.compare(this, timecode) === -1;
   }
 
   isSame(timecode: Timecode) : boolean {
-    const [hours, minutes, seconds, frames] = this.compareFields(timecode);
-
-    if (hours !== 0) return false;
-
-    if (minutes !== 0) return false;
-
-    if (seconds !== 0) return false;
-
-    return frames === 0;
+    return Timecode.compare(this, timecode) === 0;
   }
 
   isAfter(timecode: Timecode) : boolean {
-    return !this.isBefore(timecode) && !this.isSame(timecode);
+    return Timecode.compare(this, timecode) === 1;
   }
 
   isBetween(earlyTimecode: Timecode, laterTimecode: Timecode) {

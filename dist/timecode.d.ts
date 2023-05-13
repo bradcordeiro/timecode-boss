@@ -29,6 +29,7 @@ export default class Timecode implements TimecodeAttributes {
     private framesInMinutesField;
     private framesInSecondsField;
     private compareFields;
+    static compare(a: Timecode, b: Timecode): number;
     static exactFrameRate(frameRate: number): number;
     valueOf(): number;
     toString(): string;
