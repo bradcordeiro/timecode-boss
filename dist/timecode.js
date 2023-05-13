@@ -32,9 +32,6 @@
                 }
             }
         }
-        static isValidTimecodeString(str) {
-            return TimecodeRegex.test(str);
-        }
         setFieldsFromFrameCount(input) {
             let remainingFrames = input;
             this.setHours(Math.trunc(remainingFrames / this.framesPerHour()));
@@ -147,13 +144,8 @@
         framesInSecondsField() {
             return this.seconds * this.nominalFrameRate();
         }
-        compareFields(comp) {
-            return [
-                this.hours - comp.hours,
-                this.minutes - comp.minutes,
-                this.seconds - comp.seconds,
-                this.frames - comp.frames,
-            ];
+        static isValidTimecodeString(str) {
+            return TimecodeRegex.test(str);
         }
         static compare(a, b) {
             if (a.hours > b.hours)

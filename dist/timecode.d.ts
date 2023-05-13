@@ -12,7 +12,6 @@ export default class Timecode implements TimecodeAttributes {
     frames: number;
     frameRate: number;
     constructor(timecode: number | string | TimecodeAttributes | Date, frameRate?: number);
-    static isValidTimecodeString(str: string): boolean;
     private setFieldsFromFrameCount;
     private setFieldsFromString;
     private setFieldsFromObject;
@@ -28,8 +27,8 @@ export default class Timecode implements TimecodeAttributes {
     private framesInHoursField;
     private framesInMinutesField;
     private framesInSecondsField;
-    private compareFields;
-    static compare(a: Timecode, b: Timecode): number;
+    static isValidTimecodeString(str: string): boolean;
+    static compare(a: Timecode, b: Timecode): -1 | 0 | 1;
     static exactFrameRate(frameRate: number): number;
     valueOf(): number;
     toString(): string;

@@ -961,5 +961,27 @@ describe('Timecode', () => {
         }
       });
     });
+
+    describe('isBetween()', () => {
+      it('Accurate for a timecodes with an hours difference', () => {
+        const attributes = { minutes: 0, seconds: 0, frames: 0 };
+
+        for (let h = 0; h < 24; h += 1) {
+          for (let i = 0; i < 24; i += 1) {
+            for (let j = 0; j < 24; j += 1) {
+              const tc1 = new Timecode({ ...attributes, hours: h }, 29.97);
+              const tc2 = new Timecode({ ...attributes, hours: i }, 29.97);
+              const tc3 = new Timecode({ ...attributes, hours: j }, 29.97);
+
+              if (h > i && h < j) {
+                assert.strictEqual(tc1.isBetween(tc2, tc3), true, `${tc1.toString()} not between ${tc2.toString()} and ${tc3.toString()}`);
+              } else {
+                assert.strictEqual(tc1.isBetween(tc2, tc3), false, `${tc1.toString()} between ${tc2.toString()} and ${tc3.toString()}`);
+              }
+            }
+          }
+        }
+      });
+    });
   });
 });
