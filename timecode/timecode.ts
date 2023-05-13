@@ -201,6 +201,15 @@ export default class Timecode implements TimecodeAttributes {
     return this.seconds * this.nominalFrameRate();
   }
 
+  private compareFields(comp: Timecode) : number[] {
+    return [
+      this.hours - comp.hours,
+      this.minutes - comp.minutes,
+      this.seconds - comp.seconds,
+      this.frames - comp.frames,
+    ];
+  }
+
   /**
    * @static
    * @param {number} frameRate
@@ -431,5 +440,20 @@ export default class Timecode implements TimecodeAttributes {
 
   pullup(frameRate: number, start = 0) {
     return this.pulldown(frameRate, start);
+  }
+
+  isBefore(timecode: Timecode) : boolean {
+    const [hours, minutes, seconds, frames] = this.compareFields(timecode);
+
+    if (hours > 0) return false;
+    if (hours < 0) return true;
+
+    if (minutes > 0) return false;
+    if (minutes < 0) return true;
+
+    if (seconds > 0) return false;
+    if (seconds < 0) return true;
+
+    return frames > 0;
   }
 }

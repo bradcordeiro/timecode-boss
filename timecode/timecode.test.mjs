@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 import assert from 'assert';
-import Timecode from '../dist/timecode.js';
+import Timecode from '../dist/timecode.js'; /* eslint-disable-line import/extensions */
 
 describe('Timecode', () => {
   describe('Constructor', () => {
@@ -685,6 +685,73 @@ describe('Timecode', () => {
       assert.strictEqual(tc2.minutes, 4, 'Minutes are incorrect');
       assert.strictEqual(tc2.seconds, 56, 'Seconds are incorrect');
       assert.strictEqual(tc2.frames, 12, 'Frames are incorrect');
+    });
+  });
+
+  describe('Comparisons', () => {
+    describe('isBefore()', () => {
+      it('Returns true for a timecode one hour before argument', () => {
+        const tc1 = new Timecode('01:02:03:04');
+        const tc2 = new Timecode('02:01:01:01');
+
+        assert.strictEqual(tc1.isBefore(tc2), true);
+      });
+
+      it('Returns true for a timecode one minute before argument', () => {
+        const tc1 = new Timecode('01:00:03:04');
+        const tc2 = new Timecode('01:01:04:05');
+
+        assert.strictEqual(tc1.isBefore(tc2), true);
+      });
+
+      it('Returns true for a timecode one second before argument', () => {
+        const tc1 = new Timecode('01:00:02:05');
+        const tc2 = new Timecode('01:00:03:00');
+
+        assert.strictEqual(tc1.isBefore(tc2), true);
+      });
+
+      it('Returns true for a timecode one frame before argument', () => {
+        const tc1 = new Timecode('01:02:03:04');
+        const tc2 = new Timecode('01:02:03:03');
+
+        assert.strictEqual(tc1.isBefore(tc2), true);
+      });
+
+      it('Returns false for a timecode one hour after argument', () => {
+        const tc1 = new Timecode('02:00:00:00');
+        const tc2 = new Timecode('01:01:01:01');
+
+        assert.strictEqual(tc1.isBefore(tc2), false);
+      });
+
+      it('Returns false for a timecode one minute after argument', () => {
+        const tc1 = new Timecode('01:03:01:04');
+        const tc2 = new Timecode('01:02:03:05');
+
+        assert.strictEqual(tc1.isBefore(tc2), false);
+      });
+
+      it('Returns false for a timecode one second after argument', () => {
+        const tc1 = new Timecode('01:02:04:00');
+        const tc2 = new Timecode('01:02:03:05');
+
+        assert.strictEqual(tc1.isBefore(tc2), false);
+      });
+
+      it('Returns false for a timecode one frame after argument', () => {
+        const tc1 = new Timecode('01:02:03:04');
+        const tc2 = new Timecode('01:02:03:05');
+
+        assert.strictEqual(tc1.isBefore(tc2), false);
+      });
+
+      it('Returns false for a timecode identical to argument', () => {
+        const tc1 = new Timecode('01:02:03:04');
+        const tc2 = new Timecode('01:02:03:04');
+
+        assert.strictEqual(tc1.isBefore(tc2), false);
+      });
     });
   });
 });

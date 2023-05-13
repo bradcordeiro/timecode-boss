@@ -28,6 +28,7 @@ export default class Timecode implements TimecodeAttributes {
     private framesInHoursField;
     private framesInMinutesField;
     private framesInSecondsField;
+    private compareFields;
     static exactFrameRate(frameRate: number): number;
     valueOf(): number;
     toString(): string;
@@ -45,4 +46,5 @@ export default class Timecode implements TimecodeAttributes {
     subtract(subtrahend: number | string | TimecodeAttributes | Date): Timecode;
     pulldown(frameRate: number, start?: number): Timecode;
     pullup(frameRate: number, start?: number): Timecode;
+    isBefore(timecode: Timecode): boolean;
 }

@@ -147,6 +147,14 @@
         framesInSecondsField() {
             return this.seconds * this.nominalFrameRate();
         }
+        compareFields(comp) {
+            return [
+                this.hours - comp.hours,
+                this.minutes - comp.minutes,
+                this.seconds - comp.seconds,
+                this.frames - comp.frames,
+            ];
+        }
         static exactFrameRate(frameRate) {
             if (frameRate > 59 && frameRate < 60) {
                 return 60000 / 1001;
@@ -298,6 +306,22 @@
         }
         pullup(frameRate, start = 0) {
             return this.pulldown(frameRate, start);
+        }
+        isBefore(timecode) {
+            const [hours, minutes, seconds, frames] = this.compareFields(timecode);
+            if (hours > 0)
+                return false;
+            if (hours < 0)
+                return true;
+            if (minutes > 0)
+                return false;
+            if (minutes < 0)
+                return true;
+            if (seconds > 0)
+                return false;
+            if (seconds < 0)
+                return true;
+            return frames > 0;
         }
     }
 
