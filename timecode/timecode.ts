@@ -210,6 +210,22 @@ export default class Timecode implements TimecodeAttributes {
     ];
   }
 
+  static compare(a: Timecode, b: Timecode) : number {
+    if (a.hours > b.hours) return 1;
+    if (a.hours < b.hours) return -1;
+
+    if (a.minutes > b.minutes) return 1;
+    if (a.minutes < b.minutes) return -1;
+
+    if (a.seconds > b.seconds) return 1;
+    if (a.seconds < b.seconds) return -1;
+
+    if (a.frames > b.frames) return 1;
+    if (a.frames < b.frames) return -1;
+
+    return 0;
+  }
+
   /**
    * @static
    * @param {number} frameRate
@@ -443,17 +459,35 @@ export default class Timecode implements TimecodeAttributes {
   }
 
   isBefore(timecode: Timecode) : boolean {
+    if (this.hours > timecode.hours) return false;
+    if (this.hours < timecode.hours) return true;
+
+    if (this.minutes > timecode.minutes) return false;
+    if (this.minutes < timecode.minutes) return true;
+
+    if (this.seconds > timecode.seconds) return false;
+    if (this.seconds < timecode.seconds) return true;
+
+    return this.frames < timecode.frames;
+  }
+
+  isSame(timecode: Timecode) : boolean {
     const [hours, minutes, seconds, frames] = this.compareFields(timecode);
 
-    if (hours > 0) return false;
-    if (hours < 0) return true;
+    if (hours !== 0) return false;
 
-    if (minutes > 0) return false;
-    if (minutes < 0) return true;
+    if (minutes !== 0) return false;
 
-    if (seconds > 0) return false;
-    if (seconds < 0) return true;
+    if (seconds !== 0) return false;
 
-    return frames > 0;
+    return frames === 0;
+  }
+
+  isAfter(timecode: Timecode) : boolean {
+    return !this.isBefore(timecode) && !this.isSame(timecode);
+  }
+
+  isBetween(earlyTimecode: Timecode, laterTimecode: Timecode) {
+    return this.isAfter(earlyTimecode) && this.isBefore(laterTimecode);
   }
 }

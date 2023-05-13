@@ -690,67 +690,275 @@ describe('Timecode', () => {
 
   describe('Comparisons', () => {
     describe('isBefore()', () => {
-      it('Returns true for a timecode one hour before argument', () => {
-        const tc1 = new Timecode('01:02:03:04');
-        const tc2 = new Timecode('02:01:01:01');
+      /* This test will iterate through every timecode for every supported framerate
+          so it's best skipped most of the time
+      */
+      it.skip('works for every possible timecode', () => {
+        const frameRates = [23.98, 24, 25, 29.97, 30, 50, 59.94, 60];
 
-        assert.strictEqual(tc1.isBefore(tc2), true);
+        for (let r = 0; r < frameRates.length; r += 1) {
+          const nominalFrameRate = parseInt(frameRates[r], 10);
+
+          for (let h = 0; h < 24; h += 1) {
+            for (let m = 0; m < 60; m += 1) {
+              for (let s = 0; s < 60; s += 1) {
+                for (let f = 0; f < nominalFrameRate; f += 1) {
+                  for (let i = 0; i < 24; i += 1) {
+                    for (let n = 0; n < 60; n += 1) {
+                      for (let t = 0; t < 60; t += 1) {
+                        for (let g = 0; g < nominalFrameRate; g += 1) {
+                          const tc1 = new Timecode({
+                            hours: h,
+                            minutes: m,
+                            seconds: s,
+                            frames: f,
+                          }, frameRates[r]);
+
+                          const tc2 = new Timecode({
+                            hours: i,
+                            minutes: n,
+                            seconds: t,
+                            frames: g,
+                          }, frameRates[r]);
+
+                          /* eslint-disable max-len */
+                          if (h < i) {
+                            assert.strictEqual(tc1.isBefore(tc2), true, `${tc1.toString()} < ${tc2.toString()} failed on hours`);
+                          } else if (h > i) {
+                            assert.strictEqual(tc1.isBefore(tc2), false, `${tc1.toString()} >= ${tc2.toString()} failed on hours`);
+                          } else if (m < n) {
+                            assert.strictEqual(tc1.isBefore(tc2), true, `${tc1.toString()} < ${tc2.toString()} failed on minutes`);
+                          } else if (m > n) {
+                            assert.strictEqual(tc1.isBefore(tc2), false, `${tc1.toString()} >= ${tc2.toString()} failed on minutes`);
+                          } else if (s < t) {
+                            assert.strictEqual(tc1.isBefore(tc2), true, `${tc1.toString()} < ${tc2.toString()} failed on seconds`);
+                          } else if (s > t) {
+                            assert.strictEqual(tc1.isBefore(tc2), false, `${tc1.toString()} >= ${tc2.toString()} failed on seconds`);
+                          } else if (f < g) {
+                            assert.strictEqual(tc1.isBefore(tc2), true, `${tc1.toString()} < ${tc2.toString()} failed on frames`);
+                          } else if (f > g) {
+                            assert.strictEqual(tc1.isBefore(tc2), false, `${tc1.toString()} >= ${tc2.toString()} failed on frames`);
+                          } else {
+                            assert.strictEqual(tc1.isBefore(tc2), false, `${tc1.toString()} == ${tc2.toString()} failed on frames`);
+                          }
+                          /* eslint-enable max-len */
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       });
 
-      it('Returns true for a timecode one minute before argument', () => {
-        const tc1 = new Timecode('01:00:03:04');
-        const tc2 = new Timecode('01:01:04:05');
+      it('Accurate for a timecodes with an hours difference', () => {
+        const attributes = { minutes: 0, seconds: 0, frames: 0 };
 
-        assert.strictEqual(tc1.isBefore(tc2), true);
+        for (let h = 0; h < 24; h += 1) {
+          for (let i = 0; i < 24; i += 1) {
+            const tc1 = new Timecode({ ...attributes, hours: h }, 29.97);
+            const tc2 = new Timecode({ ...attributes, hours: i }, 29.97);
+
+            if (h < i) {
+              assert.strictEqual(tc1.isBefore(tc2), true);
+            } else {
+              assert.strictEqual(tc1.isBefore(tc2), false);
+            }
+          }
+        }
       });
 
-      it('Returns true for a timecode one second before argument', () => {
-        const tc1 = new Timecode('01:00:02:05');
-        const tc2 = new Timecode('01:00:03:00');
+      it('Accurate for a timecodes with a minute difference', () => {
+        const attributes = { hours: 0, seconds: 0, frames: 0 };
 
-        assert.strictEqual(tc1.isBefore(tc2), true);
+        for (let m = 0; m < 60; m += 1) {
+          for (let n = 0; n < 60; n += 1) {
+            const tc1 = new Timecode({ ...attributes, minutes: m }, 29.97);
+            const tc2 = new Timecode({ ...attributes, minutes: n }, 29.97);
+
+            if (m < n) {
+              assert.strictEqual(tc1.isBefore(tc2), true, `${tc1.toString()} < ${tc2.toString()} failed`);
+            } else {
+              assert.strictEqual(tc1.isBefore(tc2), false, `${tc1.toString()} !< ${tc2.toString()} failed`);
+            }
+          }
+        }
       });
 
-      it('Returns true for a timecode one frame before argument', () => {
-        const tc1 = new Timecode('01:02:03:04');
-        const tc2 = new Timecode('01:02:03:03');
+      it('Accurate for a timecodes with a seconds difference', () => {
+        const attributes = { hours: 0, minutes: 0, frames: 0 };
 
-        assert.strictEqual(tc1.isBefore(tc2), true);
+        for (let s = 0; s < 60; s += 1) {
+          for (let t = 0; t < 60; t += 1) {
+            const tc1 = new Timecode({ ...attributes, seconds: s }, 29.97);
+            const tc2 = new Timecode({ ...attributes, seconds: t }, 29.97);
+
+            if (s < t) {
+              assert.strictEqual(tc1.isBefore(tc2), true, `${tc1.toString()} < ${tc2.toString()} failed`);
+            } else {
+              assert.strictEqual(tc1.isBefore(tc2), false, `${tc1.toString()} !< ${tc2.toString()} failed`);
+            }
+          }
+        }
       });
 
-      it('Returns false for a timecode one hour after argument', () => {
-        const tc1 = new Timecode('02:00:00:00');
-        const tc2 = new Timecode('01:01:01:01');
+      it('Accurate for a timecodes with a frame difference', () => {
+        const attributes = { hours: 0, minutes: 0, seconds: 0 };
 
-        assert.strictEqual(tc1.isBefore(tc2), false);
+        for (let f = 0; f < 30; f += 1) {
+          for (let g = 0; g < 30; g += 1) {
+            const tc1 = new Timecode({ ...attributes, frames: f }, 29.97);
+            const tc2 = new Timecode({ ...attributes, frames: g }, 29.97);
+
+            if (f < g) {
+              assert.strictEqual(tc1.isBefore(tc2), true, `${tc1.toString()} < ${tc2.toString()} failed`);
+            } else {
+              assert.strictEqual(tc1.isBefore(tc2), false, `${tc1.toString()} !< ${tc2.toString()} failed`);
+            }
+          }
+        }
+      });
+    });
+
+    describe('isSame()', () => {
+      it('Accurate for a timecodes with an hours difference', () => {
+        const attributes = { minutes: 0, seconds: 0, frames: 0 };
+
+        for (let h = 0; h < 24; h += 1) {
+          for (let i = 0; i < 24; i += 1) {
+            const tc1 = new Timecode({ ...attributes, hours: h }, 29.97);
+            const tc2 = new Timecode({ ...attributes, hours: i }, 29.97);
+
+            if (h === i) {
+              assert.strictEqual(tc1.isSame(tc2), true);
+            } else {
+              assert.strictEqual(tc1.isSame(tc2), false);
+            }
+          }
+        }
       });
 
-      it('Returns false for a timecode one minute after argument', () => {
-        const tc1 = new Timecode('01:03:01:04');
-        const tc2 = new Timecode('01:02:03:05');
+      it('Accurate for a timecodes with a minute difference', () => {
+        const attributes = { hours: 0, seconds: 0, frames: 0 };
 
-        assert.strictEqual(tc1.isBefore(tc2), false);
+        for (let m = 0; m < 60; m += 1) {
+          for (let n = 0; n < 60; n += 1) {
+            const tc1 = new Timecode({ ...attributes, minutes: m }, 29.97);
+            const tc2 = new Timecode({ ...attributes, minutes: n }, 29.97);
+
+            if (m === n) {
+              assert.strictEqual(tc1.isSame(tc2), true, `${tc1.toString()} < ${tc2.toString()} failed`);
+            } else {
+              assert.strictEqual(tc1.isSame(tc2), false, `${tc1.toString()} !< ${tc2.toString()} failed`);
+            }
+          }
+        }
       });
 
-      it('Returns false for a timecode one second after argument', () => {
-        const tc1 = new Timecode('01:02:04:00');
-        const tc2 = new Timecode('01:02:03:05');
+      it('Accurate for a timecodes with a seconds difference', () => {
+        const attributes = { hours: 0, minutes: 0, frames: 0 };
 
-        assert.strictEqual(tc1.isBefore(tc2), false);
+        for (let s = 0; s < 60; s += 1) {
+          for (let t = 0; t < 60; t += 1) {
+            const tc1 = new Timecode({ ...attributes, seconds: s }, 29.97);
+            const tc2 = new Timecode({ ...attributes, seconds: t }, 29.97);
+
+            if (s === t) {
+              assert.strictEqual(tc1.isSame(tc2), true, `${tc1.toString()} < ${tc2.toString()} failed`);
+            } else {
+              assert.strictEqual(tc1.isSame(tc2), false, `${tc1.toString()} !< ${tc2.toString()} failed`);
+            }
+          }
+        }
       });
 
-      it('Returns false for a timecode one frame after argument', () => {
-        const tc1 = new Timecode('01:02:03:04');
-        const tc2 = new Timecode('01:02:03:05');
+      it('Accurate for a timecodes with a frame difference', () => {
+        const attributes = { hours: 0, minutes: 0, seconds: 0 };
 
-        assert.strictEqual(tc1.isBefore(tc2), false);
+        for (let f = 0; f < 30; f += 1) {
+          for (let g = 0; g < 30; g += 1) {
+            const tc1 = new Timecode({ ...attributes, frames: f }, 29.97);
+            const tc2 = new Timecode({ ...attributes, frames: g }, 29.97);
+
+            if (f === g) {
+              assert.strictEqual(tc1.isSame(tc2), true, `${tc1.toString()} < ${tc2.toString()} failed`);
+            } else {
+              assert.strictEqual(tc1.isSame(tc2), false, `${tc1.toString()} !< ${tc2.toString()} failed`);
+            }
+          }
+        }
+      });
+    });
+
+    describe('isAfter', () => {
+      it('Accurate for a timecodes with an hours difference', () => {
+        const attributes = { minutes: 0, seconds: 0, frames: 0 };
+
+        for (let h = 0; h < 24; h += 1) {
+          for (let i = 0; i < 24; i += 1) {
+            const tc1 = new Timecode({ ...attributes, hours: h }, 29.97);
+            const tc2 = new Timecode({ ...attributes, hours: i }, 29.97);
+
+            if (h > i) {
+              assert.strictEqual(tc1.isAfter(tc2), true);
+            } else {
+              assert.strictEqual(tc1.isAfter(tc2), false);
+            }
+          }
+        }
       });
 
-      it('Returns false for a timecode identical to argument', () => {
-        const tc1 = new Timecode('01:02:03:04');
-        const tc2 = new Timecode('01:02:03:04');
+      it('Accurate for a timecodes with a minute difference', () => {
+        const attributes = { hours: 0, seconds: 0, frames: 0 };
 
-        assert.strictEqual(tc1.isBefore(tc2), false);
+        for (let m = 0; m < 60; m += 1) {
+          for (let n = 0; n < 60; n += 1) {
+            const tc1 = new Timecode({ ...attributes, minutes: m }, 29.97);
+            const tc2 = new Timecode({ ...attributes, minutes: n }, 29.97);
+
+            if (m > n) {
+              assert.strictEqual(tc1.isAfter(tc2), true, `${tc1.toString()} < ${tc2.toString()} failed`);
+            } else {
+              assert.strictEqual(tc1.isAfter(tc2), false, `${tc1.toString()} !< ${tc2.toString()} failed`);
+            }
+          }
+        }
+      });
+
+      it('Accurate for a timecodes with a seconds difference', () => {
+        const attributes = { hours: 0, minutes: 0, frames: 0 };
+
+        for (let s = 0; s < 60; s += 1) {
+          for (let t = 0; t < 60; t += 1) {
+            const tc1 = new Timecode({ ...attributes, seconds: s }, 29.97);
+            const tc2 = new Timecode({ ...attributes, seconds: t }, 29.97);
+
+            if (s > t) {
+              assert.strictEqual(tc1.isAfter(tc2), true, `${tc1.toString()} < ${tc2.toString()} failed`);
+            } else {
+              assert.strictEqual(tc1.isAfter(tc2), false, `${tc1.toString()} !< ${tc2.toString()} failed`);
+            }
+          }
+        }
+      });
+
+      it('Accurate for a timecodes with a frame difference', () => {
+        const attributes = { hours: 0, minutes: 0, seconds: 0 };
+
+        for (let f = 0; f < 30; f += 1) {
+          for (let g = 0; g < 30; g += 1) {
+            const tc1 = new Timecode({ ...attributes, frames: f }, 29.97);
+            const tc2 = new Timecode({ ...attributes, frames: g }, 29.97);
+
+            if (f > g) {
+              assert.strictEqual(tc1.isAfter(tc2), true, `${tc1.toString()} < ${tc2.toString()} failed`);
+            } else {
+              assert.strictEqual(tc1.isAfter(tc2), false, `${tc1.toString()} !< ${tc2.toString()} failed`);
+            }
+          }
+        }
       });
     });
   });

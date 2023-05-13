@@ -47,4 +47,7 @@ export default class Timecode implements TimecodeAttributes {
     pulldown(frameRate: number, start?: number): Timecode;
     pullup(frameRate: number, start?: number): Timecode;
     isBefore(timecode: Timecode): boolean;
+    isSame(timecode: Timecode): boolean;
+    isAfter(timecode: Timecode): boolean;
+    isBetween(earlyTimecode: Timecode, laterTimecode: Timecode): boolean;
 }
