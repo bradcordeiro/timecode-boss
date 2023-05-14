@@ -6,6 +6,8 @@ export type TimecodeAttributes = {
   frameRate?: number
 };
 
+export type ConvertibleToTimecode = number | string | TimecodeAttributes | Date;
+
 const TimeStampRegex = /(\d{1,2}):(\d{1,2}):(\d{1,2})(?:[.,](\d{1,3}))?/;
 const TimecodeRegex = /(\d{1,2})[:;](\d{1,2})[:;](\d{1,2})[:;](\d{1,2})/;
 const SecondsInOneMinute = 60;
@@ -13,7 +15,7 @@ const MinutesInOneHour = 60;
 const HoursInOneDay = 24;
 
 /** Class representing a timecode. */
-export default class Timecode implements TimecodeAttributes {
+export default class Timecode implements Required<TimecodeAttributes> {
   hours: number;
 
   minutes: number;
@@ -24,7 +26,7 @@ export default class Timecode implements TimecodeAttributes {
 
   frameRate: number;
 
-  constructor(timecode: number | string | TimecodeAttributes | Date, frameRate = 29.97) {
+  constructor(timecode: ConvertibleToTimecode, frameRate = 29.97) {
     this.hours = 0;
     this.minutes = 0;
     this.seconds = 0;
@@ -388,7 +390,7 @@ export default class Timecode implements TimecodeAttributes {
     return false;
   }
 
-  add(addend: number | string | TimecodeAttributes | Date) : Timecode {
+  add(addend: ConvertibleToTimecode) : Timecode {
     const tc = new Timecode(this);
 
     if (!(addend instanceof Timecode)) {
@@ -407,7 +409,7 @@ export default class Timecode implements TimecodeAttributes {
     return tc;
   }
 
-  subtract(subtrahend: number | string | TimecodeAttributes | Date) : Timecode {
+  subtract(subtrahend: ConvertibleToTimecode) : Timecode {
     const tc = new Timecode(this);
 
     if (!(subtrahend instanceof Timecode)) {

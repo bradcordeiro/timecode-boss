@@ -5,13 +5,14 @@ export type TimecodeAttributes = {
     frames?: number;
     frameRate?: number;
 };
-export default class Timecode implements TimecodeAttributes {
+export type ConvertibleToTimecode = number | string | TimecodeAttributes | Date;
+export default class Timecode implements Required<TimecodeAttributes> {
     hours: number;
     minutes: number;
     seconds: number;
     frames: number;
     frameRate: number;
-    constructor(timecode: number | string | TimecodeAttributes | Date, frameRate?: number);
+    constructor(timecode: ConvertibleToTimecode, frameRate?: number);
     private setFieldsFromFrameCount;
     private setFieldsFromString;
     private setFieldsFromObject;
@@ -42,8 +43,8 @@ export default class Timecode implements TimecodeAttributes {
     frameCount(): number;
     fractionalSeconds(): number;
     isDropFrame(): boolean;
-    add(addend: number | string | TimecodeAttributes | Date): Timecode;
-    subtract(subtrahend: number | string | TimecodeAttributes | Date): Timecode;
+    add(addend: ConvertibleToTimecode): Timecode;
+    subtract(subtrahend: ConvertibleToTimecode): Timecode;
     pulldown(frameRate: number, start?: number): Timecode;
     pullup(frameRate: number, start?: number): Timecode;
     isBefore(timecode: Timecode): boolean;
