@@ -89,8 +89,8 @@ frameRate | Number | A Number representing the playback speed of the Timecode. T
 | Method | Argument Type | Return Type | Description
 |--------|-------------- | ----------- | -----------
 | isValidTimecodeString(*str*)     | String | Boolean | Returns true if the string can be parsed into a Timecode
-| compare(*a*, *b*) | Timecode, Timecode | Number | Compare function matching the signature of Array.sort(). Returns -1 if a is before b, 1 if a is after b, ore 0 if they are equal
-| exactFrameRate(*frameRate*) | Number | Number | Returns the exact float frame rate used for a framerate between two integers
+| compare(*a*, *b*) | Timecode, Timecode | Number | Compare function matching the signature of *compareFn* of Array.sort(*compareFn*). Returns **-1** if a is before b, **1** if a is after b, or **0** if they are equal
+| exactFrameRate(*frameRate*) | Number | Number | Floating-point framerates are determined by a fraction (e.g. 29.97 is 30000/1001). Passing a floating-point framerate argument near a supported framerate here returns the exact calculation of that fraction.
 
 #### Constructor
 
@@ -104,7 +104,7 @@ The first parameter of the Constructor accepts:
 
 * Another Timecode instance
 * A string in the format "00:00:00:00"
-* A JavaScript Object with one or more of the properties *hours*, *minutes*,  *seconds*, or *frames*.
+* A JavaScript Object with one or more of the properties *hours*, *minutes*,  *seconds*, or *frames*. Any missing properties will be set to 0.
 * A Number representing the frame count
 * A Date instance
 
