@@ -29,7 +29,7 @@ export default class Timecode implements Required<TimecodeAttributes> {
     private framesInMinutesField;
     private framesInSecondsField;
     static isValidTimecodeString(str: string): boolean;
-    static compare(a: Timecode, b: Timecode): -1 | 0 | 1;
+    static compare(a: Timecode, b: Timecode): number;
     static exactFrameRate(frameRate: number): number;
     valueOf(): number;
     toString(): string;

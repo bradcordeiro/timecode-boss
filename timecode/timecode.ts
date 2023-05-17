@@ -205,7 +205,7 @@ export default class Timecode implements Required<TimecodeAttributes> {
   }
 
   /* Compares two timecodes. Signature matches the signature of JavaScript's Array.sort() compare function */
-  static compare(a: Timecode, b: Timecode) : -1 | 0 | 1 {
+  static compare(a: Timecode, b: Timecode) : number {
     if (a.hours > b.hours) return 1;
     if (a.hours < b.hours) return -1;
 
