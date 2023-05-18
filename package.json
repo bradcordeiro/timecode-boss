@@ -22,7 +22,7 @@
   "scripts": {
     "build": "rollup --config rollup.config.mjs",
     "test": "mocha timecode/timecode.test.mjs",
-    "test-coverage": "nyc mocha timecode/timecode.test.js"
+    "test-coverage": "nyc mocha timecode/timecode.test.mjs"
   },
   "devDependencies": {
     "@rollup/plugin-terser": "^0.4.0",
