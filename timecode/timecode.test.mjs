@@ -823,7 +823,7 @@ describe('Timecode', () => {
     });
 
     describe('isSame()', () => {
-      it('Accurate for a timecodes with an hours difference', () => {
+      it('Accurate for all timecodes with an hours difference', () => {
         const attributes = { minutes: 0, seconds: 0, frames: 0 };
 
         for (let h = 0; h < 24; h += 1) {
@@ -840,7 +840,7 @@ describe('Timecode', () => {
         }
       });
 
-      it('Accurate for a timecodes with a minute difference', () => {
+      it('Accurate for all timecodes with a minute difference', () => {
         const attributes = { hours: 0, seconds: 0, frames: 0 };
 
         for (let m = 0; m < 60; m += 1) {
@@ -857,7 +857,7 @@ describe('Timecode', () => {
         }
       });
 
-      it('Accurate for a timecodes with a seconds difference', () => {
+      it('Accurate for all timecodes with a seconds difference', () => {
         const attributes = { hours: 0, minutes: 0, frames: 0 };
 
         for (let s = 0; s < 60; s += 1) {
@@ -874,7 +874,7 @@ describe('Timecode', () => {
         }
       });
 
-      it('Accurate for a timecodes with a frame difference', () => {
+      it('Accurate for all timecodes with a frame difference', () => {
         const attributes = { hours: 0, minutes: 0, seconds: 0 };
 
         for (let f = 0; f < 30; f += 1) {
@@ -892,8 +892,8 @@ describe('Timecode', () => {
       });
     });
 
-    describe('isAfter', () => {
-      it('Accurate for a timecodes with an hours difference', () => {
+    describe('isAfter()', () => {
+      it('Accurate for all timecodes with an hours difference', () => {
         const attributes = { minutes: 0, seconds: 0, frames: 0 };
 
         for (let h = 0; h < 24; h += 1) {
@@ -910,7 +910,7 @@ describe('Timecode', () => {
         }
       });
 
-      it('Accurate for a timecodes with a minute difference', () => {
+      it('Accurate for all timecodes with a minute difference', () => {
         const attributes = { hours: 0, seconds: 0, frames: 0 };
 
         for (let m = 0; m < 60; m += 1) {
@@ -927,7 +927,7 @@ describe('Timecode', () => {
         }
       });
 
-      it('Accurate for a timecodes with a seconds difference', () => {
+      it('Accurate for all timecodes with a seconds difference', () => {
         const attributes = { hours: 0, minutes: 0, frames: 0 };
 
         for (let s = 0; s < 60; s += 1) {
@@ -944,7 +944,7 @@ describe('Timecode', () => {
         }
       });
 
-      it('Accurate for a timecodes with a frame difference', () => {
+      it('Accurate for all timecodes with a frame difference', () => {
         const attributes = { hours: 0, minutes: 0, seconds: 0 };
 
         for (let f = 0; f < 30; f += 1) {
@@ -963,7 +963,7 @@ describe('Timecode', () => {
     });
 
     describe('isBetween()', () => {
-      it('Accurate for a timecodes with an hours difference', () => {
+      it('Accurate for all timecodes with an hours difference', () => {
         const attributes = { minutes: 0, seconds: 0, frames: 0 };
 
         for (let h = 0; h < 24; h += 1) {
@@ -985,7 +985,7 @@ describe('Timecode', () => {
         }
       });
 
-      it('Accurate for a timecodes with a minutes difference', () => {
+      it('Accurate for all timecodes with a minutes difference', () => {
         const attributes = { hours: 0, seconds: 0, frames: 0 };
 
         for (let h = 0; h < 60; h += 1) {
@@ -1007,7 +1007,7 @@ describe('Timecode', () => {
         }
       });
 
-      it('Accurate for a timecodes with a seconds difference', () => {
+      it('Accurate for all timecodes with a seconds difference', () => {
         const attributes = { hours: 0, minutes: 0, frames: 0 };
 
         for (let h = 0; h < 60; h += 1) {
@@ -1029,7 +1029,7 @@ describe('Timecode', () => {
         }
       });
 
-      it('Accurate for a timecodes with a frames difference', () => {
+      it('Accurate for all timecodes with a frames difference', () => {
         const attributes = { hours: 0, minutes: 0, seconds: 0 };
 
         for (let h = 0; h < 30; h += 1) {
