@@ -266,10 +266,22 @@ export default class Timecode implements Required<TimecodeAttributes> {
     const m = tc.minutes.toString(10).padStart(2, '0');
     const s = tc.seconds.toString(10).padStart(2, '0');
 
-    const milliseconds = tc.milliseconds().toString(10).substr(2, 3);
+    const milliseconds = tc.milliseconds().toString(10).substring(2, 5);
     const mm = milliseconds.padEnd(3, '0');
 
     return `${h}:${m}:${s},${mm}`;
+  }
+
+  /** This timecode as a string in the format 'HH:MM:SS:TTT', with TTT being ticks (1 tick = 40 ms) */
+  toDCDMString() : string {
+    const h = this.hours.toString(10).padStart(2, '0');
+    const m = this.minutes.toString(10).padStart(2, '0');
+    const s = this.seconds.toString(10).padStart(2, '0');
+
+    const ticks = this.milliseconds() / 4;
+    const t = ticks.toString(10).substring(2, 5).padEnd(3, '0');
+
+    return `${h}:${m}:${s}:${t}`;
   }
 
   /**

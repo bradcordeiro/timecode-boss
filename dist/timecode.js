@@ -197,9 +197,17 @@
             const h = tc.hours.toString(10).padStart(2, '0');
             const m = tc.minutes.toString(10).padStart(2, '0');
             const s = tc.seconds.toString(10).padStart(2, '0');
-            const milliseconds = tc.milliseconds().toString(10).substr(2, 3);
+            const milliseconds = tc.milliseconds().toString(10).substring(2, 5);
             const mm = milliseconds.padEnd(3, '0');
             return `${h}:${m}:${s},${mm}`;
+        }
+        toDCDMString() {
+            const h = this.hours.toString(10).padStart(2, '0');
+            const m = this.minutes.toString(10).padStart(2, '0');
+            const s = this.seconds.toString(10).padStart(2, '0');
+            const ticks = this.milliseconds() / 4;
+            const t = ticks.toString(10).substring(2, 5).padEnd(3, '0');
+            return `${h}:${m}:${s}:${t}`;
         }
         toObject() {
             return {

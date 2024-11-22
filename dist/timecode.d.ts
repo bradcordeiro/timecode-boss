@@ -34,6 +34,7 @@ export default class Timecode implements Required<TimecodeAttributes> {
     valueOf(): number;
     toString(): string;
     toSRTString(realTime?: boolean): string;
+    toDCDMString(): string;
     toObject(): Required<TimecodeAttributes>;
     setHours(hours: number): this;
     setMinutes(minutes: number): this;
