@@ -8,7 +8,7 @@ export type TimecodeAttributes = {
 
 export type ConvertibleToTimecode = number | string | TimecodeAttributes | Date;
 
-const TimeStampRegex = /(\d{1,2}):(\d{1,2}):(\d{1,2})(?:[.,](\d{1,3}))?/;
+const TimeStampRegex = /(\d{1,2}):(\d{1,2}):(\d{1,2})[.,]?(\d{1,3})?/;
 const TimecodeRegex = /(\d{1,2})[:;](\d{1,2})[:;](\d{1,2})[:;](\d{1,2})/;
 const SecondsInOneMinute = 60;
 const MinutesInOneHour = 60;
@@ -53,7 +53,7 @@ export default class Timecode implements Required<TimecodeAttributes> {
     // the remaining value for the minutes, etc., for each field
     let remainingFrames = input;
 
-    this.setHours(Math.trunc(remainingFrames / this.framesPerHour()));
+    this.setHours(Math.trunc(input / this.framesPerHour()));
     remainingFrames -= this.framesInHoursField();
 
     // For drop frame, two frames are not counted each minute but are for every tenth
@@ -246,27 +246,21 @@ export default class Timecode implements Required<TimecodeAttributes> {
   /** This timecode as a string in the format 'HH:MM:SS:FF' */
   toString() : string {
     const c = this.separator();
-    const h = (this.hours < 10 ? '0' : '') + this.hours.toString(10);
-    const m = (this.minutes < 10 ? '0' : '') + this.minutes.toString(10);
-    const s = (this.seconds < 10 ? '0' : '') + this.seconds.toString(10);
-    const f = (this.frames < 10 ? '0' : '') + this.frames.toString(10);
+    const h = this.hours.toString(10).padStart(2, '0');
+    const m = this.minutes.toString(10).padStart(2, '0');
+    const s = this.seconds.toString(10).padStart(2, '0');
+    const f = this.frames.toString(10).padStart(2, '0');
+
     return `${h}:${m}:${s}${c}${f}`;
   }
 
   /** This timecode as a string in the format 'HH:MM:SS,mmm', with mmm being fractional seconds */
-  toSRTString(realTime = false) : string {
-    let tc = new Timecode(this);
+  toSRTString() : string {
+    const h = this.hours.toString(10).padStart(2, '0');
+    const m = this.minutes.toString(10).padStart(2, '0');
+    const s = this.seconds.toString(10).padStart(2, '0');
 
-    // SRT uses real time, not timecode, so pulldown to 29.97 to get real time if requested
-    if (realTime === true) {
-      tc = this.pulldown(29.97);
-    }
-
-    const h = tc.hours.toString(10).padStart(2, '0');
-    const m = tc.minutes.toString(10).padStart(2, '0');
-    const s = tc.seconds.toString(10).padStart(2, '0');
-
-    const milliseconds = tc.milliseconds().toString(10).substring(2, 5);
+    const milliseconds = this.milliseconds().toString(10).substring(2, 5);
     const mm = milliseconds.padEnd(3, '0');
 
     return `${h}:${m}:${s},${mm}`;
@@ -309,7 +303,11 @@ export default class Timecode implements Required<TimecodeAttributes> {
     return this;
   }
 
-  // Set Minutes, with some validation
+  /**
+   * Sets the minutes field.
+   * Minutes greater than 60 will roll over and increase the hours field.
+   * Minutes less than 0 will borrow from the hours field.
+   */
   setMinutes(minutes: number) : this {
     this.minutes = Math.trunc(minutes) % MinutesInOneHour;
     this.setHours(this.hours + Math.trunc(minutes / MinutesInOneHour));
@@ -325,7 +323,11 @@ export default class Timecode implements Required<TimecodeAttributes> {
     return this;
   }
 
-  // Set seconds, with some validation
+  /**
+   * Sets the seconds field.
+   * Seconds greater than 60 will roll over and increase the minutes field.
+   * Seconds less than 0 will borrow from the minutes field.
+   */
   setSeconds(seconds: number) : this {
     const secondsComponent = Math.trunc(seconds);
     const millisecondsComponent = seconds - secondsComponent;
@@ -368,7 +370,7 @@ export default class Timecode implements Required<TimecodeAttributes> {
   }
 
   /**
-   * @returns {number} Returns the rounded framerate needed to do Timecode math
+   * Returns the rounded framerate needed to do Timecode math
   */
   nominalFrameRate() : number {
     /* 23.98 -> 24
@@ -395,7 +397,7 @@ export default class Timecode implements Required<TimecodeAttributes> {
 
   /** Returns true if using drop-frame time */
   isDropFrame() {
-    // 29.97 or 59.94  per second
+    // 29.97 or 59.94 per second
     if (this.frameRate > 29 && this.frameRate < 30) return true;
     if (this.frameRate > 59 && this.frameRate < 60) return true;
 
