@@ -47,7 +47,7 @@ class Timecode {
     }
     setFieldsFromString(input) {
         let matches = TimecodeRegex.exec(input);
-        if (matches && matches.length === 5) {
+        if ((matches === null || matches === void 0 ? void 0 : matches.length) === 5) {
             const [, hh, mm, ss, ff] = matches;
             const hours = parseInt(hh, 10);
             const minutes = parseInt(mm, 10);
@@ -122,6 +122,9 @@ class Timecode {
     }
     milliseconds() {
         return this.frames / this.nominalFrameRate();
+    }
+    ticks() {
+        return this.milliseconds() / 4;
     }
     framesToDrop() {
         return this.isDropFrame() ? this.nominalFrameRate() / 15 : 0;
@@ -206,8 +209,7 @@ class Timecode {
         const h = formatFieldString(this.hours);
         const m = formatFieldString(this.minutes);
         const s = formatFieldString(this.seconds);
-        const ticks = this.milliseconds() / 4;
-        const t = ticks.toString(10).substring(2, 5).padEnd(3, '0');
+        const t = this.ticks().toString(10).substring(2, 5).padEnd(3, '0');
         return `${h}:${m}:${s}:${t}`;
     }
     toObject() {

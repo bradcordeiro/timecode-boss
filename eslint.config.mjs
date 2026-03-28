@@ -39,6 +39,17 @@ const typescriptConfig = [
   rules.typescript.typescriptEslintStrict,
 ];
 
+const customRules = defineConfig([
+  {
+    rules: {
+      '@stylistic/max-len': ['warn', {
+        code: 140,
+        ignoreComments: true,
+      }],
+    },
+  },
+]);
+
 export default [
   // Ignore .gitignore files/folder in eslint
   includeIgnoreFile(gitignorePath),
@@ -48,6 +59,5 @@ export default [
   ...nodeConfig,
   // TypeScript Config
   ...typescriptConfig,
-  // Custom Rules
   ...customRules,
 ];

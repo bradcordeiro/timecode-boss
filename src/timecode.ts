@@ -1,10 +1,10 @@
-export type TimecodeAttributes = {
-  hours?: number
-  minutes?: number
-  seconds?: number
-  frames?: number
-  frameRate?: number
-};
+export interface TimecodeAttributes {
+  hours?: number;
+  minutes?: number;
+  seconds?: number;
+  frames?: number;
+  frameRate?: number;
+}
 
 export type ConvertibleToTimecode = number | string | TimecodeAttributes | Date;
 
@@ -49,14 +49,14 @@ class Timecode implements Required<TimecodeAttributes> {
     }
   }
 
-  private static convertToTimecode(input: ConvertibleToTimecode, frameRate?: number) : Timecode {
+  private static convertToTimecode(input: ConvertibleToTimecode, frameRate?: number): Timecode {
     if (input instanceof Timecode) return input;
 
     return new Timecode(input, frameRate);
   }
 
   /** Sets the timecode fields using a total number of frames. */
-  private setFieldsFromFrameCount(frames: number) : void {
+  private setFieldsFromFrameCount(frames: number): void {
     // We'll populate the hours, minutes, seconds, and frame fields by finding
     // how many frames will fill the hours, subtracting that from the total, and using
     // the remaining value for the minutes, etc., for each field
@@ -81,10 +81,10 @@ class Timecode implements Required<TimecodeAttributes> {
   }
 
   /** Parses and sets timecode fields from a string in the format 00:00:00:00 or 00:00:00.000 */
-  private setFieldsFromString(input: string) : this {
+  private setFieldsFromString(input: string): this {
     let matches = TimecodeRegex.exec(input);
 
-    if (matches && matches.length === 5) {
+    if (matches?.length === 5) {
       const [, hh, mm, ss, ff] = matches;
 
       const hours = parseInt(hh, 10);
@@ -123,7 +123,8 @@ class Timecode implements Required<TimecodeAttributes> {
     throw new TypeError(`Invalid timecode string ${input}`);
   }
 
-  /** Sets timecode fields from an object with any of the properties 'hours', 'minutes', 'seconds', or 'frames' */
+  /** Sets timecode fields from an object with any of the
+   * properties 'hours', 'minutes', 'seconds', or 'frames' */
   private setFieldsFromObject(input: TimecodeAttributes) {
     // give all fields initial values so the drop-frame incrementing isn't thrown off
     if (input.hours) this.hours = input.hours;
@@ -159,7 +160,7 @@ class Timecode implements Required<TimecodeAttributes> {
     return Math.trunc(fractionalSeconds * this.nominalFrameRate());
   }
 
-  private framesPerHour() : number {
+  private framesPerHour(): number {
     return this.framesPer10Minute() * 6;
   }
 
@@ -173,6 +174,10 @@ class Timecode implements Required<TimecodeAttributes> {
 
   private milliseconds() {
     return this.frames / this.nominalFrameRate();
+  }
+
+  private ticks() {
+    return this.milliseconds() / 4;
   }
 
   private framesToDrop() {
@@ -207,12 +212,13 @@ class Timecode implements Required<TimecodeAttributes> {
   }
 
   /** Returns true if the string can be parsed into a timecode */
-  static isValidTimecodeString(str: string) : boolean {
+  static isValidTimecodeString(str: string): boolean {
     return TimecodeRegex.test(str);
   }
 
-  /* Compares two timecodes. Signature matches the signature of JavaScript's Array.sort() compare function */
-  static compare(a: ConvertibleToTimecode, b: ConvertibleToTimecode) : number {
+  /** Compares two timecodes. Signature matches the signature of
+    * JavaScript's Array.sort() compare function */
+  static compare(a: ConvertibleToTimecode, b: ConvertibleToTimecode): number {
     const x = Timecode.convertToTimecode(a);
     const y = Timecode.convertToTimecode(b);
 
@@ -231,8 +237,8 @@ class Timecode implements Required<TimecodeAttributes> {
     return 0;
   }
 
-  /* Returns an exact framerate for non-integer framerates */
-  static exactFrameRate(frameRate: number) : number {
+  /** Returns an exact framerate for non-integer framerates */
+  static exactFrameRate(frameRate: number): number {
     if (frameRate > 59 && frameRate < 60) {
       return 60000 / 1001; // 59.94
     }
@@ -251,7 +257,7 @@ class Timecode implements Required<TimecodeAttributes> {
   /**
    * Returns the rounded framerate needed to do Timecode math
   */
-  private nominalFrameRate() : number {
+  private nominalFrameRate(): number {
     /* 23.98 -> 24
      * 25    -> 25
      * 29.97 -> 30
@@ -264,12 +270,12 @@ class Timecode implements Required<TimecodeAttributes> {
   }
 
   /** Overrides the valueOf() method inherited from Object that gets an object's primitive value */
-  valueOf() : number {
+  valueOf(): number {
     return this.frameCount();
   }
 
   /** This timecode as a string in the format 'HH:MM:SS:FF' */
-  toString() : string {
+  toString(): string {
     const c = this.separator();
     const h = formatFieldString(this.hours);
     const m = formatFieldString(this.minutes);
@@ -280,7 +286,7 @@ class Timecode implements Required<TimecodeAttributes> {
   }
 
   /** This timecode as a string in the format 'HH:MM:SS,mmm', with mmm being fractional seconds */
-  toSRTString() : string {
+  toSRTString(): string {
     const h = formatFieldString(this.hours);
     const m = formatFieldString(this.minutes);
     const s = formatFieldString(this.seconds);
@@ -291,14 +297,14 @@ class Timecode implements Required<TimecodeAttributes> {
     return `${h}:${m}:${s},${mm}`;
   }
 
-  /** This timecode as a string in the format 'HH:MM:SS:TTT', with TTT being ticks (1 tick = 40 ms) */
-  toDCDMString() : string {
+  /** This timecode as a string in the format 'HH:MM:SS:TTT',
+   * with TTT being ticks (1 tick = 40 ms) */
+  toDCDMString(): string {
     const h = formatFieldString(this.hours);
     const m = formatFieldString(this.minutes);
     const s = formatFieldString(this.seconds);
 
-    const ticks = this.milliseconds() / 4;
-    const t = ticks.toString(10).substring(2, 5).padEnd(3, '0');
+    const t = this.ticks().toString(10).substring(2, 5).padEnd(3, '0');
 
     return `${h}:${m}:${s}:${t}`;
   }
@@ -306,7 +312,7 @@ class Timecode implements Required<TimecodeAttributes> {
   /**
    * Returns new plain JavaScript object with field and framerate properties
   */
-  toObject() : Required<TimecodeAttributes> {
+  toObject(): Required<TimecodeAttributes> {
     return {
       hours: this.hours,
       minutes: this.minutes,
@@ -316,7 +322,7 @@ class Timecode implements Required<TimecodeAttributes> {
     };
   }
 
-  setHours(hours: number) : this {
+  setHours(hours: number): this {
     // Hours should not be higher than 23, and should restart counting up from 0 after 23
     this.hours = Math.trunc(hours) % HoursInOneDay;
 
@@ -333,7 +339,7 @@ class Timecode implements Required<TimecodeAttributes> {
    * Minutes greater than 60 will roll over and increase the hours field.
    * Minutes less than 0 will borrow from the hours field.
    */
-  setMinutes(minutes: number) : this {
+  setMinutes(minutes: number): this {
     this.minutes = Math.trunc(minutes) % MinutesInOneHour;
     this.setHours(this.hours + Math.trunc(minutes / MinutesInOneHour));
 
@@ -353,7 +359,7 @@ class Timecode implements Required<TimecodeAttributes> {
    * Seconds greater than 60 will roll over and increase the minutes field.
    * Seconds less than 0 will borrow from the minutes field.
    */
-  setSeconds(seconds: number) : this {
+  setSeconds(seconds: number): this {
     const secondsComponent = Math.trunc(seconds);
     const millisecondsComponent = seconds - secondsComponent;
 
@@ -376,7 +382,7 @@ class Timecode implements Required<TimecodeAttributes> {
   }
 
   // Set frames, withj some validation
-  setFrames(frames: number) : this {
+  setFrames(frames: number): this {
     if (frames === undefined) return this;
 
     const nominalFrameRate = this.nominalFrameRate();
@@ -397,7 +403,7 @@ class Timecode implements Required<TimecodeAttributes> {
   /**
    * Returns the total number of frames that this Timecode represents
    */
-  frameCount() : number {
+  frameCount(): number {
     return this.framesInHoursField()
       + this.framesInMinutesField()
       + this.framesInSecondsField()
@@ -407,12 +413,12 @@ class Timecode implements Required<TimecodeAttributes> {
   /**
    * Returns the seconds and milliseconds as a single number
    */
-  fractionalSeconds() : number {
+  fractionalSeconds(): number {
     return this.seconds + this.milliseconds();
   }
 
   /** Returns true if using drop-frame time */
-  isDropFrame() {
+  isDropFrame(): boolean {
     // 29.97 or 59.94 per second
     if (this.frameRate > 29 && this.frameRate < 30) return true;
     if (this.frameRate > 59 && this.frameRate < 60) return true;
@@ -421,7 +427,7 @@ class Timecode implements Required<TimecodeAttributes> {
   }
 
   /** Returns a new timecode by adding another timecode to this one */
-  add(addend: ConvertibleToTimecode) : Timecode {
+  add(addend: ConvertibleToTimecode): Timecode {
     const tc = new Timecode(this);
     const convertedAddend = Timecode.convertToTimecode(addend);
 
@@ -434,7 +440,7 @@ class Timecode implements Required<TimecodeAttributes> {
   }
 
   /** Returns a new timecode by subtracting another timecode from this one */
-  subtract(subtrahend: ConvertibleToTimecode) : Timecode {
+  subtract(subtrahend: ConvertibleToTimecode): Timecode {
     const tc = new Timecode(this);
     const x = Timecode.convertToTimecode(subtrahend);
 
@@ -447,7 +453,7 @@ class Timecode implements Required<TimecodeAttributes> {
   }
 
   /** Returns a new timecode converted to another framerate while maintaining real-time position */
-  pulldown(frameRate: number, offset: ConvertibleToTimecode = new Timecode(0)) {
+  pulldown(frameRate: number, offset: ConvertibleToTimecode = new Timecode(0)): Timecode {
     const start = Timecode.convertToTimecode(offset);
 
     const oldBase = new Timecode(start, this.frameRate);
@@ -464,34 +470,34 @@ class Timecode implements Required<TimecodeAttributes> {
     return output.add(newBase);
   }
 
-  pullup(frameRate: number, offset: ConvertibleToTimecode = new Timecode(0)) {
+  pullup(frameRate: number, offset: ConvertibleToTimecode = new Timecode(0)): Timecode {
     return this.pulldown(frameRate, offset);
   }
 
-  slowdown(newFrameRate: number, offset: ConvertibleToTimecode = new Timecode(0, this.frameRate)) : Timecode {
+  slowdown(newFrameRate: number, offset: ConvertibleToTimecode = new Timecode(0, this.frameRate)): Timecode {
     const start = new Timecode(offset, newFrameRate);
     const difference = this.subtract(start);
     difference.frameRate = newFrameRate;
     return difference.add(start);
   }
 
-  speedup(frameRate: number, offset: ConvertibleToTimecode = new Timecode(0)) : Timecode {
+  speedup(frameRate: number, offset: ConvertibleToTimecode = new Timecode(0)): Timecode {
     return this.slowdown(frameRate, offset);
   }
 
-  isBefore(timecode: ConvertibleToTimecode) : boolean {
+  isBefore(timecode: ConvertibleToTimecode): boolean {
     return Timecode.compare(this, timecode) === -1;
   }
 
-  isSame(timecode: ConvertibleToTimecode) : boolean {
+  isSame(timecode: ConvertibleToTimecode): boolean {
     return Timecode.compare(this, timecode) === 0;
   }
 
-  isAfter(timecode: ConvertibleToTimecode) : boolean {
+  isAfter(timecode: ConvertibleToTimecode): boolean {
     return Timecode.compare(this, timecode) === 1;
   }
 
-  isBetween(earlier: ConvertibleToTimecode, later: ConvertibleToTimecode) {
+  isBetween(earlier: ConvertibleToTimecode, later: ConvertibleToTimecode): boolean {
     return this.isAfter(earlier) && this.isBefore(later);
   }
 }

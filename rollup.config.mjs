@@ -11,7 +11,7 @@ export default {
     },
     {
       file: './dist/timecode.min.js',
-      format: 'es',
+      format: 'umd',
       name: 'Timecode',
       plugins: [terser()],
     },

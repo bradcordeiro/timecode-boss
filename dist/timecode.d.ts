@@ -1,10 +1,10 @@
-export type TimecodeAttributes = {
+export interface TimecodeAttributes {
     hours?: number;
     minutes?: number;
     seconds?: number;
     frames?: number;
     frameRate?: number;
-};
+}
 export type ConvertibleToTimecode = number | string | TimecodeAttributes | Date;
 declare class Timecode implements Required<TimecodeAttributes> {
     hours: number;
@@ -23,6 +23,7 @@ declare class Timecode implements Required<TimecodeAttributes> {
     private framesPer10Minute;
     private framesPerMinute;
     private milliseconds;
+    private ticks;
     private framesToDrop;
     private incrementIfDropFrame;
     private separator;
