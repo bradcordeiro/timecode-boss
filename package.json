@@ -1,8 +1,7 @@
 {
   "name": "timecode-boss",
   "description": "A ES6 JavaScript module for working with SMPTE timecode",
-  "main": "./dist/timecode.js",
-  "module": "",
+  "module": "./dist/timecode.js",
   "unpkg": "./dist/timecode.min.js",
   "types": "./dist/timecode.d.ts",
   "version": "6.2.0",
@@ -22,23 +21,25 @@
   },
   "scripts": {
     "build": "rollup --config rollup.config.mjs",
-    "test": "mocha timecode/timecode.test.mjs",
-    "test-coverage": "nyc mocha timecode/timecode.test.mjs"
+    "test": "mocha test/timecode.test.js",
+    "test-coverage": "nyc mocha test/timecode.test.js"
   },
   "devDependencies": {
-    "@rollup/plugin-terser": "^0.4.4",
-    "@rollup/plugin-typescript": "^12.1.1",
-    "@types/node": "^17.0.18",
-    "@typescript-eslint/eslint-plugin": "^5.12.0",
-    "@typescript-eslint/parser": "^5.12.0",
-    "eslint": "^7.32.0",
-    "eslint-config-airbnb": "^19.0.4",
-    "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-config-airbnb-typescript": "^16.1.0",
-    "eslint-plugin-import": "^2.25.4",
-    "mocha": "^10.2.0",
-    "nyc": "^15.1.0",
-    "rollup": "^4.28.0",
-    "typescript": "^5.7.2"
+    "@eslint/compat": "^2.0.0",
+    "@eslint/js": "^9.39.2",
+    "@rollup/plugin-terser": "^1.0.0",
+    "@rollup/plugin-typescript": "^12.3.0",
+    "@stylistic/eslint-plugin": "^3.1.0",
+    "@types/mocha": "^10.0.10",
+    "eslint": "^9.39.2",
+    "eslint-config-airbnb-extended": "^2.3.3",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import-x": "^4.16.1",
+    "eslint-plugin-n": "^17.23.1",
+    "mocha": "^11.7.5",
+    "nyc": "^18.0.0",
+    "rollup": "^4.60.0",
+    "typescript": "^5.0.2",
+    "typescript-eslint": "^8.51.0"
   }
 }

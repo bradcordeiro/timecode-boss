@@ -1,11 +1,9 @@
 {
-  "files": ["./timecode/timecode.ts"],
+  "files": ["src/timecode.ts"],
   "transpileOnly": false,
   "compilerOptions": {
     "declaration": true,
-    "esModuleInterop": false,
     "lib": ["ES2017"],
-    "module": "ES6",
     "outDir": "./dist",
     "removeComments": true,
     "strict": true,

@@ -1,6 +1,8 @@
 # timecode-boss &middot; [![npm version](https://badge.fury.io/js/timecode-boss.svg)](https://www.npmjs.com/package/timecode-boss) [![Coverage Status](https://coveralls.io/repos/github/bradcordeiro/timecode-boss/badge.svg?branch=master)](https://coveralls.io/github/bradcordeiro/timecode-boss?branch=master) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/bradcordeiro/timecode-boss/blob/master/LICENSE)
 
-This is a JavaScript module that provides a **Timecode** class with properties and methods to work with SMPTE timecode.
+This is a JavaScript module that provides a **Timecode** class with properties and methods to work with SMPTE timecode, written in Typescript.
+
+This is a hobby project by an amateur developer, so I'd advise approaching this module knowing that.
 
 ## Installing / Getting started
 
@@ -31,7 +33,7 @@ tc.add() returns a new timecode, starting from the original *tc* instance and ad
 ### Prerequisites
 Tests are run using [Mocha](https://mochajs.org), and code coverage is tested with Istanbul's command-line interface, [nyc](https://github.com/istanbuljs/nyc).
 
-Babel is used to transpile to ES5 and uglify-js is used to minify the source for use in the browser.
+[Rollup](https://rollupjs.org) is used to transpile to commonjs for Nodejs and an IIFE for the browser. [uglify-js](https://github.com/mishoo/UglifyJS#readme) is used to minify the browser IIFE.
 
 ### Setting up Dev
 
@@ -119,7 +121,7 @@ The second parameter is a frame rate.
 | setSeconds(*seconds*) | Number | Timecode (*this*)
 | setFrames(*frames*)   | Number | Timecode (*this*)
 
-There are also setters for each individual field. The Timecode object is returned, allowing these methods to be chained. Calling these methods with a type that cannot be coerced to an integer will throw a TypeError, and float types will be truncated to an integer.
+There are also setters for each individual field. The Timecode object is returned, allowing these methods to be chained. Floats will be truncated to an integer.
 
 If an argument overflows a field, the next larger field will be incremented accordingly. For example, calling *setMinutes(72)* will set the minutes to 12, and increment the hours field by 1. Setting the hours above 24 will overflow the hours and they will be recalculated starting from 0.
 
@@ -127,31 +129,36 @@ If an argument overflows a field, the next larger field will be incremented acco
 
 | Method | Argument Type | Return Type
 |--------|-------------- | -----------
-| isBefore(*tc*)     | Timecode | Boolean
-| isAfter(*tc*) | Timecode | Boolean
-| isSame(*tc*) | Timecode | Boolean
-| isBetween(*tc*)   | Timecode | Boolean
+| isBefore(*timecode*)     | Timecode | Boolean
+| isAfter(*timecode*) | Timecode | Boolean
+| isSame(*timecode*) | Timecode | Boolean
+| isBetween(*earlier*, *later*)   | Timecode | Boolean
 
-Compare *this* Timecode to another timecode passed as an argument.
+Compare *this* Timecode to another Timecode passed as an argument.
 
 #### Arithmetic
 
 | Method | Argument Type | Return Type
 |--------|-------------- | -----------
-| add(*addend*) | Timecode, String, Number, Object, or Date | Timecode
-| subtract(*subtrahend*) | Timecode, String, Number, Object, or Date | Timecode
+| add(*addend*) | Timecode | Timecode
+| subtract(*subtrahend*) | Timecode | Timecode
 
 Adds the addend to or subtracts the subtrahend from the calling Timecode, and returns a new Timecode. Any of the types available to use in the Timecode constructor above are available to use as arguments to these methods. If an addend or subtrahend has a different framerate than the calling object, the addend will be converted to the calling object's frame rate (see **Frame Rate Conversion** below).
 
 #### Frame Rate Conversion
 | Method | Argument Type | Return Type
 |--------|-------------- | -----------
-| pulldown(*frameRate*, *\[start\]*) | Number, Any | Timecode
-| pullup(*frameRate*, *\[start\]*) | Number, Any | Timecode 
+| pulldown(*frameRate*, *\[offset\]*) | Number, Timecode | Timecode
+| pullup(*frameRate*, *\[offset\]*) | Number, Timecode | Timecode 
 
 Return a new Timecode object based on the calling object converted to the frame rate passed as an argument, where the conversion would result in frames being added for the new framerate. This is useful for, for example, a converting a 23.98 timecode to a 29.97 drop-frame timecode using a [3:2 pulldown](https://en.wikipedia.org/wiki/Three-two_pull_down). The first argument is the framerate to convert to, and the second argument is an optional start time of the sequence being pulled down, which affects the output. The second argument can be any type accepted by the Timecode object constructor.
 
 pullup() is an alias of pulldown().
+
+| Method | Argument Type | Return Type
+|--------|-------------- | -----------
+| speedup(*frameRate*, *\[offset\]*) | Number, Timecode | Timecode
+| slowdown(*frameRate*, *\[offset\]*) | Number, Timecode | Timecode 
 
 #### Other Helpers
 | Method | Argument Type | Return Type | Description

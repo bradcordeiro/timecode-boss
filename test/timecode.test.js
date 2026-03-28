@@ -1,8 +1,6 @@
 /* eslint-env mocha */
-import assert from 'assert';
+import * as assert from 'assert';
 import Timecode from '../dist/timecode.js'; /* eslint-disable-line import/extensions */
-
-const frameRates = [23.98, 24, 25, 29.97, 30, 50, 59.94, 60];
 
 describe('Timecode', () => {
   describe('Constructor', () => {
@@ -216,35 +214,6 @@ describe('Timecode', () => {
     });
   });
 
-  describe('Nominal Frame Rates', () => {
-    const tc = new Timecode();
-
-    it('nominalFrameRate() for 23.98 returns 24', () => {
-      tc.frameRate = 23.98;
-      assert.strictEqual(tc.nominalFrameRate(), 24);
-    });
-
-    it('nominalFrameRate() for 24 returns 24', () => {
-      tc.frameRate = 24;
-      assert.strictEqual(tc.nominalFrameRate(), 24);
-    });
-
-    it('nominalFrameRate() for 25 returns 25', () => {
-      tc.frameRate = 25;
-      assert.strictEqual(tc.nominalFrameRate(), 25);
-    });
-
-    it('nominalFrameRate() for 29.97 returns 30', () => {
-      tc.frameRate = 29.97;
-      assert.equal(tc.nominalFrameRate(), 30);
-    });
-
-    it('nominalFrameRate() for 30 returns 30', () => {
-      tc.frameRate = 30;
-      assert.strictEqual(tc.nominalFrameRate(), 30);
-    });
-  });
-
   describe('Drop Frame Detection', () => {
     it('isDropFrame() for 23.98 returns false', () => {
       const tc = new Timecode(0, 23.98);
@@ -270,39 +239,24 @@ describe('Timecode', () => {
       const tc = new Timecode(0, 30.00);
       assert.strictEqual(tc.isDropFrame(), false);
     });
+
+    it('isDropFrame() for 50 returns false', () => {
+      const tc = new Timecode(0, 50.00);
+      assert.strictEqual(tc.isDropFrame(), false);
+    });
+
+    it('isDropFrame() for 59.94 returns true', () => {
+      const tc = new Timecode(0, 59.94);
+      assert.strictEqual(tc.isDropFrame(), true);
+    });
+
+    it('isDropFrame() for 60 returns false', () => {
+      const tc = new Timecode(0, 60.00);
+      assert.strictEqual(tc.isDropFrame(), false);
+    });
   });
 
   describe('Getters', () => {
-    it('separator() returns ":" for a Timecode at 23.98 frames per second', () => {
-      const tc = new Timecode('02:05:34:15', 23.98);
-
-      assert.strictEqual(tc.separator(), ':');
-    });
-
-    it('separator() returns ":" for a Timecode at 24 frames per second', () => {
-      const tc = new Timecode('02:05:34:15', 24);
-
-      assert.strictEqual(tc.separator(), ':');
-    });
-
-    it('separator() returns ":" for a Timecode at 25 frames per second', () => {
-      const tc = new Timecode('02:05:34:15', 25);
-
-      assert.strictEqual(tc.separator(), ':');
-    });
-
-    it('separator() returns ";" for a Timcode at 29.97 fps', () => {
-      const tc = new Timecode('02:05:34:15', 29.97);
-
-      assert.strictEqual(tc.separator(), ';');
-    });
-
-    it('separator() returns ":" for a Timecode at 30 frames per second', () => {
-      const tc = new Timecode('02:05:34:15', 30);
-
-      assert.strictEqual(tc.separator(), ':');
-    });
-
     it('fractionalSeconds() returns 5.5 for 00:00:05:12 at 23.98', () => {
       const tc = new Timecode('00:00:05:12', 23.98);
 
@@ -316,16 +270,6 @@ describe('Timecode', () => {
       tc.setHours(15);
 
       assert.strictEqual(tc.hours, 15);
-      assert.strictEqual(tc.minutes, 0);
-      assert.strictEqual(tc.seconds, 0);
-      assert.strictEqual(tc.frames, 0);
-    });
-
-    it('setHours() accepts a string argument', () => {
-      const tc = new Timecode();
-      tc.setHours('13');
-
-      assert.strictEqual(tc.hours, 13);
       assert.strictEqual(tc.minutes, 0);
       assert.strictEqual(tc.seconds, 0);
       assert.strictEqual(tc.frames, 0);
@@ -351,16 +295,6 @@ describe('Timecode', () => {
       assert.strictEqual(tc.frames, 0);
     });
 
-    it('setMinutes() accepts a string argument', () => {
-      const tc = new Timecode(0, 30);
-      tc.setMinutes('47');
-
-      assert.strictEqual(tc.hours, 0);
-      assert.strictEqual(tc.minutes, 47);
-      assert.strictEqual(tc.seconds, 0);
-      assert.strictEqual(tc.frames, 0);
-    });
-
     it('setMinutes() rolls an argument over 59', () => {
       const tc = new Timecode(0, 30);
       tc.setMinutes(72);
@@ -374,13 +308,6 @@ describe('Timecode', () => {
     it('setSeconds() accepts a number', () => {
       const tc = new Timecode();
       tc.setSeconds(15);
-
-      assert.strictEqual(tc.seconds, 15);
-    });
-
-    it('setSeconds() accepts a string', () => {
-      const tc = new Timecode();
-      tc.setSeconds('15');
 
       assert.strictEqual(tc.seconds, 15);
     });
@@ -465,19 +392,10 @@ describe('Timecode', () => {
       assert.strictEqual(tc2.frames, 0);
     });
 
-    it('add() can add a number to a Timecode', () => {
-      const tc1 = new Timecode('01:00:00:00', 30);
-      const tc2 = tc1.add(1);
-
-      assert.strictEqual(tc2.hours, 1);
-      assert.strictEqual(tc2.minutes, 0);
-      assert.strictEqual(tc2.seconds, 0);
-      assert.strictEqual(tc2.frames, 1);
-    });
-
     it('add() adds 1 second when adding 30 frames to 30NDF timecode', () => {
       const tc1 = new Timecode('01:00:00:00', 30);
-      const tc2 = tc1.add(30);
+      const addend = new Timecode(30, 30);
+      const tc2 = tc1.add(addend);
 
       assert.strictEqual(tc2.hours, 1);
       assert.strictEqual(tc2.minutes, 0);
@@ -487,7 +405,8 @@ describe('Timecode', () => {
 
     it('add() adds 1 minute when adding 1800 frames to 30NDF timecode', () => {
       const tc1 = new Timecode('01:00:00:00', 30);
-      const tc2 = tc1.add(1800);
+      const addend = new Timecode(1800, 30);
+      const tc2 = tc1.add(addend);
 
       assert.strictEqual(tc2.hours, 1);
       assert.strictEqual(tc2.minutes, 1);
@@ -497,7 +416,8 @@ describe('Timecode', () => {
 
     it('add() adds 1 hour when adding 108000 frames to 30NDF timecode', () => {
       const tc1 = new Timecode('01:00:00:00', 30);
-      const tc2 = tc1.add(108000);
+      const addend = new Timecode(108000, 30);
+      const tc2 = tc1.add(addend);
 
       assert.strictEqual(tc2.hours, 2);
       assert.strictEqual(tc2.minutes, 0);
@@ -505,19 +425,10 @@ describe('Timecode', () => {
       assert.strictEqual(tc2.frames, 0);
     });
 
-    it('add() adds a timecode-formatted string', () => {
-      const tc1 = new Timecode('01:00:00:00', 30);
-      const tc2 = tc1.add('00:33:22:11');
-
-      assert.strictEqual(tc2.hours, 1);
-      assert.strictEqual(tc2.minutes, 33);
-      assert.strictEqual(tc2.seconds, 22);
-      assert.strictEqual(tc2.frames, 11);
-    });
-
     it('add() rolls hours over 24 from 0', () => {
       const tc1 = new Timecode('23:59:59:29', 30);
-      const tc2 = tc1.add(1);
+      const addend = new Timecode(1, 30);
+      const tc2 = tc1.add(addend);
 
       assert.strictEqual(tc2.hours, 0);
       assert.strictEqual(tc2.minutes, 0);
@@ -527,33 +438,22 @@ describe('Timecode', () => {
 
     it('add() skips first 2 frames for even minute in a result', () => {
       const tc1 = new Timecode('01:00:59:29', 29.97);
-      let tc2 = tc1.add(1);
+      const addend = new Timecode(1, 29.97);
+      let tc2 = tc1.add(addend);
       assert.strictEqual(tc2.toString(), '01:01:00;02');
-      tc2 = tc2.add(1);
+      tc2 = tc2.add(addend);
       assert.strictEqual(tc2.toString(), '01:01:00;03');
-      tc2 = tc2.add(1);
+      tc2 = tc2.add(addend);
       assert.strictEqual(tc2.toString(), '01:01:00;04');
     });
 
     it('add() does not skip first 2 frames in 10th minute', () => {
       const tc1 = new Timecode('01:09:59:29', 29.97);
-      let tc2 = tc1.add(1);
+      const addend = new Timecode(1, 29.97);
+      let tc2 = tc1.add(addend);
       assert.strictEqual(tc2.toString(), '01:10:00;00');
-      tc2 = tc2.add(1);
+      tc2 = tc2.add(addend);
       assert.strictEqual(tc2.toString(), '01:10:00;01');
-    });
-
-    // Old test from when pulldown() was behaving incorrectly, need new test
-    it.skip('add() performs pulldown on addend with different frameRate', () => {
-      const tc1 = new Timecode('00:07:12:04', 29.97);
-      const tc2 = new Timecode('00:04:16:05', 23.98);
-      const tc3 = tc1.add(tc2);
-
-      assert.strictEqual(tc3.hours, 0);
-      assert.strictEqual(tc3.minutes, 11);
-      assert.strictEqual(tc3.seconds, 28);
-      assert.strictEqual(tc3.frames, 10);
-      assert.strictEqual(tc3.frameRate, 29.97);
     });
   });
 
@@ -568,19 +468,10 @@ describe('Timecode', () => {
       assert.strictEqual(tc2.frames, 0);
     });
 
-    it('subtract() subtracts 1 frame when passed 1', () => {
-      const tc1 = new Timecode('02:00:00:00', 30);
-      const tc2 = tc1.subtract(1);
-
-      assert.strictEqual(tc2.hours, 1);
-      assert.strictEqual(tc2.minutes, 59);
-      assert.strictEqual(tc2.seconds, 59);
-      assert.strictEqual(tc2.frames, 29);
-    });
-
     it('subtract() subtracts 1 second from when passed 30 on a 30 NDF Timecode', () => {
       const tc1 = new Timecode('04:00:01:00', 30);
-      const tc2 = tc1.subtract(30);
+      const addend = new Timecode(30, 30);
+      const tc2 = tc1.subtract(addend);
 
       assert.strictEqual(tc2.hours, 4);
       assert.strictEqual(tc2.minutes, 0);
@@ -590,7 +481,8 @@ describe('Timecode', () => {
 
     it('subtract() subtracts 1 minute when passed 1800 on a 30NDF timecode', () => {
       const tc1 = new Timecode('01:00:00:00', 30);
-      const tc2 = tc1.subtract(1800);
+      const subtrahend = new Timecode(1800, 30);
+      const tc2 = tc1.subtract(subtrahend);
 
       assert.strictEqual(tc2.hours, 0);
       assert.strictEqual(tc2.minutes, 59);
@@ -600,7 +492,8 @@ describe('Timecode', () => {
 
     it('subtract() subtracts 1 hour when passed 108000 on a 30NDF timecode', () => {
       const tc1 = new Timecode('01:00:00:00', 30);
-      const tc2 = tc1.subtract(108000);
+      const subtrahend = new Timecode(108000, 30);
+      const tc2 = tc1.subtract(subtrahend);
 
       assert.strictEqual(tc2.hours, 0);
       assert.strictEqual(tc2.minutes, 0);
@@ -608,44 +501,36 @@ describe('Timecode', () => {
       assert.strictEqual(tc2.frames, 0);
     });
 
-    it('subtract() accurately parses a string argument and subtracts it', () => {
-      const tc1 = new Timecode('01:00:00:00', 30);
-      const tc2 = tc1.subtract('00:33:21:04');
-
-      assert.strictEqual(tc2.hours, 0);
-      assert.strictEqual(tc2.minutes, 26);
-      assert.strictEqual(tc2.seconds, 38);
-      assert.strictEqual(tc2.frames, 26);
-    });
-
     it('subtract() restarts at hour 24 when falling below 0', () => {
       const tc1 = new Timecode('00:00:00:00', 29.97);
-      const tc2 = tc1.subtract(1);
+      const subtrahend = new Timecode(1, 29.97);
+      const tc2 = tc1.subtract(subtrahend);
 
       assert.strictEqual(tc2.hours, 23);
       assert.strictEqual(tc2.minutes, 59);
       assert.strictEqual(tc2.seconds, 59);
       assert.strictEqual(tc2.frames, 29);
     });
+  });
 
-    // Old test from when pulldown() was behaving incorrectly, need new test
-    it.skip('subtract() performs pulldown on subtrahend with different frameRate', () => {
-      const tc1 = new Timecode('00:07:16:04', 29.97);
-      const tc2 = new Timecode('00:04:12:05', 23.98);
-      const tc3 = tc1.subtract(tc2);
+  describe('Speed Change', () => {
+    it('speeds 02:18:30:19 at 23.976 to 02:18:35:13 at 24', () => {
+      const tc1 = new Timecode('02:18:30:19', 23.98);
+      const tc2 = tc1.speedup(24, '01:00:00:00');
 
-      assert.strictEqual(tc3.hours, 0);
-      assert.strictEqual(tc3.minutes, 3);
-      assert.strictEqual(tc3.seconds, 3);
-      assert.strictEqual(tc3.frames, 21);
-      assert.strictEqual(tc3.frameRate, 29.97);
+      assert.strictEqual(tc2.frameRate, 24);
+      assert.strictEqual(tc2.hours, 2);
+      assert.strictEqual(tc2.minutes, 18);
+      assert.strictEqual(tc2.seconds, 35);
+      assert.strictEqual(tc2.frames, 13);
     });
   });
 
   describe('Pulldown', () => {
     it('Returns a new object', () => {
       const tc1 = new Timecode('01:07:10:16', 23.98);
-      const tc2 = tc1.pulldown(29.97, '01:00:00:00');
+      const offset = new Timecode('01:00:00:00', 23.98);
+      const tc2 = tc1.pulldown(29.97, offset);
 
       assert.strictEqual(tc1 === tc2, false);
 
@@ -658,7 +543,8 @@ describe('Timecode', () => {
 
     it('converts 01:07:10:16 at 23.98 to 01:07:11;04 at 29.97', () => {
       const tc1 = new Timecode('01:07:10:16', 23.98);
-      const tc2 = tc1.pulldown(29.97, '01:00:00:00');
+      const offset = new Timecode('01:00:00:00', 23.98);
+      const tc2 = tc1.pulldown(29.97, offset);
 
       assert.strictEqual(tc2.frameRate, 29.97);
       assert.strictEqual(tc2.hours, 1, 'Hours are incorrect');
@@ -680,7 +566,8 @@ describe('Timecode', () => {
 
     it('returns the same timecode as the input if it also matches the base', () => {
       const tc1 = new Timecode('02:04:56:12', 23.98);
-      const tc2 = tc1.pulldown(29.97, '02:04:56:12');
+      const offset = new Timecode('02:04:56:12', 23.98);
+      const tc2 = tc1.pulldown(29.97, offset);
 
       assert.strictEqual(tc2.frameRate, 29.97);
       assert.strictEqual(tc2.hours, 2, 'Hours are incorrect');
@@ -692,67 +579,6 @@ describe('Timecode', () => {
 
   describe('Comparisons', () => {
     describe('isBefore()', () => {
-      /* This test will iterate through every timecode for every supported framerate
-          so it's best skipped most of the time
-      */
-      it.skip('works for every possible timecode', () => {
-        for (let r = 0; r < frameRates.length; r += 1) {
-          const nominalFrameRate = parseInt(frameRates[r], 10);
-
-          for (let h = 0; h < 24; h += 1) {
-            for (let m = 0; m < 60; m += 1) {
-              for (let s = 0; s < 60; s += 1) {
-                for (let f = 0; f < nominalFrameRate; f += 1) {
-                  for (let i = 0; i < 24; i += 1) {
-                    for (let n = 0; n < 60; n += 1) {
-                      for (let t = 0; t < 60; t += 1) {
-                        for (let g = 0; g < nominalFrameRate; g += 1) {
-                          const tc1 = new Timecode({
-                            hours: h,
-                            minutes: m,
-                            seconds: s,
-                            frames: f,
-                          }, frameRates[r]);
-
-                          const tc2 = new Timecode({
-                            hours: i,
-                            minutes: n,
-                            seconds: t,
-                            frames: g,
-                          }, frameRates[r]);
-
-                          /* eslint-disable max-len */
-                          if (h < i) {
-                            assert.strictEqual(tc1.isBefore(tc2), true, `${tc1.toString()} < ${tc2.toString()} failed on hours`);
-                          } else if (h > i) {
-                            assert.strictEqual(tc1.isBefore(tc2), false, `${tc1.toString()} >= ${tc2.toString()} failed on hours`);
-                          } else if (m < n) {
-                            assert.strictEqual(tc1.isBefore(tc2), true, `${tc1.toString()} < ${tc2.toString()} failed on minutes`);
-                          } else if (m > n) {
-                            assert.strictEqual(tc1.isBefore(tc2), false, `${tc1.toString()} >= ${tc2.toString()} failed on minutes`);
-                          } else if (s < t) {
-                            assert.strictEqual(tc1.isBefore(tc2), true, `${tc1.toString()} < ${tc2.toString()} failed on seconds`);
-                          } else if (s > t) {
-                            assert.strictEqual(tc1.isBefore(tc2), false, `${tc1.toString()} >= ${tc2.toString()} failed on seconds`);
-                          } else if (f < g) {
-                            assert.strictEqual(tc1.isBefore(tc2), true, `${tc1.toString()} < ${tc2.toString()} failed on frames`);
-                          } else if (f > g) {
-                            assert.strictEqual(tc1.isBefore(tc2), false, `${tc1.toString()} >= ${tc2.toString()} failed on frames`);
-                          } else {
-                            assert.strictEqual(tc1.isBefore(tc2), false, `${tc1.toString()} == ${tc2.toString()} failed on frames`);
-                          }
-                          /* eslint-enable max-len */
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      });
-
       it('Accurate for a timecodes with an hours difference', () => {
         const attributes = { minutes: 0, seconds: 0, frames: 0 };
 

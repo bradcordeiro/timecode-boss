@@ -2,17 +2,17 @@ import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
 
 export default {
-  input: './timecode/timecode.ts',
+  input: './src/timecode.ts',
   output: [
     {
       file: './dist/timecode.js',
-      format: 'umd',
-      name: 'timecode-boss',
+      format: 'es',
+      name: 'Timecode',
     },
     {
       file: './dist/timecode.min.js',
-      format: 'umd',
-      name: 'timecode-boss',
+      format: 'es',
+      name: 'Timecode',
       plugins: [terser()],
     },
   ],
