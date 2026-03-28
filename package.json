@@ -20,7 +20,9 @@
     "email": "brad.cordeiro@gmail.com"
   },
   "scripts": {
-    "build": "rollup --config rollup.config.mjs",
+    "build:node": "tsc",
+    "build:browser": "rollup --config rollup.config.mjs",
+    "build": "npm run build:node && npm run build:browser",
     "test": "mocha test/timecode.test.js",
     "test-coverage": "nyc mocha test/timecode.test.js"
   },
@@ -30,6 +32,7 @@
     "@rollup/plugin-terser": "^1.0.0",
     "@rollup/plugin-typescript": "^12.3.0",
     "@stylistic/eslint-plugin": "^3.1.0",
+    "@tsconfig/node16": "^16.1.8",
     "@types/mocha": "^10.0.10",
     "eslint": "^9.39.2",
     "eslint-config-airbnb-extended": "^2.3.3",

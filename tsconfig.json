@@ -1,12 +1,11 @@
 {
+  "extends": "@tsconfig/node16/tsconfig.json",
   "files": ["src/timecode.ts"],
   "transpileOnly": false,
   "compilerOptions": {
     "declaration": true,
-    "lib": ["ES2017"],
     "outDir": "./dist",
     "removeComments": true,
     "strict": true,
-    "target": "ES6"
   }
 }

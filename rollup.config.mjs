@@ -5,11 +5,6 @@ export default {
   input: './src/timecode.ts',
   output: [
     {
-      file: './dist/timecode.js',
-      format: 'es',
-      name: 'Timecode',
-    },
-    {
       file: './dist/timecode.min.js',
       format: 'umd',
       name: 'Timecode',

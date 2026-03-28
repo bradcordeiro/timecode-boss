@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const TimeStampRegex = /(\d{1,2}):(\d{1,2}):(\d{1,2})[.,]?(\d{1,3})?/;
 const TimecodeRegex = /(\d{1,2})[:;](\d{1,2})[:;](\d{1,2})[:;](\d{1,2})/;
 const SecondsInOneMinute = 60;
@@ -47,7 +49,7 @@ class Timecode {
     }
     setFieldsFromString(input) {
         let matches = TimecodeRegex.exec(input);
-        if ((matches === null || matches === void 0 ? void 0 : matches.length) === 5) {
+        if (matches?.length === 5) {
             const [, hh, mm, ss, ff] = matches;
             const hours = parseInt(hh, 10);
             const minutes = parseInt(mm, 10);
@@ -337,5 +339,4 @@ class Timecode {
         return this.isAfter(earlier) && this.isBefore(later);
     }
 }
-
-export { Timecode as default };
+exports.default = Timecode;
