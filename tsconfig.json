@@ -1,7 +1,6 @@
 {
-  "extends": "@tsconfig/node16/tsconfig.json",
+  "extends": "@tsconfig/node22/tsconfig.json",
   "files": ["src/timecode.ts"],
-  "transpileOnly": false,
   "compilerOptions": {
     "declaration": true,
     "outDir": "./dist",

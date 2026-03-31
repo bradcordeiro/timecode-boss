@@ -1,12 +1,12 @@
-export interface TimecodeAttributes {
+interface TimecodeAttributes {
     hours?: number;
     minutes?: number;
     seconds?: number;
     frames?: number;
     frameRate?: number;
 }
-export type ConvertibleToTimecode = number | string | TimecodeAttributes | Date;
-declare class Timecode implements Required<TimecodeAttributes> {
+type ConvertibleToTimecode = number | string | TimecodeAttributes | Date;
+export default class Timecode implements Required<TimecodeAttributes> {
     hours: number;
     minutes: number;
     seconds: number;
@@ -57,4 +57,4 @@ declare class Timecode implements Required<TimecodeAttributes> {
     isAfter(timecode: ConvertibleToTimecode): boolean;
     isBetween(earlier: ConvertibleToTimecode, later: ConvertibleToTimecode): boolean;
 }
-export default Timecode;
+export {};

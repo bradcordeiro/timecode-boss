@@ -1,4 +1,4 @@
-export interface TimecodeAttributes {
+interface TimecodeAttributes {
   hours?: number;
   minutes?: number;
   seconds?: number;
@@ -6,7 +6,7 @@ export interface TimecodeAttributes {
   frameRate?: number;
 }
 
-export type ConvertibleToTimecode = number | string | TimecodeAttributes | Date;
+type ConvertibleToTimecode = number | string | TimecodeAttributes | Date;
 
 const TimeStampRegex = /(\d{1,2}):(\d{1,2}):(\d{1,2})[.,]?(\d{1,3})?/;
 const TimecodeRegex = /(\d{1,2})[:;](\d{1,2})[:;](\d{1,2})[:;](\d{1,2})/;
@@ -17,7 +17,7 @@ const HoursInOneDay = 24;
 const formatFieldString = (x: number, length = 2): string => x.toString(10).padStart(length, '0');
 
 /** Class representing a timecode. */
-class Timecode implements Required<TimecodeAttributes> {
+export default class Timecode implements Required<TimecodeAttributes> {
   hours: number;
 
   minutes: number;
@@ -501,5 +501,3 @@ class Timecode implements Required<TimecodeAttributes> {
     return this.isAfter(earlier) && this.isBefore(later);
   }
 }
-
-export default Timecode;

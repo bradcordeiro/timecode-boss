@@ -1,12 +1,15 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const TimeStampRegex = /(\d{1,2}):(\d{1,2}):(\d{1,2})[.,]?(\d{1,3})?/;
 const TimecodeRegex = /(\d{1,2})[:;](\d{1,2})[:;](\d{1,2})[:;](\d{1,2})/;
 const SecondsInOneMinute = 60;
 const MinutesInOneHour = 60;
 const HoursInOneDay = 24;
 const formatFieldString = (x, length = 2) => x.toString(10).padStart(length, '0');
-class Timecode {
+export default class Timecode {
+    hours;
+    minutes;
+    seconds;
+    frames;
+    frameRate;
     constructor(timecode = 0, frameRate = 29.97) {
         this.hours = 0;
         this.minutes = 0;
@@ -339,4 +342,3 @@ class Timecode {
         return this.isAfter(earlier) && this.isBefore(later);
     }
 }
-exports.default = Timecode;
