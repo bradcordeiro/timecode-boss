@@ -1,10 +1,17 @@
 {
-  "extends": "@tsconfig/node22/tsconfig.json",
   "include": ["src"],
   "compilerOptions": {
     "declaration": true,
+    "esModuleInterop": true,
+    "lib": ["es2022"],
+    "module": "nodenext",
+    "moduleResolution": "node16",
     "outDir": "./dist",
+    "rootDir": "./src",
     "removeComments": true,
+    "skipLibCheck": true,
     "strict": true,
+    "target": "es2022",
+    "types": ["node", "mocha"]
   }
 }

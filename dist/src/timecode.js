@@ -10,8 +10,6 @@ export default class Timecode {
     seconds;
     frames;
     frameRate;
-    pullup;
-    speedup;
     constructor(timecode = 0, frameRate = 29.97) {
         this.hours = 0;
         this.minutes = 0;
@@ -33,8 +31,6 @@ export default class Timecode {
                 this.frameRate = timecode.frameRate;
             }
         }
-        this.pullup = this.pulldown;
-        this.speedup = this.slowdown;
     }
     static convertToTimecode(input, frameRate) {
         if (input instanceof Timecode)
@@ -321,11 +317,17 @@ export default class Timecode {
         output.setFieldsFromFrameCount(outputFrames);
         return output.add(newBase);
     }
+    pullup(frameRate, offset = new Timecode(0)) {
+        return this.pulldown(frameRate, offset);
+    }
     slowdown(newFrameRate, offset = new Timecode(0, this.frameRate)) {
         const start = new Timecode(offset, newFrameRate);
         const difference = this.subtract(start);
         difference.frameRate = newFrameRate;
-        return start.add(difference);
+        return difference.add(start);
+    }
+    speedup(frameRate, offset = new Timecode(0)) {
+        return this.slowdown(frameRate, offset);
     }
     isBefore(timecode) {
         return Timecode.compare(this, timecode) === -1;

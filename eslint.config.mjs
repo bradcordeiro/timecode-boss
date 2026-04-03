@@ -2,7 +2,7 @@ import path from 'node:path';
 
 import { includeIgnoreFile } from '@eslint/compat';
 import js from '@eslint/js';
-import { defineConfig, globalIgnores } from 'eslint/config';
+import { defineConfig } from 'eslint/config';
 import { configs, plugins, rules } from 'eslint-config-airbnb-extended';
 
 const gitignorePath = path.resolve('.', '.gitignore');
@@ -53,7 +53,6 @@ const customRules = defineConfig([
 export default [
   // Ignore .gitignore files/folder in eslint
   includeIgnoreFile(gitignorePath),
-  defineConfig([globalIgnores([".dist/*"])]),
   // Javascript Config
   ...jsConfig,
   // Node Config

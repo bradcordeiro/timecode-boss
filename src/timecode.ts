@@ -28,6 +28,11 @@ export default class Timecode implements Required<TimecodeAttributes> {
 
   frameRate: number;
 
+  /* aliases */
+  pullup: typeof Timecode.prototype.pulldown;
+
+  speedup: typeof Timecode.prototype.slowdown;
+
   constructor(timecode: ConvertibleToTimecode = 0, frameRate = 29.97) {
     this.hours = 0;
     this.minutes = 0;
@@ -47,6 +52,10 @@ export default class Timecode implements Required<TimecodeAttributes> {
         this.frameRate = timecode.frameRate;
       }
     }
+
+    /* aliases */
+    this.pullup = this.pulldown;
+    this.speedup = this.slowdown;
   }
 
   private static convertToTimecode(input: ConvertibleToTimecode, frameRate?: number): Timecode {
@@ -470,19 +479,11 @@ export default class Timecode implements Required<TimecodeAttributes> {
     return output.add(newBase);
   }
 
-  pullup(frameRate: number, offset: ConvertibleToTimecode = new Timecode(0)): Timecode {
-    return this.pulldown(frameRate, offset);
-  }
-
   slowdown(newFrameRate: number, offset: ConvertibleToTimecode = new Timecode(0, this.frameRate)): Timecode {
     const start = new Timecode(offset, newFrameRate);
     const difference = this.subtract(start);
     difference.frameRate = newFrameRate;
-    return difference.add(start);
-  }
-
-  speedup(frameRate: number, offset: ConvertibleToTimecode = new Timecode(0)): Timecode {
-    return this.slowdown(frameRate, offset);
+    return start.add(difference);
   }
 
   isBefore(timecode: ConvertibleToTimecode): boolean {

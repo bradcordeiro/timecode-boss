@@ -12,8 +12,6 @@ export default class Timecode implements Required<TimecodeAttributes> {
     seconds: number;
     frames: number;
     frameRate: number;
-    pullup: typeof Timecode.prototype.pulldown;
-    speedup: typeof Timecode.prototype.slowdown;
     constructor(timecode?: ConvertibleToTimecode, frameRate?: number);
     private static convertToTimecode;
     private setFieldsFromFrameCount;
@@ -51,7 +49,9 @@ export default class Timecode implements Required<TimecodeAttributes> {
     add(addend: ConvertibleToTimecode): Timecode;
     subtract(subtrahend: ConvertibleToTimecode): Timecode;
     pulldown(frameRate: number, offset?: ConvertibleToTimecode): Timecode;
+    pullup(frameRate: number, offset?: ConvertibleToTimecode): Timecode;
     slowdown(newFrameRate: number, offset?: ConvertibleToTimecode): Timecode;
+    speedup(frameRate: number, offset?: ConvertibleToTimecode): Timecode;
     isBefore(timecode: ConvertibleToTimecode): boolean;
     isSame(timecode: ConvertibleToTimecode): boolean;
     isAfter(timecode: ConvertibleToTimecode): boolean;
