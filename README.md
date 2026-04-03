@@ -33,8 +33,6 @@ tc.add() returns a new timecode, starting from the original *tc* instance and ad
 ### Prerequisites
 Tests are run using [Mocha](https://mochajs.org), and code coverage is tested with Istanbul's command-line interface, [nyc](https://github.com/istanbuljs/nyc).
 
-[Rollup](https://rollupjs.org) is used to transpile to commonjs for Nodejs and an IIFE for the browser. [uglify-js](https://github.com/mishoo/UglifyJS#readme) is used to minify the browser IIFE.
-
 ### Setting up Dev
 
 ```shell
