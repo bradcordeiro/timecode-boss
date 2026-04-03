@@ -173,3 +173,7 @@ pullup() is an alias of pulldown().
 ## Licensing
 
 Released under the [MIT License](https://en.wikipedia.org/wiki/MIT_License).
+
+## AI Usage
+
+Anthropic's Opus 4.6, via the Claude Code CLI, was queried to assist with configuring TypeScript and module exporting fields of package.json. All files were human-edited based on the LLM's recommendations, if useful.
