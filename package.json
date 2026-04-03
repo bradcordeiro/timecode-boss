@@ -1,10 +1,10 @@
 {
   "name": "timecode-boss",
   "description": "A ES6 JavaScript module for working with SMPTE timecode",
-  "main": "./dist/timecode.js",
-  "types": "./dist/timecode.d.ts",
+  "main": "./dist/src/timecode.js",
+  "types": "./dist/src/timecode.d.ts",
   "type": "module",
-  "version": "7.0.0",
+  "version": "7.0.1",
   "license": "MIT",
   "author": {
     "name": "Brad Cordeiro",
@@ -21,8 +21,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "mocha test/timecode.test.js",
-    "test-coverage": "nyc mocha test/timecode.test.js"
+    "test": "mocha dist/timecode.test.js",
+    "test-coverage": "nyc mocha dist/timecode.test.js"
   },
   "devDependencies": {
     "@eslint/compat": "^2.0.0",
@@ -30,6 +30,7 @@
     "@stylistic/eslint-plugin": "^3.1.0",
     "@tsconfig/node22": "^22.0.5",
     "@types/mocha": "^10.0.10",
+    "@types/node": "^25.5.0",
     "eslint": "^9.39.2",
     "eslint-config-airbnb-extended": "^2.3.3",
     "eslint-import-resolver-typescript": "^4.4.4",

@@ -1,6 +1,7 @@
 /* eslint-env mocha */
-import * as assert from 'assert';
-import Timecode from '../dist/timecode.js'; /* eslint-disable-line import/extensions */
+import assert from 'node:assert';
+
+import Timecode from './timecode.js';
 
 describe('Timecode', () => {
   describe('Constructor', () => {
@@ -799,13 +800,11 @@ describe('Timecode', () => {
               const tc2 = new Timecode({ ...attributes, hours: i }, 29.97);
               const tc3 = new Timecode({ ...attributes, hours: j }, 29.97);
 
-              /* eslint-disable max-len */
               if (h > i && h < j) {
                 assert.strictEqual(tc1.isBetween(tc2, tc3), true, `${tc1.toString()} not between ${tc2.toString()} and ${tc3.toString()}`);
               } else {
                 assert.strictEqual(tc1.isBetween(tc2, tc3), false, `${tc1.toString()} between ${tc2.toString()} and ${tc3.toString()}`);
               }
-              /* eslint-enable max-len */
             }
           }
         }
@@ -821,13 +820,11 @@ describe('Timecode', () => {
               const tc2 = new Timecode({ ...attributes, minutes: i }, 29.97);
               const tc3 = new Timecode({ ...attributes, minutes: j }, 29.97);
 
-              /* eslint-disable max-len */
               if (h > i && h < j) {
                 assert.strictEqual(tc1.isBetween(tc2, tc3), true, `${tc1.toString()} not between ${tc2.toString()} and ${tc3.toString()}`);
               } else {
                 assert.strictEqual(tc1.isBetween(tc2, tc3), false, `${tc1.toString()} between ${tc2.toString()} and ${tc3.toString()}`);
               }
-              /* eslint-enable max-len */
             }
           }
         }
@@ -843,13 +840,11 @@ describe('Timecode', () => {
               const tc2 = new Timecode({ ...attributes, seconds: i }, 29.97);
               const tc3 = new Timecode({ ...attributes, seconds: j }, 29.97);
 
-              /* eslint-disable max-len */
               if (h > i && h < j) {
                 assert.strictEqual(tc1.isBetween(tc2, tc3), true, `${tc1.toString()} not between ${tc2.toString()} and ${tc3.toString()}`);
               } else {
                 assert.strictEqual(tc1.isBetween(tc2, tc3), false, `${tc1.toString()} between ${tc2.toString()} and ${tc3.toString()}`);
               }
-              /* eslint-enable max-len */
             }
           }
         }
@@ -865,13 +860,11 @@ describe('Timecode', () => {
               const tc2 = new Timecode({ ...attributes, frames: i }, 29.97);
               const tc3 = new Timecode({ ...attributes, frames: j }, 29.97);
 
-              /* eslint-disable max-len */
               if (h > i && h < j) {
                 assert.strictEqual(tc1.isBetween(tc2, tc3), true, `${tc1.toString()} not between ${tc2.toString()} and ${tc3.toString()}`);
               } else {
                 assert.strictEqual(tc1.isBetween(tc2, tc3), false, `${tc1.toString()} between ${tc2.toString()} and ${tc3.toString()}`);
               }
-              /* eslint-enable max-len */
             }
           }
         }

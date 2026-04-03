@@ -1,4 +1,4 @@
-interface TimecodeAttributes {
+export interface TimecodeAttributes {
   hours?: number;
   minutes?: number;
   seconds?: number;
@@ -6,7 +6,7 @@ interface TimecodeAttributes {
   frameRate?: number;
 }
 
-type ConvertibleToTimecode = number | string | TimecodeAttributes | Date;
+export type ConvertibleToTimecode = number | string | TimecodeAttributes | Date;
 
 const TimeStampRegex = /(\d{1,2}):(\d{1,2}):(\d{1,2})[.,]?(\d{1,3})?/;
 const TimecodeRegex = /(\d{1,2})[:;](\d{1,2})[:;](\d{1,2})[:;](\d{1,2})/;
