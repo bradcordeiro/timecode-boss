@@ -340,3 +340,4 @@ export default class Timecode {
         return this.isAfter(earlier) && this.isBefore(later);
     }
 }
+//# sourceMappingURL=timecode.js.map
